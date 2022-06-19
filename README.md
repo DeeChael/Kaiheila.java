@@ -1,5 +1,6 @@
 # Kaiheila.java (WIP)
 ## A java sdk for kaiheila bot
+## !!!Attension!!! Requires Java >= 17
 
 Still in developing\
 This is a fork of https://github.com/FightingGuys/rabbit and its forked branch https://github.com/Kamikuz/rabbit-enhanced\
