@@ -1,10 +1,9 @@
 package net.deechael.khl.cache;
 
-import net.deechael.khl.RabbitImpl;
+import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.client.http.HttpHeaders;
-import net.deechael.khl.core.RabbitObject;
-import cn.fightingguys.kaiheila.entity.*;
+import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.entity.*;
 import net.deechael.khl.restful.RestPageable;
 import net.deechael.khl.restful.RestRoute;
@@ -20,7 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-public class CacheManager extends RabbitObject {
+public class CacheManager extends KaiheilaObject {
     protected static final Logger Log = LoggerFactory.getLogger(CacheManager.class);
 
     private SelfUserEntity selfUserCache;
@@ -34,9 +33,9 @@ public class CacheManager extends RabbitObject {
 
     final HttpHeaders defaultHeaders = new HttpHeaders();
 
-    public CacheManager(RabbitImpl rabbit) {
+    public CacheManager(KaiheilaBot rabbit) {
         super(rabbit);
-        defaultHeaders.addHeader("Authorization", "Bot " + getRabbitImpl().getConfiguration().getApiConfigurer().getToken());
+        defaultHeaders.addHeader("Authorization", "Bot " + getKaiheilaBot().getConfiguration().getApiConfigurer().getToken());
     }
 
     public void unloadCache() {
@@ -50,6 +49,7 @@ public class CacheManager extends RabbitObject {
     }
 
     public boolean checkTokenAvailable() {
+        if (getKaiheilaBot().getConfiguration().getApiConfigurer().getToken().isEmpty()) return false;
         try {
             fetchSelfUser();
             if (this.selfUserCache != null) {
@@ -76,7 +76,7 @@ public class CacheManager extends RabbitObject {
         HttpCall request = HttpCall.createRequest(route.getMethod(), getCompleteUrl(route), this.defaultHeaders);
         List<JsonNode> data = getRestJsonResponse(route, request);
         if (data != null) {
-            this.selfUserCache = getRabbitImpl().getEntitiesBuilder().buildSelfUserEntity(getRestApiData(data.get(0)));
+            this.selfUserCache = getKaiheilaBot().getEntitiesBuilder().buildSelfUserEntity(getRestApiData(data.get(0)));
         }
     }
 
@@ -85,6 +85,7 @@ public class CacheManager extends RabbitObject {
         HttpCall guildListRequest = HttpCall.createRequest(guildListRoute.getMethod(), getCompleteUrl(guildListRoute), this.defaultHeaders);
         List<JsonNode> guildList = getRestJsonResponse(guildListRoute, guildListRequest);
         if (guildList == null) {
+            Log.error("Failed to fetch guild list."); //todo i18n
             return;
         }
         for (JsonNode list : guildList) {
@@ -102,20 +103,21 @@ public class CacheManager extends RabbitObject {
         HttpCall guildIdRequest = HttpCall.createRequest(guildRoute.getMethod(), getCompleteUrl(guildRoute), this.defaultHeaders);
         List<JsonNode> guilds = getRestJsonResponse(guildRoute, guildIdRequest);
         if (guilds == null) {
+            Log.error("Failed to fetch guild data."); //todo i18n
             return;
         }
         JsonNode node = getRestApiData(guilds.get(0));
-        GuildEntity guild = getRabbitImpl().getEntitiesBuilder().buildGuild(node);
+        GuildEntity guild = getKaiheilaBot().getEntitiesBuilder().buildGuild(node);
         ArrayList<String> channelId = new ArrayList<>();
         for (JsonNode channels : node.get("channels")) {
-            ChannelEntity entity = getRabbitImpl().getEntitiesBuilder().buildChannelEntity(channels);
+            ChannelEntity entity = getKaiheilaBot().getEntitiesBuilder().buildChannelEntity(channels);
             this.channelCache.updateElementById(entity.getId(), entity);
             channelId.add(entity.getId());
         }
         guild.setChannels(channelId);
         ArrayList<Integer> roleId = new ArrayList<>();
         for (JsonNode role : node.get("roles")) {
-            RoleEntity entity = getRabbitImpl().getEntitiesBuilder().buildRoleEntity(role);
+            RoleEntity entity = getKaiheilaBot().getEntitiesBuilder().buildRoleEntity(role);
             if (entity.getRoleId() != 0) {
                 this.roleCache.updateElementById(entity.getRoleId(), entity);
                 roleId.add(entity.getRoleId());
@@ -132,15 +134,16 @@ public class CacheManager extends RabbitObject {
         HttpCall guildIdRequest = HttpCall.createRequest(guildMemberRoute.getMethod(), getCompleteUrl(guildMemberRoute), this.defaultHeaders);
         List<JsonNode> members = getRestJsonResponse(guildMemberRoute, guildIdRequest);
         if (members == null) {
+            Log.error("Failed to fetch guild member list."); //todo i18n
             return;
         }
         HashMap<String, MemberEntity> memberEntities = new HashMap<>();
         members.forEach(node -> {
             JsonNode data = getRestApiData(node);
             for (JsonNode items : data.get("items")) {
-                UserEntity userEntity = getRabbitImpl().getEntitiesBuilder().buildUserEntity(items);
+                UserEntity userEntity = getKaiheilaBot().getEntitiesBuilder().buildUserEntity(items);
                 this.userCache.updateElementById(userEntity.getId(), userEntity);
-                MemberEntity memberEntity = getRabbitImpl().getEntitiesBuilder().buildMemberEntity(items);
+                MemberEntity memberEntity = getKaiheilaBot().getEntitiesBuilder().buildMemberEntity(items);
                 memberEntities.put(memberEntity.getUserId(), memberEntity);
             }
             this.updateGuildUserCount(guildId, data);
@@ -153,12 +156,13 @@ public class CacheManager extends RabbitObject {
         HttpCall guildEmojiRequest = HttpCall.createRequest(guildEmojiRoute.getMethod(), getCompleteUrl(guildEmojiRoute), this.defaultHeaders);
         List<JsonNode> emojis = getRestJsonResponse(guildEmojiRoute, guildEmojiRequest);
         if (emojis == null) {
+            Log.error("Failed to fetch guild emojis for guild " + guildId);
             return;
         }
         List<String> emojiList = new ArrayList<>();
         emojis.forEach(node -> {
             for (JsonNode items : getRestApiData(node).get("items")) {
-                EmojiEntity emojiEntity = getRabbitImpl().getEntitiesBuilder().buildGuildEmojiEntity(items);
+                EmojiEntity emojiEntity = getKaiheilaBot().getEntitiesBuilder().buildGuildEmojiEntity(items);
                 emojiList.add(emojiEntity.getId());
                 this.guildEmojisCache.updateElementById(guildId, emojiEntity);
             }
@@ -190,13 +194,13 @@ public class CacheManager extends RabbitObject {
         HttpCall.Response response;
         do {
             try {
-                response = getRabbitImpl().getHttpClient().execute(call);
+                response = getKaiheilaBot().getHttpClient().execute(call);
                 if (response.getCode() != 200) {
                     reportRequestFailed(++callRetry, call.getRequest().getUrl());
                     callFailed = true;
                     continue;
                 }
-                root = getRabbitImpl().getJsonEngine().readTree(response.getResponseBody().getBuffer().array());
+                root = getKaiheilaBot().getJsonEngine().readTree(response.getResponseBody().getBuffer().array());
             } catch (IOException e) {
                 reportRequestFailed(++callRetry, call.getRequest().getUrl());
                 callFailed = true;
@@ -219,7 +223,7 @@ public class CacheManager extends RabbitObject {
 
     private List<JsonNode> getRemainPageRestData(RestRoute.CompiledRoute compiledRoute, JsonNode data) throws InterruptedException {
         ArrayList<JsonNode> result = new ArrayList<>();
-        RestPageable pageable = RestPageable.of(getRabbitImpl(), compiledRoute, data);
+        RestPageable pageable = RestPageable.of(getKaiheilaBot(), compiledRoute, data);
         while (pageable.hasNext()) {
             RestRoute.CompiledRoute nextRoute = pageable.next();
             HttpCall nextCall = HttpCall.createRequest(nextRoute.getMethod(), getCompleteUrl(nextRoute), this.defaultHeaders);
@@ -236,6 +240,7 @@ public class CacheManager extends RabbitObject {
         ArrayList<JsonNode> result = new ArrayList<>();
         JsonNode root = callRestApi(call);
         if (root == null) {
+            Log.error("Not set the root");
             return null;
         }
         result.add(root);
@@ -248,7 +253,7 @@ public class CacheManager extends RabbitObject {
     }
 
     private String getCompleteUrl(RestRoute.CompiledRoute route) {
-        return getRabbitImpl().getConfiguration().getApiConfigurer().getBaseUrl() + route.getQueryStringCompleteRoute();
+        return getKaiheilaBot().getConfiguration().getApiConfigurer().getBaseUrl() + route.getQueryStringCompleteRoute();
     }
 
     public SelfUserEntity getSelfUserCache() {

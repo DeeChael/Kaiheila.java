@@ -19,8 +19,8 @@ package net.deechael.khl.client.ws.impl;
 import net.deechael.khl.client.ws.IWebSocketClient;
 import net.deechael.khl.client.ws.IWebSocketContext;
 import net.deechael.khl.client.ws.IWebSocketListener;
+import net.deechael.khl.configurer.Configuration;
 import okhttp3.*;
-import okhttp3.internal.ws.RealWebSocket;
 import okio.ByteString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,11 +28,8 @@ import org.slf4j.LoggerFactory;
 import java.nio.ByteBuffer;
 
 public class OkHttpWebSocketClientImpl implements IWebSocketClient {
-
     protected final static Logger Log = LoggerFactory.getLogger(OkHttpWebSocketClientImpl.class);
-
     private final OkHttpClient client;
-
     public OkHttpWebSocketClientImpl(OkHttpClient client) {
         this.client = client;
     }
@@ -47,7 +44,6 @@ public class OkHttpWebSocketClientImpl implements IWebSocketClient {
     }
 
     public static class OkhttpWebSocketClientContext extends WebSocketListener implements IWebSocketContext {
-
         private WebSocket websocket;
         private boolean closed = true;
         private final IWebSocketListener listener;
@@ -99,40 +95,40 @@ public class OkHttpWebSocketClientImpl implements IWebSocketClient {
         public void onOpen(WebSocket webSocket, Response response) {
             Thread.currentThread().setName("WebSocketReceiverThread");
             this.receiverThread = Thread.currentThread();
-            Log.trace("WebSocket onOpen");
+            if (Configuration.isDebug) Log.trace("WebSocket onOpen");
             this.setClosed(false);
             listener.onOpen(this);
         }
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            Log.trace("onMessage {}", text);
+            if (Configuration.isDebug) Log.trace("onMessage(plain) {}", text);
             listener.onTextMessage(this, text);
         }
 
         @Override
         public void onMessage(WebSocket webSocket, ByteString bytes) {
-            Log.trace("onMessage {}", bytes.toString());
+            if (Configuration.isDebug) Log.trace("onMessage(binary) {}", bytes.toString());
             listener.onBinaryMessage(this, ByteBuffer.wrap(bytes.toByteArray()));
         }
 
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
-            Log.trace("onClosing {} {}", code, reason);
+            if (Configuration.isDebug) Log.trace("onClosing {} {}", code, reason);
             this.setClosed(true);
             listener.onClosing(this, code, reason);
         }
 
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
-            Log.trace("onClosed {} {}", code, reason);
+            if (Configuration.isDebug) Log.trace("onClosed {} {}", code, reason);
             this.setClosed(true);
             listener.onClosed(this, code, reason);
         }
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            Log.trace("onFailure {}", t.getMessage());
+            if (Configuration.isDebug) Log.trace("onFailure {}", t.getMessage());
             this.setClosed(true);
             listener.onFailure(this, t);
         }

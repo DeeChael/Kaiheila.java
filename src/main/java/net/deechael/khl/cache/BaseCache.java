@@ -16,7 +16,9 @@
 
 package net.deechael.khl.cache;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -54,6 +56,11 @@ public class BaseCache<K, T> implements ICacheView<K, T>, Iterable<T> {
     }
 
     @Override
+    public List<K> getAll() {
+        return new ArrayList<>(cache.keySet());
+    }
+
+    @Override
     public T getElementById(K id) {
         return cache.get(id);
     }
@@ -62,4 +69,6 @@ public class BaseCache<K, T> implements ICacheView<K, T>, Iterable<T> {
     public Iterator<T> iterator() {
         return cache.values().iterator();
     }
+
+
 }

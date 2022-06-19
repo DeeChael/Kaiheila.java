@@ -16,10 +16,10 @@
 
 package net.deechael.khl.event.user;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Channel;
-import net.deechael.khl.api.objects.User;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Channel;
+import net.deechael.khl.api.User;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import net.deechael.khl.util.TimeUtil;
@@ -35,7 +35,7 @@ public class JoinedChannelEvent extends AbstractEvent {
     private final String channelId;
     private final LocalDateTime joinedAt;
 
-    public JoinedChannelEvent(RabbitImpl rabbit, JsonNode node) {
+    public JoinedChannelEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         userId = body.get("user_id").asText();
@@ -43,12 +43,17 @@ public class JoinedChannelEvent extends AbstractEvent {
         joinedAt = TimeUtil.convertUnixTimeMillisecondLocalDateTime(body.get("joined_at").asLong());
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public User getUser() {
-        return getRabbitImpl().getCacheManager().getUserCache().getElementById(userId);
+        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(userId);
     }
 
     public Channel getChannel() {
-        return getRabbitImpl().getCacheManager().getChannelCache().getElementById(channelId);
+        return getKaiheilaBot().getCacheManager().getChannelCache().getElementById(channelId);
     }
 
     public LocalDateTime getJoinedTime() {
@@ -56,7 +61,7 @@ public class JoinedChannelEvent extends AbstractEvent {
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public IEvent handleSystemEvent(JsonNode body) {
         // todo Wait for KHL Official, Fix Event Data
         return this;
     }

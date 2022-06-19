@@ -16,11 +16,11 @@
 
 package net.deechael.khl.event.channel;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Channel;
-import net.deechael.khl.api.objects.Emoji;
-import net.deechael.khl.api.objects.User;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Channel;
+import net.deechael.khl.api.Emoji;
+import net.deechael.khl.api.User;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -34,7 +34,7 @@ public class DeletedReactionEvent extends AbstractEvent {
     private final String channelId;
     private final String emojiId;
 
-    public DeletedReactionEvent(RabbitImpl rabbit, JsonNode node) {
+    public DeletedReactionEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         msgId = body.get("msg_id").asText();
@@ -43,24 +43,29 @@ public class DeletedReactionEvent extends AbstractEvent {
         emojiId = body.get("emoji").get("id").asText();
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public String getMsgId() {
         return msgId;
     }
 
     public User getUser() {
-        return getRabbitImpl().getCacheManager().getUserCache().getElementById(userId);
+        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(userId);
     }
 
     public Channel getChannel() {
-        return getRabbitImpl().getCacheManager().getChannelCache().getElementById(channelId);
+        return getKaiheilaBot().getCacheManager().getChannelCache().getElementById(channelId);
     }
 
     public Emoji getEmoji() {
-        return getRabbitImpl().getCacheManager().getGuildEmojisCache().getElementById(emojiId);
+        return getKaiheilaBot().getCacheManager().getGuildEmojisCache().getElementById(emojiId);
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public IEvent handleSystemEvent(JsonNode body) {
         return this;
     }
 }

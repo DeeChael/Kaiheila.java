@@ -1,11 +1,10 @@
 package net.deechael.khl.hook;
 
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.core.RabbitObject;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.event.FailureEvent;
 import net.deechael.khl.event.IEvent;
 import net.deechael.khl.event.UnknownEvent;
-import cn.fightingguys.kaiheila.event.channel.*;
 import net.deechael.khl.event.channel.*;
 import net.deechael.khl.event.dm.DeletedPrivateMessageEvent;
 import net.deechael.khl.event.dm.PrivateAddedReactionEvent;
@@ -15,19 +14,16 @@ import net.deechael.khl.event.guild.AddedBlockListEvent;
 import net.deechael.khl.event.guild.DeletedBlockListEvent;
 import net.deechael.khl.event.guild.DeletedGuildEvent;
 import net.deechael.khl.event.guild.UpdatedGuildEvent;
-import cn.fightingguys.kaiheila.event.member.*;
-import cn.fightingguys.kaiheila.event.message.*;
+import net.deechael.khl.event.member.*;
 import net.deechael.khl.event.message.*;
 import net.deechael.khl.event.role.AddedRoleEvent;
 import net.deechael.khl.event.role.DeletedRoleEvent;
 import net.deechael.khl.event.role.UpdatedRoleEvent;
-import cn.fightingguys.kaiheila.event.user.*;
+import net.deechael.khl.event.user.*;
 import net.deechael.khl.hook.queue.SequenceMessageQueue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.deechael.khl.event.member.*;
-import net.deechael.khl.event.user.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 
-public class EventParser extends RabbitObject implements Runnable {
+public class EventParser extends KaiheilaObject implements Runnable {
     protected static final Logger Log = LoggerFactory.getLogger(EventParser.class);
     private static final HashMap<String, Class<? extends IEvent>> eventClasses = new HashMap<>();
 
@@ -43,7 +39,7 @@ public class EventParser extends RabbitObject implements Runnable {
     private final SequenceMessageQueue<String> messageQueue;
     private final List<EventListener> listeners;
 
-    public EventParser(RabbitImpl rabbit, SequenceMessageQueue<String> messageQueue, List<EventListener> listeners) {
+    public EventParser(KaiheilaBot rabbit, SequenceMessageQueue<String> messageQueue, List<EventListener> listeners) {
         super(rabbit);
         this.messageQueue = messageQueue;
         this.listeners = listeners;
@@ -64,7 +60,7 @@ public class EventParser extends RabbitObject implements Runnable {
     }
 
     private void eventHandler(String data) {
-        ObjectMapper jsonEngine = getRabbitImpl().getJsonEngine();
+        ObjectMapper jsonEngine = getKaiheilaBot().getJsonEngine();
         JsonNode dataNode;
         try {
             dataNode = jsonEngine.readTree(data);
@@ -75,38 +71,49 @@ public class EventParser extends RabbitObject implements Runnable {
             return;
         }
         IEvent event = createEventObject(dataNode);
-        this.listeners.forEach(eventListener -> eventListener.handle(getRabbitImpl(), event));
+        this.listeners.forEach(eventListener -> eventListener.handle(getKaiheilaBot(), event));
+    }
+
+    private boolean isBotEvent(JsonNode data){
+        return data.get("nonce").asText().toLowerCase().equals("bot-message");
     }
 
     private IEvent createEventObject(JsonNode dataNode) {
         int type = dataNode.get("type").asInt();
-        if (type == 255) {
-            String sType = dataNode.get("extra").get("type").asText();
-            Class<? extends IEvent> clazz = eventClasses.get(sType);
-            try {
-                IEvent event = clazz.getConstructor(RabbitImpl.class, JsonNode.class).newInstance(getRabbitImpl(), dataNode);
-                return event.handleSystemEvent(dataNode);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                Log.error(e.getMessage());
-                return new FailureEvent(getRabbitImpl(), dataNode, e);
+        try{
+            if (type == 255) {
+                String sType = dataNode.get("extra").get("type").asText();
+                Class<? extends IEvent> clazz = eventClasses.get(sType);
+                try {
+                    IEvent event = clazz.getConstructor(KaiheilaBot.class, JsonNode.class).newInstance(getKaiheilaBot(), dataNode);
+                    Log.info("系统事件解析成功 [{}]", event.getClass().getSimpleName());
+                    return event.handleSystemEvent(dataNode);
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    e.printStackTrace();
+                    return new FailureEvent(getKaiheilaBot(), dataNode, e);
+                }
             }
-        }
-        switch (type) {
-            case 1:
-                return new TextMessageEvent(getRabbitImpl(), dataNode);
-            case 2:
-                return new ImageMessageEvent(getRabbitImpl(), dataNode);
-            case 3:
-                return new VideoMessageEvent(getRabbitImpl(), dataNode);
-            case 4:
-            case 8:
-                return new FileMessageEvent(getRabbitImpl(), dataNode);
-            case 9:
-                return new MarkDownMessageEvent(getRabbitImpl(), dataNode);
-            case 10:
-                return new CardMessageEvent(getRabbitImpl(), dataNode);
-            default:
-                return new UnknownEvent(getRabbitImpl(), dataNode);
+            switch (type) {
+                case 1:
+                    if (isBotEvent(dataNode)) return new BotMessageEvent(getKaiheilaBot(),dataNode);
+                    return new TextMessageEvent(getKaiheilaBot(), dataNode);
+                case 2:
+                    return new ImageMessageEvent(getKaiheilaBot(), dataNode);
+                case 3:
+                    return new VideoMessageEvent(getKaiheilaBot(), dataNode);
+                case 4:
+                case 8:
+                    return new FileMessageEvent(getKaiheilaBot(), dataNode);
+                case 9:
+                    return new MarkDownMessageEvent(getKaiheilaBot(), dataNode);
+                case 10:
+                    return new CardMessageEvent(getKaiheilaBot(), dataNode);
+                default:
+                    return new UnknownEvent(getKaiheilaBot(), dataNode);
+            }
+        }catch (Exception e){
+         Log.error("事件解析失败 [{}]", dataNode);
+            return new FailureEvent(getKaiheilaBot(), dataNode, e);
         }
     }
 

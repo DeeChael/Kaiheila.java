@@ -1,10 +1,10 @@
 package net.deechael.khl.entity;
 
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Role;
-import net.deechael.khl.core.RabbitObject;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Role;
+import net.deechael.khl.core.KaiheilaObject;
 
-public class RoleEntity extends RabbitObject implements Role {
+public class RoleEntity extends KaiheilaObject implements Role {
 
     private int roleId;
     private String name;
@@ -14,7 +14,7 @@ public class RoleEntity extends RabbitObject implements Role {
     private int mentionable;
     private int permissions;
 
-    public RoleEntity(RabbitImpl rabbit) {
+    public RoleEntity(KaiheilaBot rabbit) {
         super(rabbit);
     }
 

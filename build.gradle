@@ -11,11 +11,19 @@ repositories {
 
 dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'org.slf4j:slf4j-api:1.7.36'
-    testImplementation 'org.slf4j:slf4j-simple:1.7.36'
+    implementation 'org.json:json:20211205'
+    testImplementation 'junit:junit:4.13.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
+    implementation 'ch.qos.logback:logback-classic:1.2.10'
+    implementation 'commons-lang:commons-lang:2.6'
+    implementation 'org.yaml:snakeyaml:1.30'
+    implementation 'com.google.guava:guava:31.0.1-jre'
 }
 
 test {
     useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }

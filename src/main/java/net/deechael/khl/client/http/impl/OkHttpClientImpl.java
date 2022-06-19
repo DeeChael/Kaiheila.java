@@ -16,7 +16,6 @@
 
 package net.deechael.khl.client.http.impl;
 
-import cn.fightingguys.kaiheila.client.http.*;
 import net.deechael.khl.client.http.*;
 import okhttp3.*;
 import okhttp3.internal.Util;
@@ -41,7 +40,7 @@ public class OkHttpClientImpl implements IHttpClient {
         HttpRequestBody httpRequestBody = request.getRequestBody();
         if (httpRequestBody == null) {
             if (method == HttpMethod.POST || method == HttpMethod.PUT || method == HttpMethod.PATCH) {
-                return Util.EMPTY_REQUEST;
+                return request.getBody();
             }
             else {
                 return null;
@@ -56,6 +55,9 @@ public class OkHttpClientImpl implements IHttpClient {
         HttpCall.Request request = httpCall.getRequest();
         Request.Builder builder = new Request.Builder();
         builder.url(request.getUrl());
+        if (httpCall.getRequest().getMethod() == HttpMethod.GET) {
+            builder.post(Util.EMPTY_REQUEST);
+        }
         // OkHttpClient 不支持 单个Header多个值
         request.getHeaders().forEach((key, values) -> builder.addHeader(key, getHeadersFirstValue(values)));
         builder.method(request.getMethod().name(), parseHttpCallRequestBody(request.getMethod(), request));

@@ -16,9 +16,9 @@
 
 package net.deechael.khl.event.channel;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Channel;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Channel;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,11 +30,16 @@ public class DeletedMessageEvent extends AbstractEvent {
     private final String msgId;
     private final String channelId;
 
-    public DeletedMessageEvent(RabbitImpl rabbit, JsonNode node) {
+    public DeletedMessageEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         channelId = body.get("channel_id").asText();
         msgId = body.get("msg_id").asText();
+    }
+
+    @Override
+    public Operation action() {
+        return null;
     }
 
     public String getMsgId() {
@@ -42,11 +47,11 @@ public class DeletedMessageEvent extends AbstractEvent {
     }
 
     public Channel getChannel() {
-        return getRabbitImpl().getCacheManager().getChannelCache().getElementById(channelId);
+        return getKaiheilaBot().getCacheManager().getChannelCache().getElementById(channelId);
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public IEvent handleSystemEvent(JsonNode body) {
         return this;
     }
 }

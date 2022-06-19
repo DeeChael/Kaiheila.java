@@ -1,6 +1,6 @@
 package net.deechael.khl.entity;
 
-import net.deechael.khl.api.objects.SelfUser;
+import net.deechael.khl.api.SelfUser;
 
 public class SelfUserEntity implements SelfUser {
     private final UserEntity user;

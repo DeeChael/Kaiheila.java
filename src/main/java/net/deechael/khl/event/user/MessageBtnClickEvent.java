@@ -16,9 +16,9 @@
 
 package net.deechael.khl.event.user;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.User;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.User;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -32,7 +32,7 @@ public class MessageBtnClickEvent extends AbstractEvent {
     private final String value;
     private final String targetId; // todo 频道Id，也有可能是 私聊
 
-    public MessageBtnClickEvent(RabbitImpl rabbit, JsonNode node) {
+    public MessageBtnClickEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         msgId = body.get("value").asText();
@@ -41,12 +41,17 @@ public class MessageBtnClickEvent extends AbstractEvent {
         targetId = body.get("target_id").asText();
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public String getMsgId() {
         return msgId;
     }
 
     public User getUser() {
-        return getRabbitImpl().getCacheManager().getUserCache().getElementById(userId);
+        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(userId);
     }
 
     public String getValue() {
@@ -58,7 +63,7 @@ public class MessageBtnClickEvent extends AbstractEvent {
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public IEvent handleSystemEvent(JsonNode body) {
         return this;
     }
 }

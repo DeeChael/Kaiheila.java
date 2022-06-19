@@ -16,9 +16,9 @@
 
 package net.deechael.khl.event.guild;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.User;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.User;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -34,7 +34,7 @@ public class AddedBlockListEvent extends AbstractEvent {
     private final String remark;
     private final List<String> userId;
 
-    public AddedBlockListEvent(RabbitImpl rabbit, JsonNode node) {
+    public AddedBlockListEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         operatorId = body.get("operator_id").asText();
@@ -44,8 +44,13 @@ public class AddedBlockListEvent extends AbstractEvent {
         userId = users;
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public User getOperator() {
-        return getRabbitImpl().getCacheManager().getUserCache().getElementById(operatorId);
+        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(operatorId);
     }
 
     public String getRemark() {
@@ -54,12 +59,12 @@ public class AddedBlockListEvent extends AbstractEvent {
 
     public List<User> getUsers() {
         ArrayList<User> users = new ArrayList<>();
-        userId.forEach(s -> users.add(getRabbitImpl().getCacheManager().getUserCache().getElementById(operatorId)));
+        userId.forEach(s -> users.add(getKaiheilaBot().getCacheManager().getUserCache().getElementById(operatorId)));
         return users;
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public IEvent handleSystemEvent(JsonNode body) {
         // todo Wait for KHL Official, Fix Event Data
         return this;
     }

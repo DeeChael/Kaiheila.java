@@ -16,9 +16,9 @@
 
 package net.deechael.khl.event.member;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.User;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.User;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,15 +30,20 @@ public class UpdatedGuildMemberEvent extends AbstractEvent {
     private final String userId;
     private final String nickname;
 
-    public UpdatedGuildMemberEvent(RabbitImpl rabbit, JsonNode node) {
+    public UpdatedGuildMemberEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         userId = body.get("user_id").asText();
         nickname = body.get("nickname").asText();
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public User getUser() {
-        return getRabbitImpl().getCacheManager().getUserCache().getElementById(userId);
+        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(userId);
     }
 
     public String getNickname() {
@@ -46,7 +51,7 @@ public class UpdatedGuildMemberEvent extends AbstractEvent {
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public IEvent handleSystemEvent(JsonNode body) {
         // todo Wait for KHL Official, Fix Event Data
         return this;
     }

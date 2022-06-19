@@ -16,10 +16,10 @@
 
 package net.deechael.khl.event.guild;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Guild;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Guild;
 import net.deechael.khl.cache.BaseCache;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.entity.GuildEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
@@ -31,21 +31,26 @@ public class UpdatedGuildEvent extends AbstractEvent {
 
     private final String guildId;
 
-    public UpdatedGuildEvent(RabbitImpl rabbit, JsonNode node) {
+    public UpdatedGuildEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         guildId = body.get("id").asText();
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public Guild getGuild() {
-        return getRabbitImpl().getCacheManager().getGuildCache().getElementById(guildId);
+        return getKaiheilaBot().getCacheManager().getGuildCache().getElementById(guildId);
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
-        BaseCache<String, GuildEntity> guildCache = (BaseCache<String, GuildEntity>) getRabbitImpl().getCacheManager().getGuildCache();
+    public IEvent handleSystemEvent(JsonNode body) {
+        BaseCache<String, GuildEntity> guildCache = (BaseCache<String, GuildEntity>) getKaiheilaBot().getCacheManager().getGuildCache();
         GuildEntity guildEntity = guildCache.getElementById(guildId);
-        guildEntity = getRabbitImpl().getEntitiesBuilder().updateGuildEntityForEvent(guildEntity, super.getEventExtraBody(body));
+        guildEntity = getKaiheilaBot().getEntitiesBuilder().updateGuildEntityForEvent(guildEntity, super.getEventExtraBody(body));
         guildCache.updateElementById(guildId, guildEntity);
         return this;
     }

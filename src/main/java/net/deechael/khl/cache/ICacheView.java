@@ -16,10 +16,13 @@
 
 package net.deechael.khl.cache;
 
+import java.util.List;
+
 public interface ICacheView<K, T> {
 
     T getElementById(K id);
 
     T getElementByName(String name);
 
+    List<K> getAll();
 }

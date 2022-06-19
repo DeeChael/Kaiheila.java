@@ -16,11 +16,11 @@
 
 package net.deechael.khl.event.channel;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Channel;
-import net.deechael.khl.api.objects.Guild;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Channel;
+import net.deechael.khl.api.Guild;
 import net.deechael.khl.cache.BaseCache;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.entity.ChannelEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
@@ -33,28 +33,34 @@ public class UpdatedChannelEvent extends AbstractEvent {
     private final String guildId;
     private final String channelId;
 
-    public UpdatedChannelEvent(RabbitImpl rabbit, JsonNode node) {
+    public UpdatedChannelEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         guildId = body.get("guild_id").asText();
         channelId = body.get("id").asText();
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public Guild getGuild() {
-        return getRabbitImpl().getCacheManager().getGuildCache().getElementById(guildId);
+        return getKaiheilaBot().getCacheManager().getGuildCache().getElementById(guildId);
     }
 
     public Channel getChannel() {
-        return getRabbitImpl().getCacheManager().getChannelCache().getElementById(channelId);
+        return getKaiheilaBot().getCacheManager().getChannelCache().getElementById(channelId);
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public IEvent handleSystemEvent(JsonNode body) {
         JsonNode node = super.getEventExtraBody(body);
-        ChannelEntity entity = getRabbitImpl().getEntitiesBuilder().buildChannelEntityForEvent(node);
+        ChannelEntity entity = getKaiheilaBot().getEntitiesBuilder().buildChannelEntityForEvent(node);
         // 更新缓存
-        BaseCache<String, ChannelEntity> channelCache = (BaseCache<String, ChannelEntity>) getRabbitImpl().getCacheManager().getChannelCache();
+        BaseCache<String, ChannelEntity> channelCache = (BaseCache<String, ChannelEntity>) getKaiheilaBot().getCacheManager().getChannelCache();
         ChannelEntity oldEntity = channelCache.getElementById(entity.getId());
+        entity.setMasterId(oldEntity.getMasterId());
         entity.setPermissionOverwrites(oldEntity.getPermissionOverwrites());
         entity.setPermissionUsers(oldEntity.getPermissionUsers());
         entity.setPermissionSync(oldEntity.isPermissionSync());

@@ -1,12 +1,12 @@
 package net.deechael.khl.entity;
 
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.core.RabbitObject;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.core.KaiheilaObject;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class MemberEntity extends RabbitObject {
+public class MemberEntity extends KaiheilaObject {
 
     private String userId;
     private String nickname;
@@ -14,7 +14,7 @@ public class MemberEntity extends RabbitObject {
     private LocalDateTime joinedAt;
     private LocalDateTime activeTime;
 
-    public MemberEntity(RabbitImpl rabbit) {
+    public MemberEntity(KaiheilaBot rabbit) {
         super(rabbit);
     }
 

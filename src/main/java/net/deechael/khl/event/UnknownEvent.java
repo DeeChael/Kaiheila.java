@@ -16,17 +16,22 @@
 
 package net.deechael.khl.event;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.core.action.Operation;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public final class UnknownEvent extends AbstractEvent {
 
     private final String rawEventData;
 
-    public UnknownEvent(RabbitImpl rabbit, JsonNode node) {
+    public UnknownEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         this.rawEventData = node.toString();
+    }
+
+    @Override
+    public Operation action() {
+        return null;
     }
 
     public String getRawEventData() {
@@ -34,7 +39,7 @@ public final class UnknownEvent extends AbstractEvent {
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public IEvent handleSystemEvent(JsonNode body) {
         return this;
     }
 }

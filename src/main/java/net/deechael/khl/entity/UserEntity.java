@@ -1,10 +1,10 @@
 package net.deechael.khl.entity;
 
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.User;
-import net.deechael.khl.core.RabbitObject;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.User;
+import net.deechael.khl.core.KaiheilaObject;
 
-public class UserEntity extends RabbitObject implements User {
+public class UserEntity extends KaiheilaObject implements User {
 
     private String id;
     private String username;
@@ -17,7 +17,7 @@ public class UserEntity extends RabbitObject implements User {
     private String vipAvatar;
     private boolean mobileVerified;
 
-    public UserEntity(RabbitImpl rabbit) {
+    public UserEntity(KaiheilaBot rabbit) {
         super(rabbit);
     }
 

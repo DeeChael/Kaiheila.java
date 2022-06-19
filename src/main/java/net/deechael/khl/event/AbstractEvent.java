@@ -16,15 +16,16 @@
 
 package net.deechael.khl.event;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.User;
-import net.deechael.khl.core.RabbitObject;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.User;
+import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.util.TimeUtil;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.LocalDateTime;
 
-public abstract class AbstractEvent extends RabbitObject implements IEvent {
+public abstract class AbstractEvent extends KaiheilaObject implements IEvent {
 
     private final String eventChannelType;
     private final int eventType;
@@ -35,20 +36,36 @@ public abstract class AbstractEvent extends RabbitObject implements IEvent {
     private final LocalDateTime eventTime;
     private final String eventNonce;
 
-    public AbstractEvent(RabbitImpl rabbit, JsonObject node) {
+    public AbstractEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit);
-        this.eventChannelType = node.get("channel_type").getAsString();
-        this.eventType = node.get("type").getAsInt();
-        this.eventTargetId = node.get("target_id").getAsString();
-        this.eventAuthorId = node.get("author_id").getAsString();
-        this.eventContent = node.get("content").getAsString();
-        this.eventId = node.get("msg_id").getAsString();
-        this.eventTime = TimeUtil.convertUnixTimeMillisecondLocalDateTime(node.get("msg_timestamp").getAsLong());
-        this.eventNonce = node.get("nonce").getAsString();
+        this.eventChannelType = node.get("channel_type").asText();
+        this.eventType = node.get("type").asInt();
+        this.eventTargetId = node.get("target_id").asText();
+        this.eventAuthorId = node.get("author_id").asText();
+        this.eventContent = node.get("content").asText();
+        this.eventId = node.get("msg_id").asText();
+        this.eventTime = TimeUtil.convertUnixTimeMillisecondLocalDateTime(node.get("msg_timestamp").asLong());
+        this.eventNonce = node.get("nonce").asText();
     }
 
-    public JsonObject getEventExtraBody(JsonObject node) {
-        return node.getAsJsonObject("extra").getAsJsonObject("body");
+    protected AbstractEvent(KaiheilaBot rabbit, AbstractEvent event) {
+        super(rabbit);
+        this.eventChannelType = event.eventChannelType;
+        this.eventType = event.eventType;
+        this.eventTargetId = event.eventTargetId;
+        this.eventAuthorId = event.eventAuthorId;
+        this.eventContent = event.eventContent;
+        this.eventId = event.eventId;
+        this.eventTime = event.eventTime;
+        this.eventNonce = event.eventNonce;
+    }
+
+    public JsonNode getEventExtraBody(JsonNode node) {
+        return node.get("extra").get("body");
+    }
+
+    public JsonNode getEventType(JsonNode node) {
+        return node.get("extra").get("type");
     }
 
     public String getEventChannelType() {
@@ -63,8 +80,12 @@ public abstract class AbstractEvent extends RabbitObject implements IEvent {
         return eventTargetId;
     }
 
-    public User getEventAuthorId() {
-        return getRabbitImpl().getCacheManager().getUserCache().getElementById(eventAuthorId);
+    public User getEventAuthor() {
+        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(eventAuthorId);
+    }
+
+    public String getEventAuthorId() {
+        return eventAuthorId;
     }
 
     public String getEventContent() {
@@ -83,4 +104,5 @@ public abstract class AbstractEvent extends RabbitObject implements IEvent {
         return eventNonce;
     }
 
+    public abstract Operation action();
 }

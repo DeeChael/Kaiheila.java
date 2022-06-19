@@ -16,10 +16,10 @@
 
 package net.deechael.khl.hook;
 
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.config.event.EventSourceConfigurer;
-import net.deechael.khl.config.event.WebhookEventSourceConfigurer;
-import net.deechael.khl.core.RabbitObject;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.configurer.event.EventSourceConfigurer;
+import net.deechael.khl.configurer.event.WebhookEventSourceConfigurer;
+import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.hook.queue.SequenceMessageQueue;
 import net.deechael.khl.hook.source.webhook.WebhookEventSource;
 import net.deechael.khl.hook.source.websocket.WebSocketEventSource;
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.util.LinkedList;
 import java.util.List;
 
-public class EventManager extends RabbitObject implements EventManagerReceiver {
+public class EventManager extends KaiheilaObject implements EventManagerReceiver {
     protected static final Logger Log = LoggerFactory.getLogger(EventManager.class);
 
     private final List<EventListener> listeners = new LinkedList<>();
@@ -39,7 +39,7 @@ public class EventManager extends RabbitObject implements EventManagerReceiver {
     private EventParser eventParser;
     private EventSource eventSource;
 
-    public EventManager(RabbitImpl rabbit) {
+    public EventManager(KaiheilaBot rabbit) {
         super(rabbit);
     }
 
@@ -47,7 +47,7 @@ public class EventManager extends RabbitObject implements EventManagerReceiver {
     public void initialSn(int sn) {
         messageQueue = new SequenceMessageQueue<>(sn);
         this.shutdownEventParser();
-        this.eventParser = new EventParser(getRabbitImpl(), messageQueue, listeners);
+        this.eventParser = new EventParser(getKaiheilaBot(), messageQueue, listeners);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class EventManager extends RabbitObject implements EventManagerReceiver {
     }
 
     public void initializeEventSource() {
-        EventSourceConfigurer configurer = getRabbitImpl().getConfiguration().getEventSourceConfigurer();
+        EventSourceConfigurer configurer = getKaiheilaBot().getConfiguration().getEventSourceConfigurer();
         if (configurer.getEventSourceType() == EventSourceConfigurer.EventSourceType.CUSTOM) {
             if (configurer.getEventSource() == null) {
                 throw new NullPointerException("自定义事件实例不能未空");
@@ -99,9 +99,9 @@ public class EventManager extends RabbitObject implements EventManagerReceiver {
             this.eventSource = configurer.getEventSource();
         } else if (configurer.getEventSourceType() == EventSourceConfigurer.EventSourceType.WEBHOOK) {
             WebhookEventSourceConfigurer instanceConfigurer = (WebhookEventSourceConfigurer) configurer.getInstanceConfigurer();
-            this.eventSource = new WebhookEventSource(this, Compression.DEFAULT_ZLIB_STREAM, getRabbitImpl().getJsonEngine(), instanceConfigurer.getVerifyToken(), instanceConfigurer.getEncryptKey());
+            this.eventSource = new WebhookEventSource(this, Compression.DEFAULT_ZLIB_STREAM, getKaiheilaBot().getJsonEngine(), instanceConfigurer.getVerifyToken(), instanceConfigurer.getEncryptKey());
         } else if (configurer.getEventSourceType() == EventSourceConfigurer.EventSourceType.WEBSOCKET) {
-            this.eventSource = new WebSocketEventSource(this, getRabbitImpl(), getRabbitImpl().getHttpClient(), getRabbitImpl().getWebsocketClient(), getRabbitImpl().getJsonEngine(), Compression.DEFAULT_ZLIB_STREAM, WebSocketSessionStorage.DEFAULT_SESSION_STORAGE);
+            this.eventSource = new WebSocketEventSource(this, getKaiheilaBot(), getKaiheilaBot().getHttpClient(), getKaiheilaBot().getWebsocketClient(), getKaiheilaBot().getJsonEngine(), Compression.DEFAULT_ZLIB_STREAM, WebSocketSessionStorage.DEFAULT_SESSION_STORAGE);
         }
         this.eventSource.enableEventPipe();
         this.eventSource.start();

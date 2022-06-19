@@ -16,10 +16,10 @@
 
 package net.deechael.khl.event.channel;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Channel;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Channel;
 import net.deechael.khl.cache.BaseCache;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.entity.ChannelEntity;
 import net.deechael.khl.entity.GuildEntity;
 import net.deechael.khl.event.AbstractEvent;
@@ -36,15 +36,20 @@ public class DeletedChannelEvent extends AbstractEvent {
     private final String channelId;
     private final LocalDateTime deletedAt;
 
-    public DeletedChannelEvent(RabbitImpl rabbit, JsonNode node) {
+    public DeletedChannelEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         channelId = body.get("id").asText();
         deletedAt = TimeUtil.convertUnixTimeMillisecondLocalDateTime(body.get("deleted_at").asLong());
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public Channel getChannel() {
-        return getRabbitImpl().getCacheManager().getChannelCache().getElementById(channelId);
+        return getKaiheilaBot().getCacheManager().getChannelCache().getElementById(channelId);
     }
 
     public LocalDateTime getDeletedTime() {
@@ -52,10 +57,10 @@ public class DeletedChannelEvent extends AbstractEvent {
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public IEvent handleSystemEvent(JsonNode body) {
         // 更新缓存
-        BaseCache<String, GuildEntity> guildCache = (BaseCache<String, GuildEntity>) getRabbitImpl().getCacheManager().getGuildCache();
-        BaseCache<String, ChannelEntity> channelCache = (BaseCache<String, ChannelEntity>) getRabbitImpl().getCacheManager().getChannelCache();
+        BaseCache<String, GuildEntity> guildCache = (BaseCache<String, GuildEntity>) getKaiheilaBot().getCacheManager().getGuildCache();
+        BaseCache<String, ChannelEntity> channelCache = (BaseCache<String, ChannelEntity>) getKaiheilaBot().getCacheManager().getChannelCache();
         channelCache.unloadElementById(channelId);
         for (GuildEntity guild : guildCache) {
             guild.getChannels().remove(channelId);

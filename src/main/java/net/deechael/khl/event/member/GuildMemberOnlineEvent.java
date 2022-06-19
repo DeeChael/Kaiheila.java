@@ -16,11 +16,11 @@
 
 package net.deechael.khl.event.member;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Guild;
-import net.deechael.khl.api.objects.User;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Guild;
+import net.deechael.khl.api.User;
 import net.deechael.khl.cache.CacheManager;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.entity.GuildEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
@@ -39,7 +39,7 @@ public class GuildMemberOnlineEvent extends AbstractEvent {
     private final LocalDateTime onlineTime;
     private final List<String> guilds;
 
-    public GuildMemberOnlineEvent(RabbitImpl rabbit, JsonNode node) {
+    public GuildMemberOnlineEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         userId = body.get("user_id").asText();
@@ -49,8 +49,13 @@ public class GuildMemberOnlineEvent extends AbstractEvent {
         guilds = gId;
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public User getUser() {
-        return getRabbitImpl().getCacheManager().getUserCache().getElementById(userId);
+        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(userId);
     }
 
     public LocalDateTime getUserOnlineTime() {
@@ -59,13 +64,13 @@ public class GuildMemberOnlineEvent extends AbstractEvent {
 
     public List<Guild> getGuilds() {
         ArrayList<Guild> r = new ArrayList<>();
-        guilds.forEach(s -> r.add(getRabbitImpl().getCacheManager().getGuildCache().getElementById(s)));
+        guilds.forEach(s -> r.add(getKaiheilaBot().getCacheManager().getGuildCache().getElementById(s)));
         return r;
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
-        CacheManager cacheManager = getRabbitImpl().getCacheManager();
+    public IEvent handleSystemEvent(JsonNode body) {
+        CacheManager cacheManager = getKaiheilaBot().getCacheManager();
         for (String guild : guilds) {
             GuildEntity guildEntity = cacheManager.getGuildCache().getElementById(guild);
             guildEntity.setOnlineCount(guildEntity.getOnlineCount() + 1);

@@ -16,13 +16,14 @@
 
 package net.deechael.khl.event.user;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Channel;
-import net.deechael.khl.api.objects.User;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Channel;
+import net.deechael.khl.api.User;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import net.deechael.khl.util.TimeUtil;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.LocalDateTime;
 
@@ -34,20 +35,25 @@ public class ExitedChannelEvent extends AbstractEvent {
     private final String channelId;
     private final LocalDateTime exitedAt;
 
-    public ExitedChannelEvent(RabbitImpl rabbit, JsonObject node) {
+    public ExitedChannelEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
-        JsonObject body = super.getEventExtraBody(node);
-        userId = body.get("user_id").getAsString();
-        channelId = body.get("channel_id").getAsString();
-        exitedAt = TimeUtil.convertUnixTimeMillisecondLocalDateTime(body.get("exited_at").getAsLong());
+        JsonNode body = super.getEventExtraBody(node);
+        userId = body.get("user_id").asText();
+        channelId = body.get("channel_id").asText();
+        exitedAt = TimeUtil.convertUnixTimeMillisecondLocalDateTime(body.get("exited_at").asLong());
+    }
+
+    @Override
+    public Operation action() {
+        return null;
     }
 
     public User getUser() {
-        return getRabbitImpl().getCacheManager().getUserCache().getElementById(userId);
+        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(userId);
     }
 
     public Channel getChannel() {
-        return getRabbitImpl().getCacheManager().getChannelCache().getElementById(channelId);
+        return getKaiheilaBot().getCacheManager().getChannelCache().getElementById(channelId);
     }
 
     public LocalDateTime getExitedTime() {
@@ -55,7 +61,7 @@ public class ExitedChannelEvent extends AbstractEvent {
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public IEvent handleSystemEvent(JsonNode body) {
         // todo Wait for KHL Official, Fix Event Data
         return this;
     }

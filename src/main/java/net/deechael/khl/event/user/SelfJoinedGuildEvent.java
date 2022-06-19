@@ -16,9 +16,9 @@
 
 package net.deechael.khl.event.user;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Guild;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Guild;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,18 +29,23 @@ public class SelfJoinedGuildEvent extends AbstractEvent {
 
     private String guildId;
 
-    public SelfJoinedGuildEvent(RabbitImpl rabbit, JsonNode node) {
+    public SelfJoinedGuildEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         guildId = body.get("guild_id").asText();
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public Guild getGuild() {
-        return getRabbitImpl().getCacheManager().getGuildCache().getElementById(guildId);
+        return getKaiheilaBot().getCacheManager().getGuildCache().getElementById(guildId);
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public IEvent handleSystemEvent(JsonNode body) {
         return this;
     }
 }

@@ -16,6 +16,9 @@
 
 package net.deechael.khl.client.http;
 
+import okhttp3.RequestBody;
+import okhttp3.internal.Util;
+
 public class HttpCall {
 
     private boolean called;
@@ -29,6 +32,11 @@ public class HttpCall {
 
     public static HttpCall createRequest(HttpMethod method, String url, HttpHeaders headers, HttpRequestBody requestBody) {
         Request request = new Request(method, url, headers != null ? headers : new HttpHeaders(), requestBody);
+        return new HttpCall(request);
+    }
+
+    public static HttpCall createRequest(String url, HttpHeaders headers, RequestBody body) {
+        Request request = new Request(HttpMethod.POST, url, headers != null ? headers : new HttpHeaders(), null, body);
         return new HttpCall(request);
     }
 
@@ -73,12 +81,21 @@ public class HttpCall {
         private final HttpMethod method;
         private final HttpHeaders headers;
         private final HttpRequestBody requestBody;
+        private RequestBody body = Util.EMPTY_REQUEST;
 
         private Request(HttpMethod method, String url, HttpHeaders headers, HttpRequestBody requestBody) {
             this.method = method;
             this.url = url;
             this.headers = headers;
             this.requestBody = requestBody;
+        }
+
+        private Request(HttpMethod method, String url, HttpHeaders headers, HttpRequestBody requestBody, RequestBody body) {
+            this.method = method;
+            this.url = url;
+            this.headers = headers;
+            this.requestBody = requestBody;
+            this.body = body;
         }
 
         public String getUrl() {
@@ -95,6 +112,10 @@ public class HttpCall {
 
         public HttpRequestBody getRequestBody() {
             return requestBody;
+        }
+
+        public RequestBody getBody() {
+            return body;
         }
     }
 

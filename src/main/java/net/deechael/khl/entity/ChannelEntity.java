@@ -1,14 +1,15 @@
 package net.deechael.khl.entity;
 
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Channel;
-import net.deechael.khl.api.objects.Guild;
-import net.deechael.khl.api.objects.User;
-import net.deechael.khl.core.RabbitObject;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Channel;
+import net.deechael.khl.api.Guild;
+import net.deechael.khl.api.User;
+import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.core.action.Operation;
 
 import java.util.List;
 
-public class ChannelEntity extends RabbitObject implements Channel {
+public class ChannelEntity extends KaiheilaObject implements Channel {
 
     private String id;
     private String name;
@@ -25,8 +26,8 @@ public class ChannelEntity extends RabbitObject implements Channel {
     private List<PermissionOverwrite> permissionUsers;
     private boolean permissionSync;
 
-    public ChannelEntity(RabbitImpl rabbit) {
-        super(rabbit);
+    public ChannelEntity(KaiheilaBot kaiheilaBot) {
+        super(kaiheilaBot);
     }
 
     /**
@@ -56,7 +57,7 @@ public class ChannelEntity extends RabbitObject implements Channel {
      */
     @Override
     public User getCreator() {
-        return getRabbitImpl().getCacheManager().getUserCache().getElementById(masterId);
+        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(masterId);
     }
 
     /**
@@ -116,7 +117,12 @@ public class ChannelEntity extends RabbitObject implements Channel {
      */
     @Override
     public Guild getGuild() {
-        return getRabbitImpl().getCacheManager().getGuildCache().getElementById(guildId);
+        return getKaiheilaBot().getCacheManager().getGuildCache().getElementById(guildId);
+    }
+
+    @Override
+    public Operation.ChannelOperation getChannelOperation() {
+        return new Operation.ChannelOperation(getKaiheilaBot(), this);
     }
 
     public void setId(String id) {

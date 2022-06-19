@@ -1,16 +1,18 @@
 package net.deechael.khl.entity;
 
-import net.deechael.khl.RabbitImpl;
-import cn.fightingguys.kaiheila.api.*;
-import net.deechael.khl.api.objects.Role;
-import net.deechael.khl.api.objects.User;
-import net.deechael.khl.core.RabbitObject;
-import net.deechael.khl.api.objects.Channel;
-import net.deechael.khl.api.objects.Guild;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Channel;
+import net.deechael.khl.api.Guild;
+import net.deechael.khl.api.Role;
+import net.deechael.khl.api.User;
+import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.core.action.Operation;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class GuildEntity extends RabbitObject implements Guild {
+public class GuildEntity extends KaiheilaObject implements Guild {
 
     private String id;
     private String name;
@@ -31,7 +33,7 @@ public class GuildEntity extends RabbitObject implements Guild {
     private int onlineCount;
     private int offlineCount;
 
-    public GuildEntity(RabbitImpl rabbit) {
+    public GuildEntity(KaiheilaBot rabbit) {
         super(rabbit);
     }
 
@@ -74,7 +76,7 @@ public class GuildEntity extends RabbitObject implements Guild {
      */
     @Override
     public User getCreator() {
-        return getRabbitImpl().getCacheManager().getUserCache().getElementById(masterId);
+        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(masterId);
     }
 
     /**
@@ -126,7 +128,7 @@ public class GuildEntity extends RabbitObject implements Guild {
      */
     @Override
     public Channel getDefaultChannel() {
-        return getRabbitImpl().getCacheManager().getChannelCache().getElementById(defaultChannelId);
+        return getKaiheilaBot().getCacheManager().getChannelCache().getElementById(defaultChannelId);
     }
 
     /**
@@ -136,7 +138,7 @@ public class GuildEntity extends RabbitObject implements Guild {
      */
     @Override
     public Channel getWelcomeChannel() {
-        return getRabbitImpl().getCacheManager().getChannelCache().getElementById(welcomeChannelId);
+        return getKaiheilaBot().getCacheManager().getChannelCache().getElementById(welcomeChannelId);
     }
 
     /**
@@ -177,6 +179,16 @@ public class GuildEntity extends RabbitObject implements Guild {
     @Override
     public int getOfflineCount() {
         return offlineCount;
+    }
+
+    /**
+     * 获取当前服务器操作
+     *
+     * @return 服务器操作
+     */
+    @Override
+    public Operation.ServerOperation getServerOperation() {
+        return new Operation.ServerOperation(getKaiheilaBot(),this);
     }
 
     public void setId(String id) {
@@ -259,7 +271,16 @@ public class GuildEntity extends RabbitObject implements Guild {
         this.roles = roles;
     }
 
-    public List<String> getChannels() {
+    public List<Channel> getChannels() {
+        return channels.stream().map(id-> (Channel) getKaiheilaBot().getCacheManager().getChannelCache().getElementById(id)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MemberEntity> getMembers() {
+        return new ArrayList<>(getKaiheilaBot().getCacheManager().getGuildMembersCache().get(this.id).values());
+    }
+
+    public List<String> getChannelIDs() {
         return channels;
     }
 

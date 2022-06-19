@@ -61,10 +61,12 @@ public class WebSocketSessionFileBaseStorage implements WebSocketSessionStorage 
     @Override
     public boolean saveSession(WebSocketEventSourceSession session) {
         if (!checkSessionFileWriteable()) {
+            Log.warn("WebSocket Session 文件不可写");
             return false;
         }
         try (FileWriter writer = new FileWriter(file)) {
             writer.write(session.getSessionId() + dataSplit + session.getGateway() + dataSplit + session.getSn());
+            writer.flush();
         } catch (IOException e) {
             return false;
         }
@@ -81,24 +83,24 @@ public class WebSocketSessionFileBaseStorage implements WebSocketSessionStorage 
             return null;
         }
         BufferedReader reader = new BufferedReader(fileReader);
-        try (reader) {
+        try {
             dataLine = reader.readLine();
+            String[] data = dataLine.split(dataSplit);
+            WebSocketEventSourceSession session = new WebSocketEventSourceSession();
+            session.setSessionId(data[0]);
+            session.setGateway(data[1]);
+            session.setSn(Integer.parseInt(data[2]));
+            reader.close();
+            fileReader.close();
+            return session;
         } catch (IOException ignored) {
             return null;
         }
-        String[] data = dataLine.split(dataSplit);
-        WebSocketEventSourceSession session = new WebSocketEventSourceSession();
-        session.setSessionId(data[0]);
-        session.setGateway(data[1]);
-        session.setSn(Integer.parseInt(data[2]));
-        return session;
     }
 
     @Override
     public void clearSession() {
-        if (file.exists() && file.delete()) {
-            Log.warn("WebSocket Session 文件已删除 [{}]", file.getAbsolutePath());
-        }
+        if (file.exists() && file.delete()) {Log.info("WebSocket Session 文件已删除");}
+        else{Log.warn("WebSocket Session 文件删除失败");}
     }
-
 }

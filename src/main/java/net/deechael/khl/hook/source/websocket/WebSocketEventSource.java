@@ -1,13 +1,13 @@
 package net.deechael.khl.hook.source.websocket;
 
-import net.deechael.khl.RabbitImpl;
-import cn.fightingguys.kaiheila.client.http.*;
+import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.client.http.HttpHeaders;
 import net.deechael.khl.client.http.HttpResponseBody;
 import net.deechael.khl.client.http.IHttpClient;
 import net.deechael.khl.client.ws.IWebSocketClient;
 import net.deechael.khl.client.ws.IWebSocketContext;
+import net.deechael.khl.configurer.Configuration;
 import net.deechael.khl.hook.EventManager;
 import net.deechael.khl.hook.EventSource;
 import net.deechael.khl.hook.source.EventSourceStringListener;
@@ -28,7 +28,7 @@ public class WebSocketEventSource extends EventSource implements EventSourceStri
 
     protected static final Logger Log = LoggerFactory.getLogger(WebSocketEventSource.class);
 
-    protected final RabbitImpl rabbit;
+    protected final KaiheilaBot rabbit;
     protected final IHttpClient httpClient;
     protected final IWebSocketClient websocketClient;
     protected final Compression compression;
@@ -47,7 +47,7 @@ public class WebSocketEventSource extends EventSource implements EventSourceStri
 
     private int failedRetry = 0;
 
-    public WebSocketEventSource(EventManager manager, RabbitImpl rabbit, IHttpClient httpClient, IWebSocketClient websocketClient, ObjectMapper jsonEngine, Compression compression, WebSocketSessionStorage sessionStorage) {
+    public WebSocketEventSource(EventManager manager, KaiheilaBot rabbit, IHttpClient httpClient, IWebSocketClient websocketClient, ObjectMapper jsonEngine, Compression compression, WebSocketSessionStorage sessionStorage) {
         super(manager);
         this.rabbit = rabbit;
         this.httpClient = httpClient;
@@ -70,14 +70,14 @@ public class WebSocketEventSource extends EventSource implements EventSourceStri
 
     protected void setCurrentState(WebSocketState state) {
         if (this.state != state) {
-            Log.trace("Websocket 状态 {} 切换至 {}", this.state, state);
+            if (Configuration.isDebug) Log.trace("Websocket 状态 {} 切换至 {}", this.state, state);
             this.state = state;
         }
     }
 
     private void saveSession() {
         if (sessionStorage.saveSession(this.session)) {
-            Log.warn("WebSocket session 保存成功");
+            if (Configuration.isDebug) Log.warn("WebSocket session 保存成功");
         } else {
             Log.warn("WebSocket session 保存失败");
         }
@@ -99,7 +99,7 @@ public class WebSocketEventSource extends EventSource implements EventSourceStri
 
     protected void restartWebSocket(boolean failed) {
         if (this.state != WebSocketState.RESTARTING) {
-            Log.trace("{} 进入重启函数", Thread.currentThread().getName());
+            if (Configuration.isDebug) Log.trace("{} 进入重启函数", Thread.currentThread().getName());
             this.setCurrentState(WebSocketState.RESTARTING);
             if (failed) {
                 Log.warn("因内部运行异常重新连接，当前为第 {} 次发生异常", ++failedRetry);
@@ -107,14 +107,12 @@ public class WebSocketEventSource extends EventSource implements EventSourceStri
             // 使用新线程重启，避免 WebSocketReceiverThread 与 shutdownCurrentService 函数进入死锁
             if (this.restartThread == null) {
                 this.restartThread = new Thread(() -> {
-                    Log.trace("WebSocket 重启线程启动");
+                    if (Configuration.isDebug) Log.trace("WebSocket 重启线程启动");
                     this.shutdownCurrentService();
                     Log.warn("WebSocket 3秒后重新连接");
                     try {
                         TimeUnit.SECONDS.sleep(3);
-                    } catch (InterruptedException e) {
-                        return;
-                    }
+                    } catch (InterruptedException e) {return;}
                     this.openConnection();
                     this.restartThread = null;
                 }, "RestartWebSocketEventSource");
@@ -133,13 +131,13 @@ public class WebSocketEventSource extends EventSource implements EventSourceStri
             } catch (InterruptedException ignored) {
             }
         }
-        Log.trace("Sender 线程完成关闭");
+        if (Configuration.isDebug) Log.trace("Sender 线程完成关闭");
         if (this.websocketContext != null) {
             this.websocketContext.closeWebSocket(1000, "User Shutdown Service");
             this.websocketContext.await();
             this.websocketContext = null;
         }
-        Log.trace("Receiver 线程完成关闭");
+        if (Configuration.isDebug) Log.trace("Receiver 线程完成关闭");
         Log.warn("Sender/Receiver 线程已经退出");
     }
 
@@ -189,7 +187,7 @@ public class WebSocketEventSource extends EventSource implements EventSourceStri
             super.manager.initialSn(0);
             return getNewGateway();
         } else {
-            Log.debug("使用重连地址 Session: {}, sn:{}", this.session.getSessionId(), this.session.getSn());
+            if (Configuration.isDebug) Log.debug("使用重连地址 Session: {}, sn:{}", this.session.getSessionId(), this.session.getSn());
             super.manager.initialSn(this.session.getSn());
             return this.session.getReconnectUrl();
         }

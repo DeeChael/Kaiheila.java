@@ -1,17 +1,16 @@
 package net.deechael.khl.util;
 
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.core.RabbitObject;
-import cn.fightingguys.kaiheila.entity.*;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.core.KaiheilaObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntitiesBuilder extends RabbitObject {
+public class EntitiesBuilder extends KaiheilaObject {
 
-    public EntitiesBuilder(RabbitImpl rabbit) {
+    public EntitiesBuilder(KaiheilaBot rabbit) {
         super(rabbit);
     }
 
@@ -21,7 +20,7 @@ public class EntitiesBuilder extends RabbitObject {
     }
 
     public UserEntity buildUserEntity(JsonNode node) {
-        UserEntity user = new UserEntity(getRabbitImpl());
+        UserEntity user = new UserEntity(getKaiheilaBot());
         user.setId(node.get("id").asText());
         user.setUsername(node.get("username").asText());
         user.setIdentifyNum(node.get("identify_num").asText());
@@ -35,7 +34,7 @@ public class EntitiesBuilder extends RabbitObject {
     }
 
     public MemberEntity buildMemberEntity(JsonNode node) {
-        MemberEntity member = new MemberEntity(getRabbitImpl());
+        MemberEntity member = new MemberEntity(getKaiheilaBot());
         member.setUserId(node.get("id").asText());
         member.setNickname(node.get("nickname").asText());
         member.setJoinedAt(TimeUtil.convertUnixTimeMillisecondLocalDateTime(node.get("joined_at").asLong()));
@@ -47,7 +46,7 @@ public class EntitiesBuilder extends RabbitObject {
     }
 
     public GuildEntity buildGuild(JsonNode node) {
-        GuildEntity guild = new GuildEntity(getRabbitImpl());
+        GuildEntity guild = new GuildEntity(getKaiheilaBot());
         guild.setId(node.get("id").asText());
         guild.setTopic(node.get("topic").asText());
         guild.setMasterId(node.get("master_id").asText());
@@ -56,7 +55,7 @@ public class EntitiesBuilder extends RabbitObject {
     }
 
     public RoleEntity buildRoleEntity(JsonNode node) {
-        RoleEntity role = new RoleEntity(getRabbitImpl());
+        RoleEntity role = new RoleEntity(getKaiheilaBot());
         role.setRoleId(node.get("role_id").asInt());
         role.setName(node.get("name").asText());
         role.setColor(node.get("color").asInt());
@@ -83,24 +82,24 @@ public class EntitiesBuilder extends RabbitObject {
         return overwrites;
     }
 
-    private ChannelEntity buildChannelEntityBase(JsonNode node) {
-        ChannelEntity channel = new ChannelEntity(getRabbitImpl());
+    private ChannelEntity buildChannelEntityBase(JsonNode node, boolean isUpdate) {
+        ChannelEntity channel = new ChannelEntity(getKaiheilaBot());
         channel.setId(node.get("id").asText());
         channel.setType(node.get("type").asInt());
         channel.setName(node.get("name").asText());
-        channel.setMasterId(node.get("master_id").asText());
+        if (!isUpdate) channel.setMasterId(node.get("master_id").asText());
         channel.setGuildId(node.get("guild_id").asText());
         channel.setTopic(node.get("topic").asText());
         channel.setCategory(node.get("is_category").asBoolean());
         channel.setParentId(node.get("parent_id").asText());
         channel.setLevel(node.get("level").asInt());
         channel.setSlowMode(node.get("slow_mode").asInt());
-        channel.setLimitAmount(node.get("limit_amount").asInt());
+        if (!isUpdate) channel.setLimitAmount(node.get("limit_amount").asInt());
         return channel;
     }
 
     public ChannelEntity buildChannelEntity(JsonNode node) {
-        ChannelEntity channel = buildChannelEntityBase(node);
+        ChannelEntity channel = buildChannelEntityBase(node, false);
         channel.setPermissionOverwrites(buildPermissionOverwrites(node.get("permission_overwrites"), false));
         channel.setPermissionUsers(buildPermissionOverwrites(node.get("permission_users"), true));
         channel.setPermissionSync(node.get("permission_sync").asInt() == 1);
@@ -109,7 +108,7 @@ public class EntitiesBuilder extends RabbitObject {
 
 
     public EmojiEntity buildGuildEmojiEntity(JsonNode node) {
-        EmojiEntity emoji = new EmojiEntity(getRabbitImpl());
+        EmojiEntity emoji = new EmojiEntity(getKaiheilaBot());
         emoji.setId(node.get("id").asText());
         emoji.setName(node.get("name").asText());
         emoji.setType(node.get("emoji_type").asInt());
@@ -118,7 +117,7 @@ public class EntitiesBuilder extends RabbitObject {
     }
 
     public ChannelEntity buildChannelEntityForEvent(JsonNode node) {
-        ChannelEntity channel = buildChannelEntityBase(node);
+        ChannelEntity channel = buildChannelEntityBase(node, true);
         channel.setPermissionOverwrites(new ArrayList<>());
         channel.setPermissionUsers(new ArrayList<>());
         channel.setPermissionSync(true);

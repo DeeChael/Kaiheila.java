@@ -1,6 +1,6 @@
 package net.deechael.khl.restful;
 
-import net.deechael.khl.RabbitImpl;
+import net.deechael.khl.bot.KaiheilaBot;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class RestPageable implements Iterator<RestRoute.CompiledRoute> {
         this.page = metadata != null ? this.metadata.getPage() : -1;
     }
 
-    public static RestPageable of(RabbitImpl rabbit, RestRoute.CompiledRoute compiledRoute, JsonNode data) {
+    public static RestPageable of(KaiheilaBot rabbit, RestRoute.CompiledRoute compiledRoute, JsonNode data) {
         Metadata meta = null;
         if (data.has("meta")) {
             try {
@@ -38,7 +38,7 @@ public class RestPageable implements Iterator<RestRoute.CompiledRoute> {
     @Override
     public boolean hasNext() {
         if (this.metadata != null)
-            return this.page != this.metadata.getPageTotal();
+            return this.metadata.getPageTotal() != 0 && this.page != this.metadata.getPageTotal();
         else
             return false;
     }

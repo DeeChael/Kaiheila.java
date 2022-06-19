@@ -1,8 +1,8 @@
 package net.deechael.khl.restful;
 
-import net.deechael.khl.RabbitImpl;
+import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.client.http.HttpCall;
-import net.deechael.khl.core.RabbitObject;
+import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.restful.ratelimit.RateLimiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,17 +12,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class Requester extends RabbitObject {
+public class Requester extends KaiheilaObject {
     protected static final Logger Log = LoggerFactory.getLogger(Requester.class);
 
     private final RateLimiter rateLimiter = new RateLimiter();
     private final ScheduledExecutorService threadPool;
 
-    public Requester(RabbitImpl rabbit) {
+    public Requester(KaiheilaBot rabbit) {
         this(rabbit, 4);
     }
 
-    public Requester(RabbitImpl rabbit, int workerThread) {
+    public Requester(KaiheilaBot rabbit, int workerThread) {
         super(rabbit);
         this.threadPool = Executors.newScheduledThreadPool(workerThread, Requester::requesterThreadFactory);
     }
@@ -40,10 +40,10 @@ public class Requester extends RabbitObject {
 
     public static class Worker implements Callable<HttpCall.Response> {
 
-        private final RabbitImpl rabbit;
+        private final KaiheilaBot rabbit;
         private final HttpCall httpCall;
 
-        public Worker(RabbitImpl rabbit, HttpCall httpCall) {
+        public Worker(KaiheilaBot rabbit, HttpCall httpCall) {
             this.rabbit = rabbit;
             this.httpCall = httpCall;
         }

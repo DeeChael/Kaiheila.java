@@ -16,32 +16,98 @@
 
 package net.deechael.khl.event.message;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Channel;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Channel;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class TextMessageEvent extends AbstractEvent {
+    public enum Type {
+        Group,
+        Person;
 
+        public final String value;
+
+        Type() {
+            this.value = this.name().toUpperCase();
+        }
+
+        public static Type from(String value) {
+            for (Type type : values()) {
+                if (type.value.toUpperCase().equals(value)) {
+                    return type;
+                }
+            }
+            return null;
+        }
+    }
+    public final Type type;
     private final MessageExtra extra;
+    public final String messageID;
 
-    public TextMessageEvent(RabbitImpl rabbit, JsonNode node) {
+    public TextMessageEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
+        type = Type.from(getEventChannelType());
+        messageID = node.get("msg_id").asText();
         this.extra = MessageExtra.buildMessageExtra(rabbit, node);
     }
 
-    public MessageExtra getExtra() {
-        return extra;
-    }
-
-    public Channel getChannel() {
-        return getRabbitImpl().getCacheManager().getChannelCache().getElementById(super.getEventTargetId());
+    protected TextMessageEvent(KaiheilaBot rabbit, TextMessageEvent event) {
+        super(rabbit, event);
+        this.type = event.type;
+        this.extra = event.extra;
+        this.messageID = event.messageID;
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public Operation.ChatOperation action() {
+        return new Operation.ChatOperation(getKaiheilaBot(),this);
+    }
+
+    protected MessageExtra getExtra(){
+        return this.extra;
+    };
+
+    public PrivateMessageEvent asPrivateMessageEvent(){
+        return new PrivateMessageEvent(getKaiheilaBot(),this);
+    }
+
+    public ChannelMessageEvent asChannelMessageEvent(){
+        return new ChannelMessageEvent(getKaiheilaBot(),this);
+    }
+
+    public Channel getChannel() {
+        return getKaiheilaBot().getCacheManager().getChannelCache().getElementById(super.getEventTargetId());
+    }
+
+    @Override
+    public IEvent handleSystemEvent(JsonNode body) {
         return this;
+    }
+
+    public static class PrivateMessageEvent extends TextMessageEvent {
+
+        public PrivateMessageEvent(KaiheilaBot rabbit, TextMessageEvent event) {
+            super(rabbit, event);
+        }
+
+        @Override
+        public MessageExtra.PersonalMessageExtra getExtra() {
+            return (MessageExtra.PersonalMessageExtra) super.getExtra();
+        }
+    }
+
+    public static class ChannelMessageEvent extends TextMessageEvent {
+
+        public ChannelMessageEvent(KaiheilaBot rabbit, TextMessageEvent event) {
+            super(rabbit, event);
+        }
+
+        @Override
+        public MessageExtra.ChannelMessageExtra getExtra() {
+            return (MessageExtra.ChannelMessageExtra) super.getExtra();
+        }
     }
 }

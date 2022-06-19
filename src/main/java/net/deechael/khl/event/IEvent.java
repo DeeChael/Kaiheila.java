@@ -1,9 +1,9 @@
 package net.deechael.khl.event;
 
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public interface IEvent {
 
-    IEvent handleSystemEvent(JsonObject body);
+    IEvent handleSystemEvent(JsonNode body);
 
 }

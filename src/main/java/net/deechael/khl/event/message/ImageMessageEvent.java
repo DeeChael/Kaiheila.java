@@ -16,8 +16,8 @@
 
 package net.deechael.khl.event.message;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,9 +26,14 @@ public class ImageMessageEvent extends AbstractEvent {
 
     private final MessageExtra extra;
 
-    public ImageMessageEvent(RabbitImpl rabbit, JsonNode node) {
+    public ImageMessageEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         this.extra = MessageExtra.buildMessageExtra(rabbit, node);
+    }
+
+    @Override
+    public Operation action() {
+        return null;
     }
 
     public MessageExtra getExtra() {
@@ -36,7 +41,7 @@ public class ImageMessageEvent extends AbstractEvent {
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public IEvent handleSystemEvent(JsonNode body) {
         return this;
     }
 }

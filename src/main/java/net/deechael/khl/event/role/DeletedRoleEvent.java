@@ -16,11 +16,11 @@
 
 package net.deechael.khl.event.role;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Role;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Role;
 import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.cache.CacheManager;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.entity.GuildEntity;
 import net.deechael.khl.entity.RoleEntity;
 import net.deechael.khl.event.AbstractEvent;
@@ -33,19 +33,24 @@ public class DeletedRoleEvent extends AbstractEvent {
 
     private final Integer roleId;
 
-    public DeletedRoleEvent(RabbitImpl rabbit, JsonNode node) {
+    public DeletedRoleEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         roleId = body.get("role_id").asInt();
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public Role getRole() {
-        return getRabbitImpl().getCacheManager().getRoleCache().getElementById(roleId);
+        return getKaiheilaBot().getCacheManager().getRoleCache().getElementById(roleId);
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
-        CacheManager cacheManager = getRabbitImpl().getCacheManager();
+    public IEvent handleSystemEvent(JsonNode body) {
+        CacheManager cacheManager = getKaiheilaBot().getCacheManager();
         ((BaseCache<Integer, RoleEntity>) cacheManager.getRoleCache()).unloadElementById(roleId);
         BaseCache<String, GuildEntity> guildCache = (BaseCache<String, GuildEntity>) cacheManager.getGuildCache();
         for (GuildEntity guild : guildCache) {

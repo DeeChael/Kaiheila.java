@@ -19,8 +19,10 @@ package net.deechael.khl.util.compression;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.zip.InflaterInputStream;
+import java.util.zip.InflaterOutputStream;
 
 public class ZlibStreamCompression implements Compression {
 
@@ -33,9 +35,11 @@ public class ZlibStreamCompression implements Compression {
      */
     @Override
     public ByteBuffer decompress(ByteBuffer data) throws IOException {
+        ByteArrayOutputStream  outputStream = new ByteArrayOutputStream();
         InflaterInputStream inputStream = new InflaterInputStream(new ByteArrayInputStream(data.array()));
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        inputStream.transferTo(outputStream);
+        try (OutputStream ios = new InflaterOutputStream(outputStream)) {
+            ios.write(data.array());
+        }
         return ByteBuffer.wrap(outputStream.toByteArray());
     }
 }

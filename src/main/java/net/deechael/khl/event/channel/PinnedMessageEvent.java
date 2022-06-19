@@ -16,10 +16,10 @@
 
 package net.deechael.khl.event.channel;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Channel;
-import net.deechael.khl.api.objects.User;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Channel;
+import net.deechael.khl.api.User;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -32,7 +32,7 @@ public class PinnedMessageEvent extends AbstractEvent {
     private final String operatorId;
     private final String msgId;
 
-    public PinnedMessageEvent(RabbitImpl rabbit, JsonNode node) {
+    public PinnedMessageEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         msgId = body.get("msg_id").asText();
@@ -40,12 +40,17 @@ public class PinnedMessageEvent extends AbstractEvent {
         channelId = body.get("channel_id").asText();
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public Channel getChannel() {
-        return getRabbitImpl().getCacheManager().getChannelCache().getElementById(channelId);
+        return getKaiheilaBot().getCacheManager().getChannelCache().getElementById(channelId);
     }
 
     public User getOperator() {
-        return getRabbitImpl().getCacheManager().getUserCache().getElementById(operatorId);
+        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(operatorId);
     }
 
     public String getMsgId() {
@@ -53,7 +58,7 @@ public class PinnedMessageEvent extends AbstractEvent {
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public IEvent handleSystemEvent(JsonNode body) {
         return this;
     }
 }

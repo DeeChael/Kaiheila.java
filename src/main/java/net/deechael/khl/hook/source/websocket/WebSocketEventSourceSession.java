@@ -16,8 +16,8 @@
 
 package net.deechael.khl.hook.source.websocket;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class WebSocketEventSourceSession {
@@ -59,7 +59,12 @@ public class WebSocketEventSourceSession {
     }
 
     private String makeUrlParam(String key, Object value) {
-        return URLEncoder.encode(key, StandardCharsets.UTF_8) + "=" + URLEncoder.encode(String.valueOf(value), StandardCharsets.UTF_8);
+        try {
+            return URLEncoder.encode(key, "UTF-8") + "=" + URLEncoder.encode(String.valueOf(value), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return key + "=" + value;
+        }
     }
 
     public String getReconnectUrl() {

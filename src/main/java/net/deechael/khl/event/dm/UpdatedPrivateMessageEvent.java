@@ -16,9 +16,9 @@
 
 package net.deechael.khl.event.dm;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.User;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.User;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import net.deechael.khl.util.TimeUtil;
@@ -37,7 +37,7 @@ public class UpdatedPrivateMessageEvent extends AbstractEvent {
     private final String chatCode;
     private final LocalDateTime updatedAt;
 
-    public UpdatedPrivateMessageEvent(RabbitImpl rabbit, JsonNode node) {
+    public UpdatedPrivateMessageEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         msgId = body.get("msg_id").asText();
@@ -48,16 +48,21 @@ public class UpdatedPrivateMessageEvent extends AbstractEvent {
         updatedAt = TimeUtil.convertUnixTimeMillisecondLocalDateTime(body.get("updated_at").asLong());
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public String getMsgId() {
         return msgId;
     }
 
     public User getAuthor() {
-        return getRabbitImpl().getCacheManager().getUserCache().getElementById(authorId);
+        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(authorId);
     }
 
     public User getTarget() {
-        return getRabbitImpl().getCacheManager().getUserCache().getElementById(targetId);
+        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(targetId);
     }
 
     public String getContent() {
@@ -73,7 +78,7 @@ public class UpdatedPrivateMessageEvent extends AbstractEvent {
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
+    public IEvent handleSystemEvent(JsonNode body) {
         return this;
     }
 }

@@ -1,7 +1,7 @@
 package net.deechael.khl.hook;
 
-import net.deechael.khl.api.Bot;
-import net.deechael.khl.RabbitImpl;
+import net.deechael.khl.bot.Bot;
+import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.FailureEvent;
 import net.deechael.khl.event.IEvent;
 import net.deechael.khl.event.UnknownEvent;
@@ -14,11 +14,11 @@ import net.deechael.khl.event.dm.DeletedPrivateMessageEvent;
 import net.deechael.khl.event.dm.PrivateAddedReactionEvent;
 import net.deechael.khl.event.dm.PrivateDeletedReactionEvent;
 import net.deechael.khl.event.dm.UpdatedPrivateMessageEvent;
+import net.deechael.khl.event.member.*;
 import net.deechael.khl.event.message.*;
 import net.deechael.khl.event.role.AddedRoleEvent;
 import net.deechael.khl.event.role.DeletedRoleEvent;
 import net.deechael.khl.event.role.UpdatedRoleEvent;
-import net.deechael.khl.event.member.*;
 import net.deechael.khl.event.user.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,15 +79,18 @@ public abstract class EventListener {
     public void onSelfExitedGuildEvent(Bot bot, SelfExitedGuildEvent event) {}
     public void onSelfJoinedGuildEvent(Bot bot, SelfJoinedGuildEvent event) {}
     public void onUserUpdatedEvent(Bot bot, UserUpdatedEvent event) {}
+    public void onBotMessageEvent(Bot bot, BotMessageEvent event) {}
+    // @formatter:on
 
-    public final void handle(RabbitImpl rabbit, IEvent event) {
+    public final void handle(KaiheilaBot rabbit, IEvent event) {
         this.onEvent(rabbit, event);
         String methodName = "on" + event.getClass().getSimpleName();
         try {
             Method method = this.getClass().getMethod(methodName, Bot.class, event.getClass());
             method.invoke(this, rabbit, event);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            Log.error(e.getMessage());
+            Log.error(e.getClass().getName() + " : " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

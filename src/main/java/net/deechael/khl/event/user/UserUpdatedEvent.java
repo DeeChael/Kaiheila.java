@@ -16,10 +16,10 @@
 
 package net.deechael.khl.event.user;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.User;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.User;
 import net.deechael.khl.cache.BaseCache;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.entity.UserEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
@@ -36,7 +36,7 @@ public class UserUpdatedEvent extends AbstractEvent {
     private final String username;
     private final String avatar;
 
-    public UserUpdatedEvent(RabbitImpl rabbit, JsonNode node) {
+    public UserUpdatedEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         userId = body.get("user_id").asText();
@@ -44,8 +44,13 @@ public class UserUpdatedEvent extends AbstractEvent {
         avatar = body.get("avatar").asText();
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public User getUser() {
-        return getRabbitImpl().getCacheManager().getUserCache().getElementById(userId);
+        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(userId);
     }
 
     public String getUsername() {
@@ -61,10 +66,10 @@ public class UserUpdatedEvent extends AbstractEvent {
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
-        BaseCache<String, UserEntity> userCache = (BaseCache<String, UserEntity>) getRabbitImpl().getCacheManager().getUserCache();
+    public IEvent handleSystemEvent(JsonNode body) {
+        BaseCache<String, UserEntity> userCache = (BaseCache<String, UserEntity>) getKaiheilaBot().getCacheManager().getUserCache();
         UserEntity userEntity = userCache.getElementById(userId);
-        userEntity = getRabbitImpl().getEntitiesBuilder().updateUserEntityForEvent(userEntity, body);
+        userEntity = getKaiheilaBot().getEntitiesBuilder().updateUserEntityForEvent(userEntity, body);
         userCache.updateElementById(userId, userEntity);
         return this;
     }

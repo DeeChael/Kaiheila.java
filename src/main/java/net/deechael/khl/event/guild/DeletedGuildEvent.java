@@ -16,11 +16,11 @@
 
 package net.deechael.khl.event.guild;
 
-import com.google.gson.JsonObject;
-import net.deechael.khl.RabbitImpl;
-import net.deechael.khl.api.objects.Guild;
+import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.api.Guild;
 import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.cache.CacheManager;
+import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.entity.ChannelEntity;
 import net.deechael.khl.entity.EmojiEntity;
 import net.deechael.khl.entity.GuildEntity;
@@ -35,25 +35,30 @@ public class DeletedGuildEvent extends AbstractEvent {
 
     private final String guildId;
 
-    public DeletedGuildEvent(RabbitImpl rabbit, JsonNode node) {
+    public DeletedGuildEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         guildId = body.get("id").asText();
     }
 
+    @Override
+    public Operation action() {
+        return null;
+    }
+
     public Guild getGuild() {
-        return getRabbitImpl().getCacheManager().getGuildCache().getElementById(guildId);
+        return getKaiheilaBot().getCacheManager().getGuildCache().getElementById(guildId);
     }
 
     @Override
-    public IEvent handleSystemEvent(JsonObject body) {
-        CacheManager cacheManager = getRabbitImpl().getCacheManager();
+    public IEvent handleSystemEvent(JsonNode body) {
+        CacheManager cacheManager = getKaiheilaBot().getCacheManager();
         BaseCache<String, GuildEntity> guildCache = (BaseCache<String, GuildEntity>) cacheManager.getGuildCache();
         GuildEntity guildEntity = guildCache.getElementById(guildId);
         for (Integer role : guildEntity.getRoles()) {
             ((BaseCache<Integer, RoleEntity>) cacheManager.getRoleCache()).unloadElementById(role);
         }
-        for (String channel : guildEntity.getChannels()) {
+        for (String channel : guildEntity.getChannelIDs()) {
             ((BaseCache<String, ChannelEntity>) cacheManager.getChannelCache()).unloadElementById(channel);
         }
         for (String emoji : guildEntity.getEmojis()) {
