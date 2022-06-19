@@ -16,6 +16,7 @@
 
 package net.deechael.khl.bot;
 
+import net.deechael.khl.api.Bot;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.api.SelfUser;
 import net.deechael.khl.cache.CacheManager;

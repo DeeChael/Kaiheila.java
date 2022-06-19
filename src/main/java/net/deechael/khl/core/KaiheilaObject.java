@@ -1,6 +1,6 @@
 package net.deechael.khl.core;
 
-import net.deechael.khl.bot.Bot;
+import net.deechael.khl.api.Bot;
 import net.deechael.khl.bot.KaiheilaBot;
 
 public abstract class KaiheilaObject {

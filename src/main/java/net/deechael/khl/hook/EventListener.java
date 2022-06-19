@@ -1,6 +1,6 @@
 package net.deechael.khl.hook;
 
-import net.deechael.khl.bot.Bot;
+import net.deechael.khl.api.Bot;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.FailureEvent;
 import net.deechael.khl.event.IEvent;

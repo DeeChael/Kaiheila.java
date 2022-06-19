@@ -16,6 +16,7 @@
 
 package net.deechael.khl.bot;
 
+import net.deechael.khl.api.Bot;
 import net.deechael.khl.configurer.Configuration;
 import net.deechael.khl.configurer.Configurer;
 import net.deechael.khl.configurer.api.ApiConfigurer;

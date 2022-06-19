@@ -1,6 +1,6 @@
 package net.deechael.khl.configurer.client;
 
-import net.deechael.khl.bot.Bot;
+import net.deechael.khl.api.Bot;
 import net.deechael.khl.bot.KaiheilaBotBuilder;
 import net.deechael.khl.client.http.HttpClientFactory;
 import net.deechael.khl.client.ws.WebSocketClientFactory;

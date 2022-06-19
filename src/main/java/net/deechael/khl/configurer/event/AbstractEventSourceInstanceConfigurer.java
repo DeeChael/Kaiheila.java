@@ -16,7 +16,7 @@
 
 package net.deechael.khl.configurer.event;
 
-import net.deechael.khl.bot.Bot;
+import net.deechael.khl.api.Bot;
 import net.deechael.khl.bot.KaiheilaBotBuilder;
 import net.deechael.khl.configurer.AbstractConfigurer;
 
