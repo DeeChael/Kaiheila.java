@@ -16,10 +16,13 @@
 
 package net.deechael.khl.hook;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.configurer.event.EventSourceConfigurer;
 import net.deechael.khl.configurer.event.WebhookEventSourceConfigurer;
 import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.event.MessageHandler;
 import net.deechael.khl.hook.queue.SequenceMessageQueue;
 import net.deechael.khl.hook.source.webhook.WebhookEventSource;
 import net.deechael.khl.hook.source.websocket.WebSocketEventSource;
@@ -28,8 +31,7 @@ import net.deechael.khl.util.compression.Compression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class EventManager extends KaiheilaObject implements EventManagerReceiver {
     protected static final Logger Log = LoggerFactory.getLogger(EventManager.class);
@@ -38,6 +40,8 @@ public class EventManager extends KaiheilaObject implements EventManagerReceiver
     private SequenceMessageQueue<String> messageQueue;
     private EventParser eventParser;
     private EventSource eventSource;
+
+    private final Set<MessageHandler> messageHandlers = new HashSet<>();
 
     public EventManager(KaiheilaBot rabbit) {
         super(rabbit);
@@ -53,7 +57,22 @@ public class EventManager extends KaiheilaObject implements EventManagerReceiver
     @Override
     public int process(int sn, String data) {
         messageQueue.push(sn, data);
+        JsonObject jsonObject = JsonParser.parseString(data).getAsJsonObject();
+        if (jsonObject.getAsJsonObject("extra").get("type").isJsonPrimitive()
+                && jsonObject.getAsJsonObject("extra").getAsJsonPrimitive("type").isNumber()
+                && jsonObject.get("type").getAsInt() == jsonObject.getAsJsonObject("extra").get("type").getAsInt()
+        ) {
+            for (MessageHandler handler : this.messageHandlers) {
+                if (handler.getIntTypesList().contains(jsonObject.get("type").getAsInt())) {
+                    handler.onMessage(getKaiheilaBot().getCacheManager().getChannelCache().getElementById(jsonObject.get("target_id").getAsString()), getKaiheilaBot().getCacheManager().getUserCache().getElementById(jsonObject.get("author_id").getAsString()), jsonObject.get("content").getAsString());
+                }
+            }
+        }
         return messageQueue.getLatestSn();
+    }
+
+    public void register(MessageHandler handler) {
+        this.messageHandlers.add(handler);
     }
 
     @Override

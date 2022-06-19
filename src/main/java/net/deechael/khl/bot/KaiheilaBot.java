@@ -16,15 +16,16 @@
 
 package net.deechael.khl.bot;
 
-import net.deechael.khl.api.Bot;
-import net.deechael.khl.api.Guild;
-import net.deechael.khl.api.SelfUser;
+import net.deechael.khl.api.*;
 import net.deechael.khl.cache.CacheManager;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.client.http.HttpHeaders;
 import net.deechael.khl.client.http.IHttpClient;
 import net.deechael.khl.client.ws.IWebSocketClient;
+import net.deechael.khl.command.CommandManager;
 import net.deechael.khl.configurer.Configuration;
+import net.deechael.khl.entity.message.MessageTypes;
+import net.deechael.khl.event.MessageHandler;
 import net.deechael.khl.hook.EventListener;
 import net.deechael.khl.hook.EventManager;
 import net.deechael.khl.restful.Requester;
@@ -40,6 +41,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class KaiheilaBot implements Bot {
+
     protected static final Logger Log = LoggerFactory.getLogger(KaiheilaBot.class);
 
     private final Configuration configuration;
@@ -50,6 +52,10 @@ public class KaiheilaBot implements Bot {
     private final IWebSocketClient websocketClient;
     private final ObjectMapper jsonEngine;
     private final EntitiesBuilder entitiesBuilder;
+
+    private final CommandManager commandManager;
+
+    private final MessageHandler defaultMessageHandler;
 
     private boolean botLogged;
 
@@ -62,6 +68,14 @@ public class KaiheilaBot implements Bot {
         this.requester = new Requester(this, 4);
         this.cacheManager = new CacheManager(this);
         this.eventManager = new EventManager(this);
+        this.commandManager = new CommandManager(this);
+        this.defaultMessageHandler = new MessageHandler(new MessageTypes[] {MessageTypes.TEXT, MessageTypes.KMD}) {
+            @Override
+            public void onMessage(Channel channel, User user, String message) {
+                KaiheilaBot.this.getCommandManager().execute(channel, user, message);
+            }
+        };
+        this.getEventManager().register(defaultMessageHandler);
     }
 
     /**
@@ -179,6 +193,10 @@ public class KaiheilaBot implements Bot {
 
     public IWebSocketClient getWebsocketClient() {
         return websocketClient;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
     }
 
     @Override

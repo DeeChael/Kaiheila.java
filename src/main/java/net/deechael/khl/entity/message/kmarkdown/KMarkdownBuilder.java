@@ -1,4 +1,4 @@
-package net.deechael.khl.entity.kmarkdown;
+package net.deechael.khl.entity.message.kmarkdown;
 
 public class KMarkdownBuilder {
   KMarkdown kMarkdown = new KMarkdown();

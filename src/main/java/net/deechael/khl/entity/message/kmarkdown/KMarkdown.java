@@ -1,4 +1,4 @@
-package net.deechael.khl.entity.kmarkdown;
+package net.deechael.khl.entity.message.kmarkdown;
 
 import net.deechael.khl.api.User;
 

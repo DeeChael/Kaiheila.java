@@ -1,4 +1,4 @@
-package net.deechael.khl.entity.cardmessage;
+package net.deechael.khl.entity.message.cardmessage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
