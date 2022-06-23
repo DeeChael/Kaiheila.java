@@ -19,7 +19,7 @@ package net.deechael.khl.client.ws.impl;
 import net.deechael.khl.client.ws.IWebSocketClient;
 import net.deechael.khl.client.ws.IWebSocketContext;
 import net.deechael.khl.client.ws.IWebSocketListener;
-import net.deechael.khl.configurer.Configuration;
+import net.deechael.khl.configurer.KaiheilaConfiguration;
 import okhttp3.*;
 import okio.ByteString;
 import org.slf4j.Logger;
@@ -95,40 +95,40 @@ public class OkHttpWebSocketClientImpl implements IWebSocketClient {
         public void onOpen(WebSocket webSocket, Response response) {
             Thread.currentThread().setName("WebSocketReceiverThread");
             this.receiverThread = Thread.currentThread();
-            if (Configuration.isDebug) Log.trace("WebSocket onOpen");
+            if (KaiheilaConfiguration.isDebug) Log.trace("WebSocket onOpen");
             this.setClosed(false);
             listener.onOpen(this);
         }
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            if (Configuration.isDebug) Log.trace("onMessage(plain) {}", text);
+            if (KaiheilaConfiguration.isDebug) Log.trace("onMessage(plain) {}", text);
             listener.onTextMessage(this, text);
         }
 
         @Override
         public void onMessage(WebSocket webSocket, ByteString bytes) {
-            if (Configuration.isDebug) Log.trace("onMessage(binary) {}", bytes.toString());
+            if (KaiheilaConfiguration.isDebug) Log.trace("onMessage(binary) {}", bytes.toString());
             listener.onBinaryMessage(this, ByteBuffer.wrap(bytes.toByteArray()));
         }
 
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
-            if (Configuration.isDebug) Log.trace("onClosing {} {}", code, reason);
+            if (KaiheilaConfiguration.isDebug) Log.trace("onClosing {} {}", code, reason);
             this.setClosed(true);
             listener.onClosing(this, code, reason);
         }
 
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
-            if (Configuration.isDebug) Log.trace("onClosed {} {}", code, reason);
+            if (KaiheilaConfiguration.isDebug) Log.trace("onClosed {} {}", code, reason);
             this.setClosed(true);
             listener.onClosed(this, code, reason);
         }
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            if (Configuration.isDebug) Log.trace("onFailure {}", t.getMessage());
+            if (KaiheilaConfiguration.isDebug) Log.trace("onFailure {}", t.getMessage());
             this.setClosed(true);
             listener.onFailure(this, t);
         }

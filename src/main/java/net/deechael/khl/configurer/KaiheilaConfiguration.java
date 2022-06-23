@@ -7,8 +7,8 @@ import net.deechael.khl.configurer.event.EventSourceConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Configuration {
-    protected static final Logger Log = LoggerFactory.getLogger(Configuration.class);
+public class KaiheilaConfiguration {
+    protected static final Logger Log = LoggerFactory.getLogger(KaiheilaConfiguration.class);
 
     private final SdkConfigurer sdkConfigurer;
     private final ApiConfigurer apiConfigurer;
@@ -17,7 +17,7 @@ public class Configuration {
 
     public static boolean isDebug;
 
-    public Configuration(SdkConfigurer sdkConfigurer, ClientConfigurer clientConfigurer, ApiConfigurer apiConfigurer, EventSourceConfigurer eventSourceConfigurer) {
+    public KaiheilaConfiguration(SdkConfigurer sdkConfigurer, ClientConfigurer clientConfigurer, ApiConfigurer apiConfigurer, EventSourceConfigurer eventSourceConfigurer) {
         this.sdkConfigurer = sdkConfigurer;
         this.clientConfigurer = clientConfigurer;
         this.apiConfigurer = apiConfigurer;

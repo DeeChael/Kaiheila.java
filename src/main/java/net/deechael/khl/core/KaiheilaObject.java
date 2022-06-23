@@ -20,7 +20,9 @@ public abstract class KaiheilaObject {
 
     public KaiheilaObject(KaiheilaBot kaiheilaBot) {
         this.kaiheilaBot = kaiheilaBot;
-        defaultHeaders.addHeader("Authorization", "Bot " + getKaiheilaBot().getConfiguration().getApiConfigurer().getToken());
+        if (kaiheilaBot.getConfiguration() != null) {
+            defaultHeaders.addHeader("Authorization", "Bot " + getKaiheilaBot().getConfiguration().getApiConfigurer().getToken());
+        }
     }
 
     protected KaiheilaBot getKaiheilaBot() {

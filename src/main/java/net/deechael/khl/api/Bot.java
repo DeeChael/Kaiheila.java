@@ -30,7 +30,7 @@ public interface Bot {
      *
      * @return 开放平台接口实例
      */
-    boolean login();
+    boolean start();
 
     /**
      * 安全退出当前平台

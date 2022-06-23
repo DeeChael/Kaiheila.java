@@ -2,7 +2,7 @@ package net.deechael.khl.hook.source.websocket;
 
 import net.deechael.khl.client.ws.IWebSocketContext;
 import net.deechael.khl.client.ws.IWebSocketListener;
-import net.deechael.khl.configurer.Configuration;
+import net.deechael.khl.configurer.KaiheilaConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,7 @@ public class WebSocketEventSourceHandle extends IWebSocketListener implements Ru
             Log.error("WebSocket 数据包解压失败", e);
             return;
         }
-        if (Configuration.isDebug) Log.info("收到 WebSocket 数据包\n{}", new String(buffer.array(), StandardCharsets.UTF_8));
+        if (KaiheilaConfiguration.isDebug) Log.info("收到 WebSocket 数据包\n{}", new String(buffer.array(), StandardCharsets.UTF_8));
         eventSource.transfer(new String(buffer.array(), StandardCharsets.UTF_8));
     }
 
@@ -97,7 +97,7 @@ public class WebSocketEventSourceHandle extends IWebSocketListener implements Ru
             delay = (1L << ++this.eventSource.pingRetryTimes) - duration;
         }
         delay = delay < 0 ? 0 : delay;
-        if (Configuration.isDebug) Log.debug("下次发送 PING 数据包剩余 {} 秒", delay);
+        if (KaiheilaConfiguration.isDebug) Log.debug("下次发送 PING 数据包剩余 {} 秒", delay);
         return delay;
     }
 
@@ -114,7 +114,7 @@ public class WebSocketEventSourceHandle extends IWebSocketListener implements Ru
 
     private void sendReportPing() throws InterruptedException {
         String ping = "{\"s\": 2, \"sn\": " + this.eventSource.session.getSn() + "}";
-        if (Configuration.isDebug) Log.debug("当前发送 PING SN 为 {}", this.eventSource.session.getSn());
+        if (KaiheilaConfiguration.isDebug) Log.debug("当前发送 PING SN 为 {}", this.eventSource.session.getSn());
         this.client.sendTextMessage(ping);
         this.eventSource.pingTime = LocalDateTime.now();
         if (this.receiveTimeout()) {
@@ -139,7 +139,7 @@ public class WebSocketEventSourceHandle extends IWebSocketListener implements Ru
     public void run() {
         LockSupport.park();
         if (this.receiveHelloTimeout()) {
-            if (Configuration.isDebug) Log.debug("{} 已关闭", Thread.currentThread().getName());
+            if (KaiheilaConfiguration.isDebug) Log.debug("{} 已关闭", Thread.currentThread().getName());
             return;
         }
         while (!this.client.isClosed() && !Thread.currentThread().isInterrupted()) {
@@ -151,7 +151,7 @@ public class WebSocketEventSourceHandle extends IWebSocketListener implements Ru
                 break;
             }
         }
-        if (Configuration.isDebug) Log.debug("{} 已关闭", Thread.currentThread().getName());
+        if (KaiheilaConfiguration.isDebug) Log.debug("{} 已关闭", Thread.currentThread().getName());
     }
 
     @Override

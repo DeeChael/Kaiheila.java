@@ -17,7 +17,7 @@
 package net.deechael.khl.bot;
 
 import net.deechael.khl.api.Bot;
-import net.deechael.khl.configurer.Configuration;
+import net.deechael.khl.configurer.KaiheilaConfiguration;
 import net.deechael.khl.configurer.Configurer;
 import net.deechael.khl.configurer.api.ApiConfigurer;
 import net.deechael.khl.configurer.client.ClientConfigurer;
@@ -67,8 +67,8 @@ public class KaiheilaBotBuilder implements Configurer<Bot> {
         if (apiConfigurer.getToken() == null) {
             throw new IllegalArgumentException("the api token cannot be null");
         }
-        Configuration configuration = new Configuration(sdkConfigurer, clientConfigurer, apiConfigurer, eventSourceConfigurer);
-        return new KaiheilaBot(configuration);
+        KaiheilaConfiguration kaiheilaConfiguration = new KaiheilaConfiguration(sdkConfigurer, clientConfigurer, apiConfigurer, eventSourceConfigurer);
+        return new KaiheilaBot(kaiheilaConfiguration);
     }
 
 }

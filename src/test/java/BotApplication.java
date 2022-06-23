@@ -1,7 +1,4 @@
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.deechael.khl.api.Bot;
-import net.deechael.khl.api.User;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.bot.KaiheilaBotBuilder;
 import net.deechael.khl.command.Command;
@@ -30,12 +27,12 @@ public class BotApplication {
 
         Log.info("Starting...");
         KaiheilaBot bot = (KaiheilaBot) KaiheilaBotBuilder.builder()
-                .createDefault(apiToken) // 使用默认配置构建 Rabbit 实例
+                .createDefault(apiToken) // 使用默认配置构建 KaiheilaBot 实例
                 .build(); // 创建实例
         // 添加事件处理器
         bot.addEventListener(new UserEventHandler());
 
-        // 指令注册以及应用，使用mojang开源的bridgadier库，minecraft 1.13+以后的指令系统均基于该项目开发
+        // 指令注册以及应用，使用mojang开源的brigadier库，minecraft 1.13+以后的指令系统均基于该项目开发
         bot.getCommandManager().register(Command.literal("test").executes(context -> {
             CommandSender sender = context.getSource();
             sender.getChannel().sendTempMessage("You just invoked \"test\" command", sender.getUser().getId(), false);
@@ -59,8 +56,13 @@ public class BotApplication {
 
         // 登录实例
         Log.info("Logging...");
-        if (bot.login()) {
+        if (bot.start()) {
             Log.info("Logged in successfully");
+
+            // 创建任务，但是，现在不会成功触发，不知道为什么，以后修
+            bot.getScheduler().runTaskAsynchronously(() -> {
+                System.out.println("aaaa");
+            });
         } else {
             Log.error("Failed to log in");
         }
@@ -74,7 +76,7 @@ public class BotApplication {
         /**
          * 接收文本消息事件
          *
-         * @param bot Rabbit 实例
+         * @param bot KaiheilaBot 实例
          * @param event  文本消息事件内容
          */
         @Override
@@ -83,4 +85,5 @@ public class BotApplication {
             event.getChannel().sendMessage("You sent message", false);
         }
     }
+
 }
