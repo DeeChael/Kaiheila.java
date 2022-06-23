@@ -55,7 +55,7 @@ public class Example {
             Channel channel = sender.getChannel(); // 获取发送频道
             User user = sender.getUser(); //获取发送用户
             User mentionedUser = UserArgumentType.getUser(context, "user"); // 获取参数输入的变量
-            channel.sendTempMessage("你调用了khljava test指令！并且输入了一名用户，其名为：" + mentionedUser.getUsername(), user, false); // 向用户发送一条临时消息（仅该用户可见）
+            channel.sendTempMessage("你调用了khljava @Someuser指令！并且输入了一名用户，其名为：" + mentionedUser.getUsername(), user, false); // 向用户发送一条临时消息（仅该用户可见）
             return 1; // 如果返回0则表示失败，返回其他大于0的数字表示成功
         }));
         // 注册指令，默认前缀为“.”
