@@ -10,4 +10,8 @@ public class CommandExceptions {
 
     public static final SimpleCommandExceptionType USER_CANNOT_BE_FOUND = new SimpleCommandExceptionType(new LiteralMessage("获取用户失败"));
 
+    public static final SimpleCommandExceptionType NOT_A_CHANNEL = new SimpleCommandExceptionType(new LiteralMessage("不是一个频道"));
+
+    public static final SimpleCommandExceptionType CHANNEL_CANNOT_BE_FOUND = new SimpleCommandExceptionType(new LiteralMessage("获取频道失败"));
+
 }

@@ -2,13 +2,11 @@ package net.deechael.khl.event;
 
 import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.User;
-import net.deechael.khl.entity.message.MessageTypes;
+import net.deechael.khl.message.MessageTypes;
 import org.apache.commons.lang.ArrayUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class MessageHandler {
 
@@ -34,6 +32,38 @@ public abstract class MessageHandler {
 
     public List<Integer> getIntTypesList() {
         return Arrays.stream(this.getTypes()).map(MessageTypes::getType).toList();
+    }
+
+    public void onText(String text) {
+
+    }
+
+    public void onImage(String url) {
+
+    }
+
+    public void onVideo(String url) {
+
+    }
+
+    public void onFile(String url) {
+
+    }
+
+    public void onAudio(String url) {
+
+    }
+
+    public void onKMarkdown(String text) {
+
+    }
+
+    public void onCardMessage(String content) {
+
+    }
+
+    public void onSystem(String text) {
+
     }
 
 }

@@ -3,13 +3,10 @@ plugins {
 }
 
 group 'net.deechael'
-version '1.0-SNAPSHOT'
+version '1.00.0'
 
 repositories {
     mavenCentral()
-    maven {
-        url "https://libraries.minecraft.net"
-    }
 }
 
 dependencies {
@@ -22,7 +19,6 @@ dependencies {
     implementation 'commons-lang:commons-lang:2.6'
     implementation 'org.yaml:snakeyaml:1.30'
     implementation 'com.google.guava:guava:31.0.1-jre'
-    implementation 'com.mojang:brigadier:1.0.18'
 }
 
 test {

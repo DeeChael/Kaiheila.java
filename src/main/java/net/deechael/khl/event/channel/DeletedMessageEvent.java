@@ -18,7 +18,6 @@ package net.deechael.khl.event.channel;
 
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.Channel;
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -35,11 +34,6 @@ public class DeletedMessageEvent extends AbstractEvent {
         JsonNode body = super.getEventExtraBody(node);
         channelId = body.get("channel_id").asText();
         msgId = body.get("msg_id").asText();
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public String getMsgId() {

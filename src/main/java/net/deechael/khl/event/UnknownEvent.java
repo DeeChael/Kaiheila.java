@@ -17,7 +17,6 @@
 package net.deechael.khl.event;
 
 import net.deechael.khl.bot.KaiheilaBot;
-import net.deechael.khl.core.action.Operation;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public final class UnknownEvent extends AbstractEvent {
@@ -27,11 +26,6 @@ public final class UnknownEvent extends AbstractEvent {
     public UnknownEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);
         this.rawEventData = node.toString();
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public String getRawEventData() {

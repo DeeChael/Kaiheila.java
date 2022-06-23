@@ -19,7 +19,6 @@ package net.deechael.khl.event.role;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.Role;
 import net.deechael.khl.cache.BaseCache;
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.entity.RoleEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
@@ -35,11 +34,6 @@ public class AddedRoleEvent extends AbstractEvent {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         roleId = body.get("role_id").asInt();
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public Role getRole() {

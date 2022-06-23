@@ -1,6 +1,7 @@
 package net.deechael.khl.api;
 
-import net.deechael.khl.core.action.Operation;
+import net.deechael.khl.core.OperationResult;
+import net.deechael.khl.message.Message;
 
 /**
  * 服务器表情，用户可以创建文本频道或语言频道
@@ -73,5 +74,68 @@ public interface Channel {
      */
     Guild getGuild();
 
-    Operation.ChannelOperation getChannelOperation();
+    OperationResult sendMessage(String message, boolean isKMarkdown);
+
+    OperationResult sendMessage(Message message);
+
+    OperationResult sendTempMessage(String message, String uid, boolean isKMarkdown);
+
+    OperationResult sendTempMessage(String message, User user, boolean isKMarkdown);
+
+    OperationResult sendTempMessage(Message message, User user);
+
+    OperationResult sendTempMessage(Message message, String uid);
+
+    OperationResult reply(Message message, String msgId);
+
+    OperationResult replyTemp(Message message, User user, String msgId);
+
+    OperationResult replyTemp(Message message, String uid, String msgId);
+
+    String createChannelInvite(InviteDuration duration, InviteTimes times);
+
+    enum InviteDuration {
+        HALF_HOUR(1800),
+        ONE_HOUR(3600),
+        SIX_HOURS(21600),
+        TWELVE_HOURS(43200),
+        ONE_DAY(86400),
+        ONE_WEEK(604800),
+        NEVER(0);
+
+        public final int value;
+
+        InviteDuration(int value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    enum InviteTimes {
+        ONE_TIME(1),
+        FIVE_TIMES(5),
+        TEN_TIMES(10),
+        TWENTY_FIVE_TIMES(25),
+        FIFTY_TIMES(50),
+        HUNDRED_TIMES(100),
+        UNLIMITED(-1);
+
+        public final int value;
+
+        InviteTimes(int value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+
+
 }

@@ -1,7 +1,6 @@
 package net.deechael.khl.event;
 
 import net.deechael.khl.bot.KaiheilaBot;
-import net.deechael.khl.core.action.Operation;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class FailureEvent extends AbstractEvent {
@@ -27,8 +26,4 @@ public class FailureEvent extends AbstractEvent {
         return this;
     }
 
-    @Override
-    public Operation action() {
-        return null;
-    }
 }

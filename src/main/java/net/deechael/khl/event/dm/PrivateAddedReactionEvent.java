@@ -19,7 +19,6 @@ package net.deechael.khl.event.dm;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.Emoji;
 import net.deechael.khl.api.User;
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,11 +39,6 @@ public class PrivateAddedReactionEvent extends AbstractEvent {
         userId = body.get("user_id").asText();
         chatCode = body.get("chat_code").asText();
         emojiId = body.get("emoji").get("id").asText();
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public String getMsgId() {

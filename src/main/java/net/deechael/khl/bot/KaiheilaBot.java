@@ -24,7 +24,7 @@ import net.deechael.khl.client.http.IHttpClient;
 import net.deechael.khl.client.ws.IWebSocketClient;
 import net.deechael.khl.command.CommandManager;
 import net.deechael.khl.configurer.Configuration;
-import net.deechael.khl.entity.message.MessageTypes;
+import net.deechael.khl.message.MessageTypes;
 import net.deechael.khl.event.MessageHandler;
 import net.deechael.khl.hook.EventListener;
 import net.deechael.khl.hook.EventManager;

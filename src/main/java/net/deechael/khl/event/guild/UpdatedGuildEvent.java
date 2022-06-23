@@ -19,7 +19,6 @@ package net.deechael.khl.event.guild;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.cache.BaseCache;
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.entity.GuildEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
@@ -35,11 +34,6 @@ public class UpdatedGuildEvent extends AbstractEvent {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         guildId = body.get("id").asText();
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public Guild getGuild() {

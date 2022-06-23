@@ -18,7 +18,6 @@ package net.deechael.khl.event.guild;
 
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.User;
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,11 +39,6 @@ public class DeletedBlockListEvent extends AbstractEvent {
         ArrayList<String> users = new ArrayList<>();
         body.get("user_id").iterator().forEachRemaining(r -> users.add(r.asText()));
         userId = users;
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public User getOperator() {

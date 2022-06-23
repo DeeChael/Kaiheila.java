@@ -1,6 +1,5 @@
 package net.deechael.khl.api;
 
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.entity.MemberEntity;
 
 import java.util.List;
@@ -112,14 +111,10 @@ public interface Guild {
      */
     int getOfflineCount();
 
-    /**
-     * 获取当前服务器操作
-     *
-     * @return 服务器操作
-     */
-    Operation.ServerOperation getServerOperation();
-
     List<Channel> getChannels();
 
     List<MemberEntity> getMembers();
+
+    String createServerInvite(Channel.InviteDuration duration, Channel.InviteTimes times);
+
 }

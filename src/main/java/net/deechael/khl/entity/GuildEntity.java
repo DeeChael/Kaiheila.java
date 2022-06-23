@@ -1,12 +1,15 @@
 package net.deechael.khl.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.api.Role;
 import net.deechael.khl.api.User;
+import net.deechael.khl.client.http.HttpCall;
+import net.deechael.khl.client.http.RequestBuilder;
 import net.deechael.khl.core.KaiheilaObject;
-import net.deechael.khl.core.action.Operation;
+import net.deechael.khl.restful.RestRoute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -181,16 +184,6 @@ public class GuildEntity extends KaiheilaObject implements Guild {
         return offlineCount;
     }
 
-    /**
-     * 获取当前服务器操作
-     *
-     * @return 服务器操作
-     */
-    @Override
-    public Operation.ServerOperation getServerOperation() {
-        return new Operation.ServerOperation(getKaiheilaBot(),this);
-    }
-
     public void setId(String id) {
         this.id = id;
     }
@@ -307,4 +300,25 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     public void setOfflineCount(int offlineCount) {
         this.offlineCount = offlineCount;
     }
+
+    public String createServerInvite(Channel.InviteDuration duration, Channel.InviteTimes times) {
+        HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.Invite.CREATE_INVITE)
+                .withData("guild_id", this.getId())
+                .withData("duration", duration)
+                .withData("setting_times", times)
+                .build();
+        try{
+            JsonNode data = callRestApi(req);
+            if (handleResult(data)) {
+                return data.get("data").get("url").asText();
+            }else{
+                Log.error("Failed to create server invite! Reason: {}",data.get("message").asText());
+            }
+        } catch (InterruptedException e) {
+            Log.error("Failed to create server invite! Reason: {}", e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

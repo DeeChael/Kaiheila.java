@@ -18,7 +18,6 @@ package net.deechael.khl.event.dm;
 
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.User;
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import net.deechael.khl.util.TimeUtil;
@@ -46,11 +45,6 @@ public class UpdatedPrivateMessageEvent extends AbstractEvent {
         content = body.get("content").asText();
         chatCode = body.get("chat_code").asText();
         updatedAt = TimeUtil.convertUnixTimeMillisecondLocalDateTime(body.get("updated_at").asLong());
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public String getMsgId() {

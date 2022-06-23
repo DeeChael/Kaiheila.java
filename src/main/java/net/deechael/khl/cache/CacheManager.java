@@ -118,6 +118,7 @@ public class CacheManager extends KaiheilaObject {
         ArrayList<Integer> roleId = new ArrayList<>();
         for (JsonNode role : node.get("roles")) {
             RoleEntity entity = getKaiheilaBot().getEntitiesBuilder().buildRoleEntity(role);
+            entity.setGuild(guild);
             if (entity.getRoleId() != 0) {
                 this.roleCache.updateElementById(entity.getRoleId(), entity);
                 roleId.add(entity.getRoleId());
@@ -175,50 +176,6 @@ public class CacheManager extends KaiheilaObject {
         guild.setUserCount(data.get("user_count").asInt());
         guild.setOnlineCount(data.get("online_count").asInt());
         guild.setOfflineCount(data.get("offline_count").asInt());
-    }
-
-    private boolean hasRestApiError(JsonNode root) {
-        if (root == null) {
-            return true;
-        }
-        if (!root.has("code")) {
-            return true;
-        }
-        return root.get("code").asInt() != 0;
-    }
-
-    private JsonNode callRestApi(HttpCall call) throws InterruptedException {
-        JsonNode root = null;
-        boolean callFailed;
-        int callRetry = 0;
-        HttpCall.Response response;
-        do {
-            try {
-                response = getKaiheilaBot().getHttpClient().execute(call);
-                if (response.getCode() != 200) {
-                    reportRequestFailed(++callRetry, call.getRequest().getUrl());
-                    callFailed = true;
-                    continue;
-                }
-                root = getKaiheilaBot().getJsonEngine().readTree(response.getResponseBody().getBuffer().array());
-            } catch (IOException e) {
-                reportRequestFailed(++callRetry, call.getRequest().getUrl());
-                callFailed = true;
-                continue;
-            }
-            callFailed = false;
-        } while (callFailed && callRetry != 3);
-        if (callFailed || hasRestApiError(root)) {
-            return null;
-        }
-        return root;
-    }
-
-    private void reportRequestFailed(int retryCount, String url) throws InterruptedException {
-        if (Log.isWarnEnabled()) {
-            Log.warn("[数据同步] 获取数据失败，3秒后第{}次重试, [{}]", retryCount, url);
-        }
-        TimeUnit.SECONDS.sleep(3);
     }
 
     private List<JsonNode> getRemainPageRestData(RestRoute.CompiledRoute compiledRoute, JsonNode data) throws InterruptedException {

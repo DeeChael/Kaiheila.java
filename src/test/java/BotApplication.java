@@ -6,6 +6,8 @@ import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.bot.KaiheilaBotBuilder;
 import net.deechael.khl.command.Command;
 import net.deechael.khl.command.CommandSender;
+import net.deechael.khl.command.argument.ChannelArgumentType;
+import net.deechael.khl.command.argument.RoleArgumentType;
 import net.deechael.khl.command.argument.UserArgumentType;
 import net.deechael.khl.configuration.file.FileConfiguration;
 import net.deechael.khl.configuration.file.YamlConfiguration;
@@ -36,17 +38,23 @@ public class BotApplication {
         // 指令注册以及应用，使用mojang开源的bridgadier库，minecraft 1.13+以后的指令系统均基于该项目开发
         bot.getCommandManager().register(Command.literal("test").executes(context -> {
             CommandSender sender = context.getSource();
-            sender.getChannel().getChannelOperation().sendTempMessage("You just invoked \"test\" command", sender.getUser().getId(), false);
+            sender.getChannel().sendTempMessage("You just invoked \"test\" command", sender.getUser().getId(), false);
             return 1;
         }).then(Command.argument(UserArgumentType.user(bot), "user").executes(context -> {
             CommandSender sender = context.getSource();
-            sender.getChannel().getChannelOperation().sendTempMessage("The user you mentioned has his/her name: " + UserArgumentType.getUser(context, "user").getFullName(), sender.getUser().getId(), false);
+            sender.getChannel().sendTempMessage("你输入了一个用户：" + UserArgumentType.getUser(context, "user").getUsername(), sender.getUser().getId(), false);
             return 1;
-                }).then(Command.argument(IntegerArgumentType.integer(), "age").executes(context -> {
+                }))
+                .then(Command.argument(ChannelArgumentType.channel(bot), "channel").executes(context -> {
                     CommandSender sender = context.getSource();
-                    sender.getChannel().getChannelOperation().sendTempMessage("The user you mentioned has his/her name: " + UserArgumentType.getUser(context, "user").getFullName() + "\nYour age is " + IntegerArgumentType.getInteger(context, "age"), sender.getUser().getId(), false);
+                    sender.getChannel().sendTempMessage("你输入了一个频道：" + ChannelArgumentType.getChannel(context, "channel").getName(), sender.getUser().getId(), false);
                     return 1;
-                })))
+                }))
+                        .then(Command.argument(RoleArgumentType.role(bot), "role").executes(context -> {
+                    CommandSender sender = context.getSource();
+                    sender.getChannel().sendTempMessage("你输入了一个角色：" + RoleArgumentType.getRole(context, "role").getName(), sender.getUser().getId(), false);
+                    return 1;
+                }))
         );
 
         // 登录实例
@@ -72,7 +80,7 @@ public class BotApplication {
         @Override
         public void onUpdateMessageEvent(Bot bot, UpdateMessageEvent event) {
             Log.info("[{}]{}",event.getEventAuthorId(), event.getEventContent());
-            event.getChannel().getChannelOperation().broadcastMessage("You sent message", false);
+            event.getChannel().sendMessage("You sent message", false);
         }
     }
 }

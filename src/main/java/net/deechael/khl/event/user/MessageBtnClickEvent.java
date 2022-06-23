@@ -18,7 +18,6 @@ package net.deechael.khl.event.user;
 
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.User;
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -39,11 +38,6 @@ public class MessageBtnClickEvent extends AbstractEvent {
         userId = body.get("msg_id").asText();
         value = body.get("user_id").asText();
         targetId = body.get("target_id").asText();
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public String getMsgId() {

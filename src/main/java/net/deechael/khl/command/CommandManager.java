@@ -81,9 +81,14 @@ public final class CommandManager extends KaiheilaObject {
         for (Entry<Pattern, String> entry : this.patterns.entrySet()) {
             if (entry.getKey().matcher(message).matches()) {
                 try {
+                    while (message.endsWith(" ")) {
+                        message = message.substring(0, message.length() - 1);
+                        if (message.length() == 0)
+                            break;
+                    }
                     this.commandDispatcher.execute(message.substring(this.patterns.get(entry.getKey()).length()), new CommandSender(this.getKaiheilaBot(), channel, user));
                 } catch (CommandSyntaxException e) {
-                    channel.getChannelOperation().sendTempMessage(e.getMessage(), user.getId(), false);
+                    channel.sendTempMessage("错误：" + e.getMessage(), user, false);
                 }
             }
         }

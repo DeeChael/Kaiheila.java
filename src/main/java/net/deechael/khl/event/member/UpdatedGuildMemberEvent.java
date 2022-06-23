@@ -18,7 +18,6 @@ package net.deechael.khl.event.member;
 
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.User;
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -35,11 +34,6 @@ public class UpdatedGuildMemberEvent extends AbstractEvent {
         JsonNode body = super.getEventExtraBody(node);
         userId = body.get("user_id").asText();
         nickname = body.get("nickname").asText();
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public User getUser() {

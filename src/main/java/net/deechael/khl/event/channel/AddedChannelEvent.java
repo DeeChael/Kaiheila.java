@@ -21,7 +21,6 @@ import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.cache.CacheManager;
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.entity.ChannelEntity;
 import net.deechael.khl.entity.GuildEntity;
 import net.deechael.khl.event.AbstractEvent;
@@ -40,11 +39,6 @@ public class AddedChannelEvent extends AbstractEvent {
         JsonNode body = super.getEventExtraBody(node);
         guildId = body.get("guild_id").asText();
         channelId = body.get("id").asText();
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public Guild getGuild() {

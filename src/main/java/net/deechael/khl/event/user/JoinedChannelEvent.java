@@ -19,7 +19,6 @@ package net.deechael.khl.event.user;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.User;
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import net.deechael.khl.util.TimeUtil;
@@ -41,11 +40,6 @@ public class JoinedChannelEvent extends AbstractEvent {
         userId = body.get("user_id").asText();
         channelId = body.get("channel_id").asText();
         joinedAt = TimeUtil.convertUnixTimeMillisecondLocalDateTime(body.get("joined_at").asLong());
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public User getUser() {

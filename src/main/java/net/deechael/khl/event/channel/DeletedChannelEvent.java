@@ -19,7 +19,6 @@ package net.deechael.khl.event.channel;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.Channel;
 import net.deechael.khl.cache.BaseCache;
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.entity.ChannelEntity;
 import net.deechael.khl.entity.GuildEntity;
 import net.deechael.khl.event.AbstractEvent;
@@ -41,11 +40,6 @@ public class DeletedChannelEvent extends AbstractEvent {
         JsonNode body = super.getEventExtraBody(node);
         channelId = body.get("id").asText();
         deletedAt = TimeUtil.convertUnixTimeMillisecondLocalDateTime(body.get("deleted_at").asLong());
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public Channel getChannel() {

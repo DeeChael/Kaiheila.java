@@ -19,7 +19,6 @@ package net.deechael.khl.event.user;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.User;
 import net.deechael.khl.cache.BaseCache;
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.entity.UserEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
@@ -42,11 +41,6 @@ public class UserUpdatedEvent extends AbstractEvent {
         userId = body.get("user_id").asText();
         username = body.get("username").asText();
         avatar = body.get("avatar").asText();
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public User getUser() {

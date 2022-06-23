@@ -1,5 +1,8 @@
 package net.deechael.khl.api;
 
+import net.deechael.khl.core.OperationResult;
+import net.deechael.khl.message.Message;
+
 /**
  * 开黑啦用户，每一个用户为独立实体
  */
@@ -93,4 +96,17 @@ public interface User {
      * @return true 用户已经通过手机验证，否则为未验证用户
      */
     boolean isMobileVerified();
+
+    OperationResult sendMessage(String message, boolean isKMarkdown);
+
+    OperationResult sendMessage(Message message);
+
+    OperationResult reply(String message, String msgId, boolean isKMarkdown);
+
+    OperationResult reply(Message message, String msgId);
+
+    OperationResult updateIntimacy(int value);
+
+    int getUserIntimacy();
+
 }

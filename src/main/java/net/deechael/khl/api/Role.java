@@ -1,5 +1,7 @@
 package net.deechael.khl.api;
 
+import net.deechael.khl.core.OperationResult;
+
 /**
  * 服务器角色，用户自定义创建的角色（用户标签）
  */
@@ -58,5 +60,17 @@ public interface Role {
      * @return 原始权限值
      */
     int getPermissionsRaw();
+
+    Guild getGuild();
+
+    String getGuildId();
+
+    OperationResult grantUser(User user);
+
+    OperationResult grantUser(String uid);
+
+    OperationResult revokeUser(User user);
+
+    OperationResult revokeUser(String uid);
 
 }

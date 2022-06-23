@@ -20,7 +20,6 @@ import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.cache.CacheManager;
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.entity.ChannelEntity;
 import net.deechael.khl.entity.EmojiEntity;
 import net.deechael.khl.entity.GuildEntity;
@@ -39,11 +38,6 @@ public class DeletedGuildEvent extends AbstractEvent {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         guildId = body.get("id").asText();
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public Guild getGuild() {

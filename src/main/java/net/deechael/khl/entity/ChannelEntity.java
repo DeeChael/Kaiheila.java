@@ -1,11 +1,18 @@
 package net.deechael.khl.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.api.User;
+import net.deechael.khl.client.http.HttpCall;
+import net.deechael.khl.client.http.RequestBuilder;
 import net.deechael.khl.core.KaiheilaObject;
-import net.deechael.khl.core.action.Operation;
+import net.deechael.khl.core.OperationResult;
+import net.deechael.khl.message.Message;
+import net.deechael.khl.message.TextMessage;
+import net.deechael.khl.message.kmarkdown.KMarkdownMessage;
+import net.deechael.khl.restful.RestRoute;
 
 import java.util.List;
 
@@ -120,11 +127,6 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
         return getKaiheilaBot().getCacheManager().getGuildCache().getElementById(guildId);
     }
 
-    @Override
-    public Operation.ChannelOperation getChannelOperation() {
-        return new Operation.ChannelOperation(getKaiheilaBot(), this);
-    }
-
     public void setId(String id) {
         this.id = id;
     }
@@ -216,4 +218,125 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
     public void setPermissionSync(boolean permissionSync) {
         this.permissionSync = permissionSync;
     }
+
+    public OperationResult sendMessage(String message, boolean isKMarkdown) {
+        return this.sendMessage(isKMarkdown ? KMarkdownMessage.create(message) : new TextMessage(message));
+    }
+
+    public OperationResult sendMessage(Message message) {
+        HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.ChannelMessage.SEND_CHANNEL_MESSAGE)
+                .withData("target_id", this.getId())
+                .withData("nonce", "bot-message")
+                .withData("content", message.asString())
+                .withData("type", message.getType().getType())
+                .build();
+        try{
+            JsonNode data = callRestApi(req);
+            if (handleResult(data))
+                return OperationResult.success(data.get("data"));
+            else
+                return OperationResult.failed();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return OperationResult.failed();
+        }
+    }
+
+    public OperationResult sendTempMessage(String message, String uid, boolean isKMarkdown) {
+        return this.sendTempMessage(isKMarkdown ? KMarkdownMessage.create(message) : new TextMessage(message), uid);
+    }
+
+    public OperationResult sendTempMessage(String message, User user, boolean isKMarkdown) {
+        return this.sendTempMessage(isKMarkdown ? KMarkdownMessage.create(message) : new TextMessage(message), user.getId());
+    }
+
+    public OperationResult sendTempMessage(Message message, User user) {
+        return this.sendTempMessage(message, user.getId());
+    }
+
+    public OperationResult sendTempMessage(Message message, String uid) {
+        HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.ChannelMessage.SEND_CHANNEL_MESSAGE)
+                .withData("target_id", this.getId())
+                .withData("nonce", "bot-message")
+                .withData("content", message.asString())
+                .withData("type", message.getType().getType())
+                .withData("temp_target_id", uid)
+                .build();
+        try{
+            JsonNode data = callRestApi(req);
+            if (handleResult(data))
+                return OperationResult.success(data.get("data"));
+            else
+                return OperationResult.failed();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return OperationResult.failed();
+        }
+    }
+
+    public OperationResult reply(Message message, String msgId) {
+        HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.ChannelMessage.SEND_CHANNEL_MESSAGE)
+                .withData("channel_id", this.getId())
+                .withData("nonce", "bot-message")
+                .withData("type", 9)
+                .withData("content", message.asString())
+                .withData("quote", msgId)
+                .build();
+        try{
+            JsonNode data = callRestApi(req);
+            if (handleResult(data))
+                return OperationResult.success(data.get("data"));
+            else
+                return OperationResult.failed();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return OperationResult.failed();
+        }
+    }
+
+    public OperationResult replyTemp(Message message, User user, String msgId) {
+        return this.replyTemp(message, user.getId(), msgId);
+    }
+
+    public OperationResult replyTemp(Message message, String uid, String msgId) {
+        HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.ChannelMessage.SEND_CHANNEL_MESSAGE)
+                .withData("channel_id", this.getId())
+                .withData("nonce", "bot-message")
+                .withData("type", 9)
+                .withData("content", message.asString())
+                .withData("quote", msgId)
+                .withData("temp_target_id", uid)
+                .build();
+        try{
+            JsonNode data = callRestApi(req);
+            if (handleResult(data))
+                return OperationResult.success(data.get("data"));
+            else
+                return OperationResult.failed();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return OperationResult.failed();
+        }
+    }
+
+    public String createChannelInvite(InviteDuration duration, InviteTimes times) {
+        HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.Invite.CREATE_INVITE)
+                .withData("channel_id", this.getId())
+                .withData("duration", duration)
+                .withData("setting_times", times)
+                .build();
+        try{
+            JsonNode data = callRestApi(req);
+            if (handleResult(data)) {
+                return data.get("url").asText();
+            }else{
+                Log.error("Failed to create server invite! Reason: {}",data.get("message").asText());
+            }
+        } catch (InterruptedException e) {
+            Log.error("Failed to create server invite! Reason: {}", e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

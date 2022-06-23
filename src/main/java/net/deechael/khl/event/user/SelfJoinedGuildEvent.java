@@ -18,7 +18,6 @@ package net.deechael.khl.event.user;
 
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.Guild;
-import net.deechael.khl.core.action.Operation;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,11 +32,6 @@ public class SelfJoinedGuildEvent extends AbstractEvent {
         super(rabbit, node);
         JsonNode body = super.getEventExtraBody(node);
         guildId = body.get("guild_id").asText();
-    }
-
-    @Override
-    public Operation action() {
-        return null;
     }
 
     public Guild getGuild() {
