@@ -18,8 +18,8 @@
 ```xml
 <dependency>
     <groupId>net.deechael</groupId>
-    <artifactId>dcg</artifactId>
-    <version>1.03.5</version>
+    <artifactId>khl</artifactId>
+    <version>1.00.0</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -27,7 +27,7 @@
 ```kotlin
 dependencies { 
     //...
-    implementation 'net.deechael:dcg:1.03.5'
+    implementation 'net.deechael:khl:1.00.0'
 }
 ```
 
