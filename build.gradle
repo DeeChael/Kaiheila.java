@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'maven-publish'
+    id 'signing'
 }
 
 group 'net.deechael'
@@ -27,4 +29,65 @@ test {
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
+}
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+javadoc {
+    options.encoding = "UTF-8"
+    options.addStringOption("charset", "UTF-8")
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'khl'
+            from components.java
+            pom {
+                name = 'khl'
+                description = 'Java sdk for Kaiheila bot development'
+                url = 'https://www.github.com/DeeChael/Kaiheila.java'
+                licenses {
+                    license {
+                        name = 'GNU General Public License v3.0'
+                        url = 'https://www.gnu.org/licenses/gpl-3.0.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'DeeChael'
+                        name = 'DeeChael'
+                        email = 'DeeChael@outlook.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://www.github.com/DeeChael/Kaiheila.java.git'
+                    developerConnection = 'scm:git:ssh://www.github.com/DeeChael/Kaiheila.java.git'
+                    url = 'https://www.github.com/DeeChael/Kaiheila.java'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "OSSRH"
+            if (project.version.toString().endsWith("-SNAPSHOT")) {
+                url = "https://s01.oss.sonatype.org/content/repositories/snapshots"
+            } else {
+                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            }
+            credentials {
+                username = findProperty("ossrhUsername") ?: System.getenv("OSSRH_USERNAME")
+                password = findProperty("ossrhPassword") ?: System.getenv("OSSRH_PASSWORD")
+            }
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications.mavenJava)
 }

@@ -1,5 +1,7 @@
 # Kaiheila.java (WIP)
 ## 一个为开黑啦开发制作的Java SDK
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.deechael/khl/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.deechael/khl)
+
 ## !!!注意!!! 需要 JDK 17 以上
 
 仍在开发中\
@@ -10,6 +12,24 @@
 
 
 ### 其实现在SDK已经是可用情况了，不过仍然需要完善
+
+### 使用:
+#### Maven
+```xml
+<dependency>
+    <groupId>net.deechael</groupId>
+    <artifactId>dcg</artifactId>
+    <version>1.03.5</version>
+    <scope>compile</scope>
+</dependency>
+```
+#### Gradle
+```kotlin
+dependencies { 
+    //...
+    implementation 'net.deechael:dcg:1.03.5'
+}
+```
 
 ## 使用案例
 ```java

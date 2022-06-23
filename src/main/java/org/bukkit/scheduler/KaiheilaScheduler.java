@@ -22,35 +22,12 @@ import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * The fundamental concepts for this implementation:
- * <li>Main thread owns {@link #head} and {@link #currentTick}, but it may be read from any thread</li>
- * <li>Main thread exclusively controls {@link #temp} and {@link #pending}.
- *     They are never to be accessed outside of the main thread; alternatives exist to prevent locking.</li>
- * <li>{@link #head} to {@link #tail} act as a linked list/queue, with 1 consumer and infinite producers.
- *     Adding to the tail is atomic and very efficient; utility method is {@link #handle(KaiheilaTask, long)} or {@link #addTask(KaiheilaTask)}. </li>
- * <li>Changing the period on a task is delicate.
- *     Any future task needs to notify waiting threads.
- *     Async tasks must be synchronized to make sure that any thread that's finishing will remove itself from {@link #runners}.
- *     Another utility method is provided for this, {@link #cancelTask(int)}</li>
- * <li>{@link #runners} provides a moderately up-to-date view of active tasks.
- *     If the linked head to tail set is read, all remaining tasks that were active at the time execution started will be located in runners.</li>
- * <li>Async tasks are responsible for removing themselves from runners</li>
- * <li>Sync tasks are only to be removed from runners on the main thread when coupled with a removal from pending and temp.</li>
- * <li>Most of the design in this scheduler relies on queuing special tasks to perform any data changes on the main thread.
- *     When executed from inside a synchronous method, the scheduler will be updated before next execution by virtue of the frequent {@link #parsePending()} calls.</li>
- */
 public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
 
     protected static final Logger Log = LoggerFactory.getLogger(KaiheilaScheduler.class);
 
-    /**
-     * The start ID for the counter.
-     */
     private static final int START_ID = 1;
-    /**
-     * Increment the {@link #ids} field and reset it to the {@link #START_ID} if it reaches {@link Integer#MAX_VALUE}
-     */
+
     private static final IntUnaryOperator INCREMENT_IDS = previous -> {
         // We reached the end, go back to the start!
         if (previous == Integer.MAX_VALUE) {
@@ -58,19 +35,13 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
         }
         return previous + 1;
     };
-    /**
-     * Counter for IDs. Order doesn't matter, only uniqueness.
-     */
+
     private final AtomicInteger ids = new AtomicInteger(START_ID);
     
     private volatile KaiheilaTask head;
-    /**
-     * Tail of a linked-list. AtomicReference only matters when adding to queue
-     */
+
     private final AtomicReference<KaiheilaTask> tail;
-    /**
-     * Main thread logic only
-     */
+
     private final PriorityQueue<KaiheilaTask> pending = new PriorityQueue<KaiheilaTask>(10,
             new Comparator<KaiheilaTask>() {
                 @Override
@@ -81,17 +52,11 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
                     return value != 0 ? value : Long.compare(o1.getCreatedAt(), o2.getCreatedAt());
                 }
             });
-    /**
-     * Main thread logic only
-     */
+
     private final List<KaiheilaTask> temp = new ArrayList<KaiheilaTask>();
-    /**
-     * These are tasks that are currently active. It's provided for 'viewing' the current state.
-     */
+
     private final ConcurrentHashMap<Integer, KaiheilaTask> runners = new ConcurrentHashMap<Integer, KaiheilaTask>();
-    /**
-     * The sync task that is currently running on the main thread.
-     */
+
     private volatile KaiheilaTask currentTask = null;
     private volatile int currentTick = -1;
     private final Executor executor = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("Craft Scheduler Thread - %d").build());
