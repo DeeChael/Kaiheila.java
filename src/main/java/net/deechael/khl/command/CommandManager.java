@@ -8,6 +8,13 @@ import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.User;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.message.cardmessage.CardMessage;
+import net.deechael.khl.message.cardmessage.Theme;
+import net.deechael.khl.message.cardmessage.element.KMarkdownText;
+import net.deechael.khl.message.cardmessage.element.PlainText;
+import net.deechael.khl.message.cardmessage.module.Header;
+import net.deechael.khl.message.cardmessage.module.Section;
+import net.deechael.khl.message.kmarkdown.KMarkdownMessage;
 import net.deechael.khl.util.StringUtil;
 
 import java.util.Arrays;
@@ -88,7 +95,15 @@ public final class CommandManager extends KaiheilaObject {
                     }
                     this.commandDispatcher.execute(message.substring(this.patterns.get(entry.getKey()).length()), new CommandSender(this.getKaiheilaBot(), channel, user));
                 } catch (CommandSyntaxException e) {
-                    channel.sendTempMessage("错误：" + e.getMessage(), user, false);
+                    CardMessage msg = new CardMessage();
+                    msg.setTheme(Theme.Danger);
+                    PlainText error = new PlainText();
+                    error.setContent("错误");
+                    msg.append(new Header().setText(error));
+                    KMarkdownText content = new KMarkdownText();
+                    content.setContent(KMarkdownMessage.mentionUser(user).expendSpace(KMarkdownMessage.create(e.getMessage())));
+                    msg.append(new Section().setText(content));
+                    channel.sendTempMessage(msg, user);
                 }
             }
         }
