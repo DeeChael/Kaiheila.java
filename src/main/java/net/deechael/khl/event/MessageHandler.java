@@ -13,7 +13,7 @@ public abstract class MessageHandler {
     private final MessageTypes[] type;
 
     public MessageHandler(MessageTypes messageType) {
-        this(new MessageTypes[] {messageType});
+        this(new MessageTypes[]{messageType});
     }
 
     public MessageHandler(MessageTypes[] messageTypes) {

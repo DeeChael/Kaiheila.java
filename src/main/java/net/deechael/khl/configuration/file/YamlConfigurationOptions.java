@@ -1,9 +1,10 @@
 package net.deechael.khl.configuration.file;
 
-import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Various settings for controlling the input and output of a {@link

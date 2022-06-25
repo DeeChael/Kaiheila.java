@@ -1,4 +1,4 @@
-package org.bukkit.scheduler;
+package net.deechael.khl.task;
 
 class KaiheilaAsyncDebugger {
     private KaiheilaAsyncDebugger next = null;

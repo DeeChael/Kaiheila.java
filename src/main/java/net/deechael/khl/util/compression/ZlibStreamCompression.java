@@ -35,7 +35,7 @@ public class ZlibStreamCompression implements Compression {
      */
     @Override
     public ByteBuffer decompress(ByteBuffer data) throws IOException {
-        ByteArrayOutputStream  outputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         InflaterInputStream inputStream = new InflaterInputStream(new ByteArrayInputStream(data.array()));
         try (OutputStream ios = new InflaterOutputStream(outputStream)) {
             ios.write(data.array());

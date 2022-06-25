@@ -17,8 +17,8 @@
 package net.deechael.khl.bot;
 
 import net.deechael.khl.api.Bot;
-import net.deechael.khl.configurer.KaiheilaConfiguration;
 import net.deechael.khl.configurer.Configurer;
+import net.deechael.khl.configurer.KaiheilaConfiguration;
 import net.deechael.khl.configurer.api.ApiConfigurer;
 import net.deechael.khl.configurer.client.ClientConfigurer;
 import net.deechael.khl.configurer.core.SdkConfigurer;

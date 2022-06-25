@@ -32,12 +32,12 @@ public class WebhookCipher {
      * @param secretKey Encrypt Key 密钥
      * @param plainText 需要加密的原文
      * @return 加密结果
-     * @throws KeyException 密钥格式错误
-     * @throws NoSuchPaddingException Java 发行版本（或版本）不支持 AES-128-CBC AES/CBC/PKCS5Padding 解密算法
-     * @throws NoSuchAlgorithmException Java 发行版本（或版本）不支持 AES-128-CBC AES/CBC/PKCS5Padding 解密算法
+     * @throws KeyException                       密钥格式错误
+     * @throws NoSuchPaddingException             Java 发行版本（或版本）不支持 AES-128-CBC AES/CBC/PKCS5Padding 解密算法
+     * @throws NoSuchAlgorithmException           Java 发行版本（或版本）不支持 AES-128-CBC AES/CBC/PKCS5Padding 解密算法
      * @throws InvalidAlgorithmParameterException 算法参数有误
-     * @throws IllegalBlockSizeException AES-CBC 错误数据填充
-     * @throws BadPaddingException AES-CBC 错误数据填充
+     * @throws IllegalBlockSizeException          AES-CBC 错误数据填充
+     * @throws BadPaddingException                AES-CBC 错误数据填充
      */
     public static String encrypt(String secretKey, byte[] plainText) throws KeyException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         byte[] byteSecretKey = setValidSecretKeyLength(secretKey);
@@ -64,12 +64,12 @@ public class WebhookCipher {
      * @param secretKey  Encrypt Key 密钥
      * @param cipherText 需要加密的原文
      * @return 解密结果
-     * @throws KeyException 密钥格式错误
-     * @throws NoSuchPaddingException Java 发行版本（或版本）不支持 AES-128-CBC AES/CBC/PKCS5Padding 解密算法
-     * @throws NoSuchAlgorithmException Java 发行版本（或版本）不支持 AES-128-CBC AES/CBC/PKCS5Padding 解密算法
+     * @throws KeyException                       密钥格式错误
+     * @throws NoSuchPaddingException             Java 发行版本（或版本）不支持 AES-128-CBC AES/CBC/PKCS5Padding 解密算法
+     * @throws NoSuchAlgorithmException           Java 发行版本（或版本）不支持 AES-128-CBC AES/CBC/PKCS5Padding 解密算法
      * @throws InvalidAlgorithmParameterException 算法参数有误
-     * @throws IllegalBlockSizeException AES-CBC 错误数据填充
-     * @throws BadPaddingException AES-CBC 错误数据填充
+     * @throws IllegalBlockSizeException          AES-CBC 错误数据填充
+     * @throws BadPaddingException                AES-CBC 错误数据填充
      */
     public static byte[] decrypt(String secretKey, byte[] cipherText) throws KeyException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         byte[] byteSecretKey = setValidSecretKeyLength(secretKey);

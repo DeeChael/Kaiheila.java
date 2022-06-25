@@ -6,7 +6,7 @@ import net.deechael.khl.message.cardmessage.element.Text;
 
 public class Section extends Module {
     private static final String type = "section";
-    private Mode mode;
+    private Mode mode = Mode.RIGHT;
     private Text text;
     private Accessoriable accessory;
 
@@ -29,19 +29,28 @@ public class Section extends Module {
     public JsonObject asJson() {
         JsonObject json = new JsonObject();
         json.addProperty("type", type);
-        json.addProperty("mode", mode.toString());
+        if (mode != null) {
+            json.addProperty("mode", mode.toString());
+        }
         json.add("text", text.asJson());
-        json.add("accessory", accessory.asJson());
+        if (accessory != null) {
+            json.add("accessory", accessory.asJson());
+        }
         return json;
     }
 
     public enum Mode {
-        Left,
-        Right;
+        LEFT,
+        RIGHT;
         public final String value;
 
         Mode() {
             this.value = this.name().toLowerCase();
+        }
+
+        @Override
+        public String toString() {
+            return this.value;
         }
     }
 

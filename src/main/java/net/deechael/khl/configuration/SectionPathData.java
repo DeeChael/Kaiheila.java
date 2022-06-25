@@ -1,9 +1,10 @@
 package net.deechael.khl.configuration;
 
-import java.util.Collections;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
 
 final class SectionPathData {
 
@@ -41,7 +42,7 @@ final class SectionPathData {
 
     /**
      * Represents the comments on a {@link ConfigurationSection} entry.
-     *
+     * <p>
      * A null entry in the List is an empty line and an empty String entry is an
      * empty comment line. Any existing comments will be replaced, regardless of
      * what the new comments are.
@@ -67,13 +68,13 @@ final class SectionPathData {
 
     /**
      * Represents the comments on a {@link ConfigurationSection} entry.
-     *
+     * <p>
      * A null entry in the List is an empty line and an empty String entry is an
      * empty comment line. Any existing comments will be replaced, regardless of
      * what the new comments are.
      *
      * @param inlineComments New comments to set every entry represents one
-     * line.
+     *                       line.
      */
     public void setInlineComments(@Nullable final List<String> inlineComments) {
         this.inlineComments = (inlineComments == null) ? Collections.emptyList() : Collections.unmodifiableList(inlineComments);

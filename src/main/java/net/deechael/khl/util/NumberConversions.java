@@ -5,7 +5,8 @@ import org.jetbrains.annotations.Nullable;
 
 public final class NumberConversions {
 
-    private NumberConversions() {}
+    private NumberConversions() {
+    }
 
     public static int floor(double num) {
         final int floor = (int) num;

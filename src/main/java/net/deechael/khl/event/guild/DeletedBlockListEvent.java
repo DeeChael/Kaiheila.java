@@ -16,11 +16,11 @@
 
 package net.deechael.khl.event.guild;
 
-import net.deechael.khl.bot.KaiheilaBot;
+import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.User;
+import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.ArrayList;
 import java.util.List;

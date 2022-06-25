@@ -1,9 +1,9 @@
-package org.bukkit.scheduler;
-
-import java.util.function.Consumer;
+package net.deechael.khl.task;
 
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
+
+import java.util.function.Consumer;
 
 class KaiheilaTask extends KaiheilaObject implements Task, Runnable {
 

@@ -9,7 +9,8 @@ public class InvalidConfigurationException extends Exception {
      * Creates a new instance of InvalidConfigurationException without a
      * message or cause.
      */
-    public InvalidConfigurationException() {}
+    public InvalidConfigurationException() {
+    }
 
     /**
      * Constructs an instance of InvalidConfigurationException with the
@@ -36,7 +37,7 @@ public class InvalidConfigurationException extends Exception {
      * specified message and cause.
      *
      * @param cause The cause of the exception.
-     * @param msg The details of the exception.
+     * @param msg   The details of the exception.
      */
     public InvalidConfigurationException(String msg, Throwable cause) {
         super(msg, cause);

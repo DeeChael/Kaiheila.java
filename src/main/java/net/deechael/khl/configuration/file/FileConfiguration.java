@@ -2,23 +2,14 @@ package net.deechael.khl.configuration.file;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-
 import net.deechael.khl.configuration.Configuration;
 import net.deechael.khl.configuration.InvalidConfigurationException;
 import net.deechael.khl.configuration.MemoryConfiguration;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.*;
 
 /**
  * This is a base class for all File based implementations of {@link
@@ -54,8 +45,8 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * using UTF8.
      *
      * @param file File to save to.
-     * @throws IOException Thrown when the given file cannot be written to for
-     *     any reason.
+     * @throws IOException              Thrown when the given file cannot be written to for
+     *                                  any reason.
      * @throws IllegalArgumentException Thrown when file is null.
      */
     public void save(@NotNull File file) throws IOException {
@@ -85,8 +76,8 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * using UTF8.
      *
      * @param file File to save to.
-     * @throws IOException Thrown when the given file cannot be written to for
-     *     any reason.
+     * @throws IOException              Thrown when the given file cannot be written to for
+     *                                  any reason.
      * @throws IllegalArgumentException Thrown when file is null.
      */
     public void save(@NotNull String file) throws IOException {
@@ -114,12 +105,12 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * thrown.
      *
      * @param file File to load from.
-     * @throws FileNotFoundException Thrown when the given file cannot be
-     *     opened.
-     * @throws IOException Thrown when the given file cannot be read.
+     * @throws FileNotFoundException         Thrown when the given file cannot be
+     *                                       opened.
+     * @throws IOException                   Thrown when the given file cannot be read.
      * @throws InvalidConfigurationException Thrown when the given file is not
-     *     a valid Configuration.
-     * @throws IllegalArgumentException Thrown when file is null.
+     *                                       a valid Configuration.
+     * @throws IllegalArgumentException      Thrown when file is null.
      */
     public void load(@NotNull File file) throws FileNotFoundException, IOException, InvalidConfigurationException {
         Validate.notNull(file, "File cannot be null");
@@ -137,10 +128,10 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * from the given stream.
      *
      * @param reader the reader to load from
-     * @throws IOException thrown when underlying reader throws an IOException
+     * @throws IOException                   thrown when underlying reader throws an IOException
      * @throws InvalidConfigurationException thrown when the reader does not
-     *      represent a valid Configuration
-     * @throws IllegalArgumentException thrown when reader is null
+     *                                       represent a valid Configuration
+     * @throws IllegalArgumentException      thrown when reader is null
      */
     public void load(@NotNull Reader reader) throws IOException, InvalidConfigurationException {
         BufferedReader input = reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);
@@ -172,12 +163,12 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * thrown.
      *
      * @param file File to load from.
-     * @throws FileNotFoundException Thrown when the given file cannot be
-     *     opened.
-     * @throws IOException Thrown when the given file cannot be read.
+     * @throws FileNotFoundException         Thrown when the given file cannot be
+     *                                       opened.
+     * @throws IOException                   Thrown when the given file cannot be read.
      * @throws InvalidConfigurationException Thrown when the given file is not
-     *     a valid Configuration.
-     * @throws IllegalArgumentException Thrown when file is null.
+     *                                       a valid Configuration.
+     * @throws IllegalArgumentException      Thrown when file is null.
      */
     public void load(@NotNull String file) throws FileNotFoundException, IOException, InvalidConfigurationException {
         Validate.notNull(file, "File cannot be null");
@@ -197,14 +188,13 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *
      * @param contents Contents of a Configuration to load.
      * @throws InvalidConfigurationException Thrown if the specified string is
-     *     invalid.
-     * @throws IllegalArgumentException Thrown if contents is null.
+     *                                       invalid.
+     * @throws IllegalArgumentException      Thrown if contents is null.
      */
     public abstract void loadFromString(@NotNull String contents) throws InvalidConfigurationException;
 
     /**
      * @return empty string
-     *
      * @deprecated This method only exists for backwards compatibility. It will
      * do nothing and should not be used! Please use
      * {@link FileConfigurationOptions#getHeader()} instead.

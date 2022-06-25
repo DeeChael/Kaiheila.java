@@ -16,15 +16,15 @@
 
 package net.deechael.khl.event.role;
 
-import net.deechael.khl.bot.KaiheilaBot;
+import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Role;
+import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.cache.CacheManager;
 import net.deechael.khl.entity.GuildEntity;
 import net.deechael.khl.entity.RoleEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
-import com.fasterxml.jackson.databind.JsonNode;
 
 public class DeletedRoleEvent extends AbstractEvent {
 

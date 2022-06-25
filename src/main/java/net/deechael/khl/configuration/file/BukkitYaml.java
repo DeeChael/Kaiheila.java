@@ -1,10 +1,5 @@
 package net.deechael.khl.configuration.file;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.lang.reflect.Field;
-import java.util.ArrayDeque;
-import java.util.Queue;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -18,6 +13,12 @@ import org.yaml.snakeyaml.events.Event;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.serializer.Serializer;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.reflect.Field;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 final class BukkitYaml extends Yaml {
 

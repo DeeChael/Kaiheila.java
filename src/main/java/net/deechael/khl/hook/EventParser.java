@@ -1,5 +1,8 @@
 package net.deechael.khl.hook;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.event.FailureEvent;
@@ -21,9 +24,6 @@ import net.deechael.khl.event.role.DeletedRoleEvent;
 import net.deechael.khl.event.role.UpdatedRoleEvent;
 import net.deechael.khl.event.user.*;
 import net.deechael.khl.hook.queue.SequenceMessageQueue;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,13 +74,13 @@ public class EventParser extends KaiheilaObject implements Runnable {
         this.listeners.forEach(eventListener -> eventListener.handle(getKaiheilaBot(), event));
     }
 
-    private boolean isBotEvent(JsonNode data){
-        return data.get("nonce").asText().toLowerCase().equals("bot-message");
+    private boolean isBotEvent(JsonNode data) {
+        return data.get("nonce").asText().equalsIgnoreCase("bot-message");
     }
 
     private IEvent createEventObject(JsonNode dataNode) {
         int type = dataNode.get("type").asInt();
-        try{
+        try {
             if (type == 255) {
                 String sType = dataNode.get("extra").get("type").asText();
                 Class<? extends IEvent> clazz = eventClasses.get(sType);
@@ -88,14 +88,15 @@ public class EventParser extends KaiheilaObject implements Runnable {
                     IEvent event = clazz.getConstructor(KaiheilaBot.class, JsonNode.class).newInstance(getKaiheilaBot(), dataNode);
                     Log.info("系统事件解析成功 [{}]", event.getClass().getSimpleName());
                     return event.handleSystemEvent(dataNode);
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                         NoSuchMethodException e) {
                     e.printStackTrace();
                     return new FailureEvent(getKaiheilaBot(), dataNode, e);
                 }
             }
             switch (type) {
                 case 1:
-                    if (isBotEvent(dataNode)) return new BotMessageEvent(getKaiheilaBot(),dataNode);
+                    if (isBotEvent(dataNode)) return new BotMessageEvent(getKaiheilaBot(), dataNode);
                     return new TextMessageEvent(getKaiheilaBot(), dataNode);
                 case 2:
                     return new ImageMessageEvent(getKaiheilaBot(), dataNode);
@@ -111,8 +112,8 @@ public class EventParser extends KaiheilaObject implements Runnable {
                 default:
                     return new UnknownEvent(getKaiheilaBot(), dataNode);
             }
-        }catch (Exception e){
-         Log.error("事件解析失败 [{}]", dataNode);
+        } catch (Exception e) {
+            Log.error("事件解析失败 [{}]", dataNode);
             return new FailureEvent(getKaiheilaBot(), dataNode, e);
         }
     }

@@ -16,17 +16,17 @@
 
 package net.deechael.khl.event.user;
 
-import net.deechael.khl.bot.KaiheilaBot;
+import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Guild;
+import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
-import com.fasterxml.jackson.databind.JsonNode;
 
 public class SelfJoinedGuildEvent extends AbstractEvent {
 
     public static final String _AcceptType = "self_joined_guild";
 
-    private String guildId;
+    private final String guildId;
 
     public SelfJoinedGuildEvent(KaiheilaBot rabbit, JsonNode node) {
         super(rabbit, node);

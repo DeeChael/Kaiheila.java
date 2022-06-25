@@ -53,7 +53,8 @@ public class WebSocketEventSourceHandle extends IWebSocketListener implements Ru
             Log.error("WebSocket 数据包解压失败", e);
             return;
         }
-        if (KaiheilaConfiguration.isDebug) Log.info("收到 WebSocket 数据包\n{}", new String(buffer.array(), StandardCharsets.UTF_8));
+        if (KaiheilaConfiguration.isDebug)
+            Log.info("收到 WebSocket 数据包\n{}", new String(buffer.array(), StandardCharsets.UTF_8));
         eventSource.transfer(new String(buffer.array(), StandardCharsets.UTF_8));
     }
 

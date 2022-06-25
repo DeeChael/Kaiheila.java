@@ -41,8 +41,7 @@ public class OkHttpClientImpl implements IHttpClient {
         if (httpRequestBody == null) {
             if (method == HttpMethod.POST || method == HttpMethod.PUT || method == HttpMethod.PATCH) {
                 return request.getBody();
-            }
-            else {
+            } else {
                 return null;
             }
         }

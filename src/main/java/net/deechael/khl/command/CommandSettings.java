@@ -2,7 +2,9 @@ package net.deechael.khl.command;
 
 import net.deechael.khl.util.StringUtil;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CommandSettings {
 

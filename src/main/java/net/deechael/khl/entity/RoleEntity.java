@@ -2,9 +2,9 @@ package net.deechael.khl.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Guild;
+import net.deechael.khl.api.Role;
 import net.deechael.khl.api.User;
 import net.deechael.khl.bot.KaiheilaBot;
-import net.deechael.khl.api.Role;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.client.http.RequestBuilder;
 import net.deechael.khl.core.KaiheilaObject;
@@ -171,13 +171,13 @@ public class RoleEntity extends KaiheilaObject implements Role {
         return this.grantUser(user.getId());
     }
 
-    public OperationResult grantUser(String uid){
+    public OperationResult grantUser(String uid) {
         HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.GuildRole.GRANT_GUILD_ROLE)
                 .withData("guild_id", guild.getId())
                 .withData("user_id", uid)
                 .withData("role_id", String.valueOf(this.getId()))
                 .build();
-        try{
+        try {
             JsonNode data = callRestApi(req);
             if (handleResult(data))
                 return OperationResult.success(data.get("data"));
@@ -193,13 +193,13 @@ public class RoleEntity extends KaiheilaObject implements Role {
         return this.revokeUser(user.getId());
     }
 
-    public OperationResult revokeUser(String uid){
+    public OperationResult revokeUser(String uid) {
         HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.GuildRole.REVOKE_GUILD_ROLE)
                 .withData("guild_id", guild.getId())
                 .withData("user_id", uid)
                 .withData("role_id", String.valueOf(this.getId()))
                 .build();
-        try{
+        try {
             JsonNode data = callRestApi(req);
             if (handleResult(data))
                 return OperationResult.success(data.get("data"));

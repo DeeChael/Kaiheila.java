@@ -1,13 +1,8 @@
-package org.bukkit.scheduler;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+package net.deechael.khl.task;
 
 import net.deechael.khl.bot.KaiheilaBot;
+
+import java.util.concurrent.*;
 
 class KaiheilaFuture<T> extends KaiheilaTask implements Future<T> {
 

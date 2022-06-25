@@ -1,15 +1,14 @@
 package net.deechael.khl.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.api.Role;
 import net.deechael.khl.api.User;
+import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.client.http.RequestBuilder;
 import net.deechael.khl.core.KaiheilaObject;
-import net.deechael.khl.restful.RestPageable;
 import net.deechael.khl.restful.RestRoute;
 
 import java.util.ArrayList;
@@ -266,7 +265,7 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     }
 
     public List<Channel> getChannels() {
-        return channels.stream().map(id-> (Channel) getKaiheilaBot().getCacheManager().getChannelCache().getElementById(id)).collect(Collectors.toList());
+        return channels.stream().map(id -> (Channel) getKaiheilaBot().getCacheManager().getChannelCache().getElementById(id)).collect(Collectors.toList());
     }
 
     @Override
@@ -308,12 +307,12 @@ public class GuildEntity extends KaiheilaObject implements Guild {
                 .withData("duration", duration)
                 .withData("setting_times", times)
                 .build();
-        try{
+        try {
             JsonNode data = callRestApi(req);
             if (handleResult(data)) {
                 return data.get("data").get("url").asText();
-            }else{
-                Log.error("Failed to create server invite! Reason: {}",data.get("message").asText());
+            } else {
+                Log.error("Failed to create server invite! Reason: {}", data.get("message").asText());
             }
         } catch (InterruptedException e) {
             Log.error("Failed to create server invite! Reason: {}", e.getMessage());
@@ -324,7 +323,7 @@ public class GuildEntity extends KaiheilaObject implements Guild {
 
     public List<Channel> getJoinedChannel(User user) {
         List<Channel> channels = new ArrayList<>();
-        try{
+        try {
             RestRoute.CompiledRoute getJoinedChannelRoute = RestRoute.ChannelUser.GET_JOINED_CHANNEL.compile()
                     .withQueryParam("guild_id", this.getId())
                     .withQueryParam("user_id", user.getId());

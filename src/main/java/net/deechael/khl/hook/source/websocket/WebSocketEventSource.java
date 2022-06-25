@@ -1,5 +1,8 @@
 package net.deechael.khl.hook.source.websocket;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.client.http.HttpHeaders;
@@ -14,9 +17,6 @@ import net.deechael.khl.hook.source.EventSourceStringListener;
 import net.deechael.khl.hook.source.websocket.session.storage.WebSocketSessionStorage;
 import net.deechael.khl.restful.RestRoute;
 import net.deechael.khl.util.compression.Compression;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,7 +112,9 @@ public class WebSocketEventSource extends EventSource implements EventSourceStri
                     Log.warn("WebSocket 3秒后重新连接");
                     try {
                         TimeUnit.SECONDS.sleep(3);
-                    } catch (InterruptedException e) {return;}
+                    } catch (InterruptedException e) {
+                        return;
+                    }
                     this.openConnection();
                     this.restartThread = null;
                 }, "RestartWebSocketEventSource");
@@ -187,7 +189,8 @@ public class WebSocketEventSource extends EventSource implements EventSourceStri
             super.manager.initialSn(0);
             return getNewGateway();
         } else {
-            if (KaiheilaConfiguration.isDebug) Log.debug("使用重连地址 Session: {}, sn:{}", this.session.getSessionId(), this.session.getSn());
+            if (KaiheilaConfiguration.isDebug)
+                Log.debug("使用重连地址 Session: {}, sn:{}", this.session.getSessionId(), this.session.getSn());
             super.manager.initialSn(this.session.getSn());
             return this.session.getReconnectUrl();
         }

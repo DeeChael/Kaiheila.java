@@ -1,7 +1,6 @@
 package net.deechael.khl.command;
 
 import com.mojang.brigadier.LiteralMessage;
-import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
 public class CommandExceptions {

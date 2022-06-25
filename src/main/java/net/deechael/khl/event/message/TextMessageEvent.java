@@ -16,11 +16,11 @@
 
 package net.deechael.khl.event.message;
 
-import net.deechael.khl.bot.KaiheilaBot;
+import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Channel;
+import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
-import com.fasterxml.jackson.databind.JsonNode;
 
 public class TextMessageEvent extends AbstractEvent {
     public enum Type {
@@ -42,6 +42,7 @@ public class TextMessageEvent extends AbstractEvent {
             return null;
         }
     }
+
     public final Type type;
     private final MessageExtra extra;
     public final String messageID;
@@ -60,16 +61,16 @@ public class TextMessageEvent extends AbstractEvent {
         this.messageID = event.messageID;
     }
 
-    protected MessageExtra getExtra(){
+    protected MessageExtra getExtra() {
         return this.extra;
-    };
-
-    public PrivateMessageEvent asPrivateMessageEvent(){
-        return new PrivateMessageEvent(getKaiheilaBot(),this);
     }
 
-    public ChannelMessageEvent asChannelMessageEvent(){
-        return new ChannelMessageEvent(getKaiheilaBot(),this);
+    public PrivateMessageEvent asPrivateMessageEvent() {
+        return new PrivateMessageEvent(getKaiheilaBot(), this);
+    }
+
+    public ChannelMessageEvent asChannelMessageEvent() {
+        return new ChannelMessageEvent(getKaiheilaBot(), this);
     }
 
     public Channel getChannel() {

@@ -1,7 +1,7 @@
 package net.deechael.khl.event;
 
-import net.deechael.khl.bot.KaiheilaBot;
 import com.fasterxml.jackson.databind.JsonNode;
+import net.deechael.khl.bot.KaiheilaBot;
 
 public class FailureEvent extends AbstractEvent {
     private final Throwable throwable;

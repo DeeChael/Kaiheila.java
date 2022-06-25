@@ -82,7 +82,6 @@ public abstract class KaiheilaObject {
             try {
                 response = getKaiheilaBot().getHttpClient().execute(call);
                 if (response.getCode() != 200) {
-                    System.out.println(new String(response.getResponseBody().getBuffer().array()));
                     reportRequestFailed(++callRetry, call.getRequest().getUrl());
                     callFailed = true;
                     continue;
@@ -122,7 +121,7 @@ public abstract class KaiheilaObject {
         return false;
     }
 
-    protected boolean handleResult(JsonNode res){
+    protected boolean handleResult(JsonNode res) {
         return res != null && res.get("code").asInt() == 0;
     }
 

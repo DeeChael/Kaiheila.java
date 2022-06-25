@@ -30,6 +30,7 @@ import java.nio.ByteBuffer;
 public class OkHttpWebSocketClientImpl implements IWebSocketClient {
     protected final static Logger Log = LoggerFactory.getLogger(OkHttpWebSocketClientImpl.class);
     private final OkHttpClient client;
+
     public OkHttpWebSocketClientImpl(OkHttpClient client) {
         this.client = client;
     }

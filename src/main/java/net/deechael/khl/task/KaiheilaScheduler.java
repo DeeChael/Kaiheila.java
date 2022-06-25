@@ -1,26 +1,18 @@
-package org.bukkit.scheduler;
+package net.deechael.khl.task;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.function.IntUnaryOperator;
-
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.IntUnaryOperator;
 
 public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
 
@@ -37,7 +29,7 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
     };
 
     private final AtomicInteger ids = new AtomicInteger(START_ID);
-    
+
     private volatile KaiheilaTask head;
 
     private final AtomicReference<KaiheilaTask> tail;
@@ -223,6 +215,7 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
                             check(KaiheilaScheduler.this.pending);
                         }
                     }
+
                     private boolean check(final Iterable<KaiheilaTask> collection) {
                         final Iterator<KaiheilaTask> tasks = collection.iterator();
                         while (tasks.hasNext()) {
@@ -259,6 +252,7 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
                         check(KaiheilaScheduler.this.pending);
                         check(KaiheilaScheduler.this.temp);
                     }
+
                     void check(final Iterable<KaiheilaTask> collection) {
                         final Iterator<KaiheilaTask> tasks = collection.iterator();
                         while (tasks.hasNext()) {
@@ -379,8 +373,8 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
                 } catch (final Throwable throwable) {
                     Log.warn(
                             String.format(
-                                "Task #%s generated an exception",
-                                task.getTaskId()),
+                                    "Task #%s generated an exception",
+                                    task.getTaskId()),
                             throwable);
                 } finally {
                     currentTask = null;

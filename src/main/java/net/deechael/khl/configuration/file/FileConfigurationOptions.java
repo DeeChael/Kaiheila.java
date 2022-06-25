@@ -1,12 +1,13 @@
 package net.deechael.khl.configuration.file;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import net.deechael.khl.configuration.MemoryConfiguration;
 import net.deechael.khl.configuration.MemoryConfigurationOptions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Various settings for controlling the input and output of a {@link
@@ -63,7 +64,6 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
 
     /**
      * @return The string header.
-     *
      * @deprecated use getHeader() instead.
      */
     @NotNull
@@ -101,7 +101,6 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
     /**
      * @param value The string header.
      * @return This object, for chaining.
-     *
      * @deprecated use setHeader() instead
      */
     @NotNull
@@ -180,7 +179,6 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
 
     /**
      * @return Whether or not comments are parsed.
-     *
      * @deprecated Call {@link #parseComments()} instead.
      */
     @Deprecated
@@ -191,7 +189,6 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
     /**
      * @param value Should comments be parsed.
      * @return This object, for chaining
-     *
      * @deprecated Call {@link #parseComments(boolean)} instead.
      */
     @NotNull

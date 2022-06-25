@@ -1,5 +1,6 @@
 package net.deechael.khl.cache;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.client.http.HttpHeaders;
@@ -7,17 +8,14 @@ import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.entity.*;
 import net.deechael.khl.restful.RestPageable;
 import net.deechael.khl.restful.RestRoute;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 public class CacheManager extends KaiheilaObject {
     protected static final Logger Log = LoggerFactory.getLogger(CacheManager.class);

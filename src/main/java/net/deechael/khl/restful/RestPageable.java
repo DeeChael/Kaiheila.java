@@ -1,7 +1,7 @@
 package net.deechael.khl.restful;
 
-import net.deechael.khl.bot.KaiheilaBot;
 import com.fasterxml.jackson.databind.JsonNode;
+import net.deechael.khl.bot.KaiheilaBot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

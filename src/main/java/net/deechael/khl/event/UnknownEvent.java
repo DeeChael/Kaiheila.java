@@ -16,8 +16,8 @@
 
 package net.deechael.khl.event;
 
-import net.deechael.khl.bot.KaiheilaBot;
 import com.fasterxml.jackson.databind.JsonNode;
+import net.deechael.khl.bot.KaiheilaBot;
 
 public final class UnknownEvent extends AbstractEvent {
 

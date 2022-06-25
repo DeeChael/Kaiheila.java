@@ -16,12 +16,12 @@
 
 package net.deechael.khl.event.dm;
 
-import net.deechael.khl.bot.KaiheilaBot;
+import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Emoji;
 import net.deechael.khl.api.User;
+import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
-import com.fasterxml.jackson.databind.JsonNode;
 
 public class PrivateDeletedReactionEvent extends AbstractEvent {
 

@@ -1,8 +1,8 @@
 package net.deechael.khl.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
-import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.entity.*;
 
 import java.util.ArrayList;

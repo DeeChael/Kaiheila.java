@@ -16,13 +16,13 @@
 
 package net.deechael.khl.event.role;
 
-import net.deechael.khl.bot.KaiheilaBot;
+import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Role;
+import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.entity.RoleEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
-import com.fasterxml.jackson.databind.JsonNode;
 
 public class UpdatedRoleEvent extends AbstractEvent {
 

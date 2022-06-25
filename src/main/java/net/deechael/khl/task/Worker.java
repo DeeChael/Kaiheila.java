@@ -1,4 +1,4 @@
-package org.bukkit.scheduler;
+package net.deechael.khl.task;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,7 @@ public interface Worker {
      *
      * @return Task id number
      */
-    public int getTaskId();
+    int getTaskId();
 
     /**
      * Returns the thread for the worker.
@@ -23,6 +23,6 @@ public interface Worker {
      * @return The Thread object for the worker
      */
     @NotNull
-    public Thread getThread();
+    Thread getThread();
 
 }

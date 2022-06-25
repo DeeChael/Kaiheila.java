@@ -100,7 +100,10 @@ public class WebSocketSessionFileBaseStorage implements WebSocketSessionStorage 
 
     @Override
     public void clearSession() {
-        if (file.exists() && file.delete()) {Log.info("WebSocket Session 文件已删除");}
-        else{Log.warn("WebSocket Session 文件删除失败");}
+        if (file.exists() && file.delete()) {
+            Log.info("WebSocket Session 文件已删除");
+        } else {
+            Log.warn("WebSocket Session 文件删除失败");
+        }
     }
 }

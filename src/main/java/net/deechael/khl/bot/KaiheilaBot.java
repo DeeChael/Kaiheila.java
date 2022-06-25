@@ -16,6 +16,8 @@
 
 package net.deechael.khl.bot;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import net.deechael.khl.api.*;
 import net.deechael.khl.cache.CacheManager;
 import net.deechael.khl.client.http.HttpCall;
@@ -24,17 +26,15 @@ import net.deechael.khl.client.http.IHttpClient;
 import net.deechael.khl.client.ws.IWebSocketClient;
 import net.deechael.khl.command.CommandManager;
 import net.deechael.khl.configurer.KaiheilaConfiguration;
-import net.deechael.khl.message.MessageTypes;
 import net.deechael.khl.event.MessageHandler;
 import net.deechael.khl.hook.EventListener;
 import net.deechael.khl.hook.EventManager;
+import net.deechael.khl.message.MessageTypes;
 import net.deechael.khl.restful.Requester;
 import net.deechael.khl.restful.RestRoute;
+import net.deechael.khl.task.KaiheilaScheduler;
+import net.deechael.khl.task.TaskScheduler;
 import net.deechael.khl.util.EntitiesBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import org.bukkit.scheduler.TaskScheduler;
-import org.bukkit.scheduler.KaiheilaScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,33 +63,21 @@ public class KaiheilaBot implements Bot {
 
     public KaiheilaBot(KaiheilaConfiguration kaiheilaConfiguration) {
         this.kaiheilaConfiguration = kaiheilaConfiguration;
-        if (kaiheilaConfiguration != null) {
-            this.httpClient = kaiheilaConfiguration.getClientConfigurer().getHttpClientFactory().buildHttpClient();
-            this.websocketClient = kaiheilaConfiguration.getClientConfigurer().getWebSocketClientFactory().buildWebSocketClient();
-            this.jsonEngine = buildJsonEngine();
-            this.entitiesBuilder = new EntitiesBuilder(this);
-            this.requester = new Requester(this, 4);
-            this.cacheManager = new CacheManager(this);
-            this.eventManager = new EventManager(this);
-            this.commandManager = new CommandManager(this);
-            this.defaultMessageHandler = new MessageHandler(new MessageTypes[] {MessageTypes.TEXT, MessageTypes.KMD}) {
-                @Override
-                public void onMessage(Channel channel, User user, String message) {
-                    KaiheilaBot.this.getCommandManager().execute(channel, user, message);
-                }
-            };
-            this.getEventManager().register(defaultMessageHandler);
-        } else {
-            this.httpClient = null;
-            this.websocketClient = null;
-            this.jsonEngine = null;
-            this.entitiesBuilder = null;
-            this.requester = null;
-            this.cacheManager = null;
-            this.eventManager = null;
-            this.commandManager = null;
-            this.defaultMessageHandler = null;
-        }
+        this.httpClient = kaiheilaConfiguration.getClientConfigurer().getHttpClientFactory().buildHttpClient();
+        this.websocketClient = kaiheilaConfiguration.getClientConfigurer().getWebSocketClientFactory().buildWebSocketClient();
+        this.jsonEngine = buildJsonEngine();
+        this.entitiesBuilder = new EntitiesBuilder(this);
+        this.requester = new Requester(this, 4);
+        this.cacheManager = new CacheManager(this);
+        this.eventManager = new EventManager(this);
+        this.commandManager = new CommandManager(this);
+        this.defaultMessageHandler = new MessageHandler(new MessageTypes[]{MessageTypes.TEXT, MessageTypes.KMD}) {
+            @Override
+            public void onMessage(Channel channel, User user, String message) {
+                KaiheilaBot.this.getCommandManager().execute(channel, user, message);
+            }
+        };
+        this.getEventManager().register(defaultMessageHandler);
         this.scheduler = new KaiheilaScheduler(this);
     }
 

@@ -1,4 +1,4 @@
-package org.bukkit.scheduler;
+package net.deechael.khl.task;
 
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;

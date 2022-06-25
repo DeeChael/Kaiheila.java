@@ -1,6 +1,7 @@
 package net.deechael.khl.message.cardmessage.struct;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.deechael.khl.message.cardmessage.Serializable;
 import net.deechael.khl.message.cardmessage.Structable;
@@ -26,7 +27,7 @@ public class Paragraph implements Textable {
         json.addProperty("type", type);
         json.addProperty("cols", cols);
         JsonArray array = new JsonArray();
-        for (JsonObject object : fields.stream().map(Serializable::asJson).toList()) {
+        for (JsonObject object : fields.stream().map(Serializable::asJson).map(JsonElement::getAsJsonObject).toList()) {
             array.add(object);
         }
         json.add("fields", array);

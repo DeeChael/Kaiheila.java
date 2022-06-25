@@ -1,13 +1,14 @@
 package net.deechael.khl.configuration.file;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import net.deechael.khl.configuration.ConfigurationSection;
 import net.deechael.khl.configuration.serialization.ConfigurationSerializable;
 import net.deechael.khl.configuration.serialization.ConfigurationSerialization;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.representer.Representer;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class YamlRepresenter extends Representer {
 

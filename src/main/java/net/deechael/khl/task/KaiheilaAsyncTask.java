@@ -1,12 +1,12 @@
-package org.bukkit.scheduler;
-
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
+package net.deechael.khl.task;
 
 import net.deechael.khl.bot.KaiheilaBot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
 
 class KaiheilaAsyncTask extends KaiheilaTask {
 
@@ -35,17 +35,17 @@ class KaiheilaAsyncTask extends KaiheilaTask {
                 return;
             }
             workers.add(
-                new Worker() {
-                    @Override
-                    public Thread getThread() {
-                        return thread;
-                    }
+                    new Worker() {
+                        @Override
+                        public Thread getThread() {
+                            return thread;
+                        }
 
-                    @Override
-                    public int getTaskId() {
-                        return KaiheilaAsyncTask.this.getTaskId();
-                    }
-                });
+                        @Override
+                        public int getTaskId() {
+                            return KaiheilaAsyncTask.this.getTaskId();
+                        }
+                    });
         }
         Throwable thrown = null;
         try {
@@ -54,8 +54,8 @@ class KaiheilaAsyncTask extends KaiheilaTask {
             thrown = t;
             Log.warn(
                     String.format(
-                        "Generated an exception while executing task %s",
-                        getTaskId()),
+                            "Generated an exception while executing task %s",
+                            getTaskId()),
                     thrown);
         } finally {
             // Cleanup is important for any async task, otherwise ghost tasks are everywhere
@@ -73,9 +73,9 @@ class KaiheilaAsyncTask extends KaiheilaTask {
                     if (!removed) {
                         throw new IllegalStateException(
                                 String.format(
-                                    "Unable to remove worker %s on task %s",
-                                    thread.getName(),
-                                    getTaskId()),
+                                        "Unable to remove worker %s on task %s",
+                                        thread.getName(),
+                                        getTaskId()),
                                 thrown); // We don't want to lose the original exception, if any
                     }
                 } finally {

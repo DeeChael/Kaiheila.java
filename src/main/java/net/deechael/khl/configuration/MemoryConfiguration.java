@@ -1,9 +1,10 @@
 package net.deechael.khl.configuration;
 
-import java.util.Map;
 import org.apache.commons.lang.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 /**
  * This is a {@link Configuration} implementation that does not save or load
@@ -17,7 +18,8 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
     /**
      * Creates an empty {@link MemoryConfiguration} with no default values.
      */
-    public MemoryConfiguration() {}
+    public MemoryConfiguration() {
+    }
 
     /**
      * Creates an empty {@link MemoryConfiguration} using the specified {@link

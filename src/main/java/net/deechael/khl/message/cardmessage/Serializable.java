@@ -1,8 +1,8 @@
 package net.deechael.khl.message.cardmessage;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 
 public interface Serializable {
-    JsonObject asJson();
+    JsonElement asJson();
 
 }

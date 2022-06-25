@@ -2,7 +2,6 @@ package net.deechael.khl.restful;
 
 import net.deechael.khl.client.http.HttpMethod;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;

@@ -1,8 +1,8 @@
 package net.deechael.khl.entity;
 
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.Emoji;
 import net.deechael.khl.api.User;
+import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
 
 public class EmojiEntity extends KaiheilaObject implements Emoji {

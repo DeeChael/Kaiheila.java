@@ -16,12 +16,12 @@
 
 package net.deechael.khl.hook.source.webhook;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.deechael.khl.hook.EventManagerReceiver;
 import net.deechael.khl.hook.EventSource;
 import net.deechael.khl.hook.source.EventSourceByteBufferListener;
 import net.deechael.khl.util.compression.Compression;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

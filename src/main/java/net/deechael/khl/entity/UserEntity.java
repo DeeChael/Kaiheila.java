@@ -1,13 +1,12 @@
 package net.deechael.khl.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.api.User;
+import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.client.http.RequestBuilder;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.core.OperationResult;
-import net.deechael.khl.core.Result;
 import net.deechael.khl.message.Message;
 import net.deechael.khl.message.TextMessage;
 import net.deechael.khl.message.kmarkdown.KMarkdownMessage;
@@ -216,7 +215,7 @@ public class UserEntity extends KaiheilaObject implements User {
                 .withData("content", message.asString())
                 .withData("type", message.getType().getType())
                 .build();
-        try{
+        try {
             JsonNode data = callRestApi(req);
             if (handleResult(data))
                 return OperationResult.success(data.get("data"));
@@ -240,7 +239,7 @@ public class UserEntity extends KaiheilaObject implements User {
                 .withData("type", message.getType().getType())
                 .withData("quote", msgId)
                 .build();
-        try{
+        try {
             JsonNode data = callRestApi(req);
             if (handleResult(data))
                 return OperationResult.success(data.get("data"));
@@ -257,7 +256,7 @@ public class UserEntity extends KaiheilaObject implements User {
                 .withQueryParam("user_id", this.getId())
                 .withQueryParam("score", value);
         HttpCall req = HttpCall.createRequest(route.getMethod(), getKaiheilaBot().getConfiguration().getApiConfigurer().getBaseUrl() + route.getQueryStringCompleteRoute(), this.getDefaultHeaders());
-        try{
+        try {
             JsonNode data = callRestApi(req);
             if (handleResult(data))
                 return OperationResult.success(data.get("data"));
@@ -273,7 +272,7 @@ public class UserEntity extends KaiheilaObject implements User {
         HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.Intimacy.INTIMACY_LIST)
                 .withQuery("user_id", this.getId())
                 .build();
-        try{
+        try {
             JsonNode data = callRestApi(req);
             if (handleResult(data)) {
                 return data.get("score").asInt();

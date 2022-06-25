@@ -1,5 +1,10 @@
 package net.deechael.khl.configuration.serialization;
 
+import net.deechael.khl.configuration.Configuration;
+import org.apache.commons.lang.Validate;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,10 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang.Validate;
-import net.deechael.khl.configuration.Configuration;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Utility class for storing and retrieving classes for {@link Configuration}.
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 public class ConfigurationSerialization {
     public static final String SERIALIZED_TYPE_KEY = "==";
     private final Class<? extends ConfigurationSerializable> clazz;
-    private static Map<String, Class<? extends ConfigurationSerializable>> aliases = new HashMap<String, Class<? extends ConfigurationSerializable>>();
+    private static final Map<String, Class<? extends ConfigurationSerializable>> aliases = new HashMap<String, Class<? extends ConfigurationSerializable>>();
 
     static {
     }
@@ -65,14 +66,14 @@ public class ConfigurationSerialization {
             ConfigurationSerializable result = (ConfigurationSerializable) method.invoke(null, args);
 
             if (result == null) {
-                Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE, "Could not call method '" + method.toString() + "' of " + clazz + " for deserialization: method returned null");
+                Logger.getLogger(ConfigurationSerialization.class.getName()).log(Level.SEVERE, "Could not call method '" + method + "' of " + clazz + " for deserialization: method returned null");
             } else {
                 return result;
             }
         } catch (Throwable ex) {
             Logger.getLogger(ConfigurationSerialization.class.getName()).log(
                     Level.SEVERE,
-                    "Could not call method '" + method.toString() + "' of " + clazz + " for deserialization",
+                    "Could not call method '" + method + "' of " + clazz + " for deserialization",
                     ex instanceof InvocationTargetException ? ex.getCause() : ex);
         }
 
@@ -86,7 +87,7 @@ public class ConfigurationSerialization {
         } catch (Throwable ex) {
             Logger.getLogger(ConfigurationSerialization.class.getName()).log(
                     Level.SEVERE,
-                    "Could not call constructor '" + ctor.toString() + "' of " + clazz + " for deserialization",
+                    "Could not call constructor '" + ctor + "' of " + clazz + " for deserialization",
                     ex instanceof InvocationTargetException ? ex.getCause() : ex);
         }
 
@@ -136,7 +137,7 @@ public class ConfigurationSerialization {
      * If a new instance could not be made, an example being the class not
      * fully implementing the interface, null will be returned.
      *
-     * @param args Arguments for deserialization
+     * @param args  Arguments for deserialization
      * @param clazz Class to deserialize into
      * @return New instance of the specified class
      */
@@ -229,7 +230,6 @@ public class ConfigurationSerialization {
      */
     public static void unregisterClass(@NotNull Class<? extends ConfigurationSerializable> clazz) {
         while (aliases.values().remove(clazz)) {
-            ;
         }
     }
 

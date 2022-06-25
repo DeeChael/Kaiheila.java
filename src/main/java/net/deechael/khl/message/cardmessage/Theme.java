@@ -1,13 +1,13 @@
 package net.deechael.khl.message.cardmessage;
 
 public enum Theme {
-    Primary,
-    Secondary,
-    Success,
-    Warning,
-    Danger,
-    Info,
-    None("");
+    PRIMARY,
+    SECONDARY,
+    SUCCESS,
+    WARNING,
+    DANGER,
+    INFO,
+    NONE("");
     public final String value;
 
     Theme() {
