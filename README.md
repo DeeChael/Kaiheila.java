@@ -68,7 +68,7 @@ public class Example {
             return 1; // 如果返回0则表示失败，返回其他大于0的数字表示成功
         }));
         // 变参指令，如用户输入“.khljava @用户”则会调用该方法
-        // 其他参数类型还有ChannelArgumentType, RoleArgumentType (Kaiheila.java提供)
+        // 其他参数类型还有ChannelArgumentType, RoleArgumentType, MessageArgumentType (Kaiheila.java提供)
         // StringArgumentType, IntegerArgumentType, LongArgumentType, DoubleArgumentType, FloatArgumentType, BoolArgumentType (Brigadier自带)
         command.then(Command.create("user" /* 此处为参数名，用以获取变量用，不可重复 */).argument(UserArgumentType.user(bot) /* 获取参数类型的对象 */).executes(context -> {
             CommandSender sender = context.getSource(); // 获取命令发送者
