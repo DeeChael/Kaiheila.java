@@ -1,6 +1,7 @@
 package net.deechael.khl.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import net.deechael.khl.api.Role;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.entity.*;
@@ -33,14 +34,16 @@ public class EntitiesBuilder extends KaiheilaObject {
         return user;
     }
 
-    public MemberEntity buildMemberEntity(JsonNode node) {
-        MemberEntity member = new MemberEntity(getKaiheilaBot());
-        member.setUserId(node.get("id").asText());
+    public GuildUserEntity buildGuildUserEntity(JsonNode node) {
+        GuildUserEntity member = new GuildUserEntity(getKaiheilaBot());
+        member.setId(node.get("id").asText());
         member.setNickname(node.get("nickname").asText());
         member.setJoinedAt(TimeUtil.convertUnixTimeMillisecondLocalDateTime(node.get("joined_at").asLong()));
         member.setActiveTime(TimeUtil.convertUnixTimeMillisecondLocalDateTime(node.get("active_time").asLong()));
-        List<Integer> roles = new ArrayList<>();
-        node.get("roles").forEach(r -> roles.add(r.asInt()));
+        List<Role> roles = new ArrayList<>();
+        node.get("roles").forEach(r -> {
+            roles.add(this.getKaiheilaBot().getCacheManager().getRoleCache().getElementById(r.asInt()));
+        });
         member.setRoles(roles);
         return member;
     }

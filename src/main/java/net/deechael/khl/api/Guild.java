@@ -1,6 +1,6 @@
 package net.deechael.khl.api;
 
-import net.deechael.khl.entity.MemberEntity;
+import net.deechael.khl.entity.GuildUserEntity;
 
 import java.util.List;
 
@@ -113,7 +113,7 @@ public interface Guild {
 
     List<Channel> getChannels();
 
-    List<MemberEntity> getMembers();
+    List<GuildUserEntity> getMembers();
 
     String createServerInvite(Channel.InviteDuration duration, Channel.InviteTimes times);
 

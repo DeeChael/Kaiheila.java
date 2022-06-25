@@ -1,28 +1,33 @@
 package net.deechael.khl.entity;
 
+import net.deechael.khl.api.Guild;
+import net.deechael.khl.api.GuildUser;
+import net.deechael.khl.api.Role;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class MemberEntity extends KaiheilaObject {
+public class GuildUserEntity extends UserEntity implements GuildUser {
 
     private String userId;
     private String nickname;
-    private List<Integer> roles;
+    private List<Role> roles;
     private LocalDateTime joinedAt;
     private LocalDateTime activeTime;
 
-    public MemberEntity(KaiheilaBot rabbit) {
+    private Guild guild;
+
+    public GuildUserEntity(KaiheilaBot rabbit) {
         super(rabbit);
     }
 
-    public String getUserId() {
+    public String getId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setId(String userId) {
         this.userId = userId;
     }
 
@@ -34,11 +39,11 @@ public class MemberEntity extends KaiheilaObject {
         this.nickname = nickname;
     }
 
-    public List<Integer> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Integer> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
 
@@ -57,4 +62,14 @@ public class MemberEntity extends KaiheilaObject {
     public void setActiveTime(LocalDateTime activeTime) {
         this.activeTime = activeTime;
     }
+
+    @Override
+    public Guild getGuild() {
+        return guild;
+    }
+
+    public void setGuild(Guild guild) {
+        this.guild = guild;
+    }
+
 }

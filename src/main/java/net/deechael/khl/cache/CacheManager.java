@@ -26,7 +26,7 @@ public class CacheManager extends KaiheilaObject {
     private final BaseCache<String, ChannelEntity> channelCache = new BaseCache<>(ChannelEntity::getName);
     private final BaseCache<String, UserEntity> userCache = new BaseCache<>(UserEntity::getName);
     private final BaseCache<String, EmojiEntity> guildEmojisCache = new BaseCache<>(EmojiEntity::getName);
-    private final ConcurrentHashMap<String, Map<String, MemberEntity>> guildMembersCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Map<String, GuildUserEntity>> guildUsersCache = new ConcurrentHashMap<>();
 //    private final ConcurrentHashMap<String, Map<String, MemberEntity>> guildInvites = new ConcurrentHashMap<>();
 
     final HttpHeaders defaultHeaders = new HttpHeaders();
@@ -42,7 +42,7 @@ public class CacheManager extends KaiheilaObject {
         this.roleCache.unloadAll();
         this.channelCache.unloadAll();
         this.userCache.unloadAll();
-        this.guildMembersCache.clear();
+        this.guildUsersCache.clear();
         this.guildEmojisCache.unloadAll();
     }
 
@@ -136,18 +136,19 @@ public class CacheManager extends KaiheilaObject {
             Log.error("Failed to fetch guild member list."); //todo i18n
             return;
         }
-        HashMap<String, MemberEntity> memberEntities = new HashMap<>();
+        HashMap<String, GuildUserEntity> guildUserEntities = new HashMap<>();
         members.forEach(node -> {
             JsonNode data = getRestApiData(node);
             for (JsonNode items : data.get("items")) {
                 UserEntity userEntity = getKaiheilaBot().getEntitiesBuilder().buildUserEntity(items);
                 this.userCache.updateElementById(userEntity.getId(), userEntity);
-                MemberEntity memberEntity = getKaiheilaBot().getEntitiesBuilder().buildMemberEntity(items);
-                memberEntities.put(memberEntity.getUserId(), memberEntity);
+                GuildUserEntity guildUserEntity = getKaiheilaBot().getEntitiesBuilder().buildGuildUserEntity(items);
+                guildUserEntity.setGuild(this.getGuildCache().getElementById(guildId));
+                guildUserEntities.put(guildUserEntity.getId(), guildUserEntity);
             }
             this.updateGuildUserCount(guildId, data);
         });
-        this.guildMembersCache.put(guildId, memberEntities);
+        this.guildUsersCache.put(guildId, guildUserEntities);
     }
 
     private void fetchGuildEmojiData(String guildId) throws InterruptedException {
@@ -215,8 +216,8 @@ public class CacheManager extends KaiheilaObject {
         return userCache;
     }
 
-    public ConcurrentHashMap<String, Map<String, MemberEntity>> getGuildMembersCache() {
-        return guildMembersCache;
+    public ConcurrentHashMap<String, Map<String, GuildUserEntity>> getGuildUsersCache() {
+        return guildUsersCache;
     }
 
     public ICacheView<String, EmojiEntity> getGuildEmojisCache() {

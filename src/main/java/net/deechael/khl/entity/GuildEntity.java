@@ -269,8 +269,8 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     }
 
     @Override
-    public List<MemberEntity> getMembers() {
-        return new ArrayList<>(getKaiheilaBot().getCacheManager().getGuildMembersCache().get(this.id).values());
+    public List<GuildUserEntity> getMembers() {
+        return new ArrayList<>(getKaiheilaBot().getCacheManager().getGuildUsersCache().get(this.id).values());
     }
 
     public List<String> getChannelIDs() {
