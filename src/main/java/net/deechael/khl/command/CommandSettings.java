@@ -14,6 +14,8 @@ public class CommandSettings {
 
     private final Set<String> aliases = new HashSet<>();
 
+    private String regex = null;
+
     public CommandSettings(String commandName) {
         this.commandName = commandName;
         this.prefixes.add("\\.");
@@ -55,6 +57,14 @@ public class CommandSettings {
         if (prefix.length() <= 0)
             return;
         this.prefixes.add(StringUtil.safePattern(prefix));
+    }
+
+    public void setRegex(String regex) {
+        this.regex = regex;
+    }
+
+    public String getRegex() {
+        return regex;
     }
 
 }

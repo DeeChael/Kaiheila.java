@@ -50,7 +50,7 @@ public class Example {
         
         // 指令API，使用Mojang开发的brigadier库
         // 创建一个名为khljava的指令
-        LiteralArgumentBuilder<CommandSender> command = Command.literal("khljava");
+        KaiheilaCommandBuilder command = Command.create("khljava").literal();
         // 当用户仅输入“.khljava”使调用该方法
         command.executes(context -> {
             CommandSender sender = context.getSource(); // 获取命令发送者
@@ -60,7 +60,7 @@ public class Example {
             return 1; // 如果返回0则表示失败，返回其他大于0的数字表示成功
         });
         // 定参指令，如用户输入“.khljava test”则会调用该方法
-        command.then(Command.literal("test").executes(context -> {
+        command.then(Command.create("test").literal().executes(context -> {
             CommandSender sender = context.getSource(); // 获取命令发送者
             Channel channel = sender.getChannel(); // 获取发送频道
             User user = sender.getUser(); //获取发送用户
@@ -70,7 +70,7 @@ public class Example {
         // 变参指令，如用户输入“.khljava @用户”则会调用该方法
         // 其他参数类型还有ChannelArgumentType, RoleArgumentType (Kaiheila.java提供)
         // StringArgumentType, IntegerArgumentType, LongArgumentType, DoubleArgumentType, FloatArgumentType, BoolArgumentType (Brigadier自带)
-        command.then(Command.argument(UserArgumentType.user(bot) /* 获取参数类型的对象 */, "user" /* 此处为参数名，用以获取变量用，不可重复 */).executes(context -> {
+        command.then(Command.create("user" /* 此处为参数名，用以获取变量用，不可重复 */).argument(UserArgumentType.user(bot) /* 获取参数类型的对象 */).executes(context -> {
             CommandSender sender = context.getSource(); // 获取命令发送者
             Channel channel = sender.getChannel(); // 获取发送频道
             User user = sender.getUser(); //获取发送用户
@@ -79,7 +79,10 @@ public class Example {
             return 1; // 如果返回0则表示失败，返回其他大于0的数字表示成功
         }));
         // 注册指令，默认前缀为“.”
-        // 使用 bot.getCommandManager().register(command, {".", "/", "。"});来注册其他的前缀
+        // 在创建指令时：
+        // Command.create("指令名称").addPrefix(".").addPrefix("/").literal(); 来使用别的前缀
+        // Command.create("指令名称").addAlias("aa").addAlias("bb").literal(); 来添加别名
+        // Command.create("指令名称").withRegex("正则"); 来使用Regex （此时别名和前缀就没有用处了)
         bot.getCommandManager().register(command);
 
         // 运行机器人

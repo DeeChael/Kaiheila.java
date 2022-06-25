@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class CommandManager extends KaiheilaObject {
@@ -37,64 +38,51 @@ public final class CommandManager extends KaiheilaObject {
         this.commandDispatcher = new CommandDispatcher<>();
     }
 
-    public void register(LiteralArgumentBuilder<CommandSender> literalArgumentBuilder) {
-        String commandName = literalArgumentBuilder.getLiteral();
-        if (!this.commmands.containsKey(commandName)) {
-            this.commmands.put(commandName, new CommandSettings(commandName));
-        }
-        this.commandDispatcher.register(literalArgumentBuilder);
-        updatePatterns();
-    }
-
-    public void register(LiteralCommandNode<CommandSender> literalCommandNode) {
-        String commandName = literalCommandNode.getName();
-        if (!this.commmands.containsKey(commandName)) {
-            this.commmands.put(commandName, new CommandSettings(commandName));
-        }
-        this.commandDispatcher.getRoot().addChild(literalCommandNode);
-        updatePatterns();
-    }
-
-    public void register(LiteralArgumentBuilder<CommandSender> literalArgumentBuilder, String[] prefixes) {
-        String commandName = literalArgumentBuilder.getLiteral();
-        if (!this.commmands.containsKey(commandName)) {
-            this.commmands.put(commandName, new CommandSettings(commandName));
-        }
-        this.commmands.get(commandName).setPrefixes(Arrays.asList(prefixes));
-        this.commandDispatcher.register(literalArgumentBuilder);
-        updatePatterns();
-    }
-
-    public void register(LiteralCommandNode<CommandSender> literalCommandNode, String[] prefixes) {
-        String commandName = literalCommandNode.getName();
-        if (!this.commmands.containsKey(commandName)) {
-            this.commmands.put(commandName, new CommandSettings(commandName));
-        }
-        this.commmands.get(commandName).setPrefixes(Arrays.asList(prefixes));
-        this.commandDispatcher.getRoot().addChild(literalCommandNode);
+    public void register(KaiheilaCommandBuilder commandBuilder) {
+        String commandName = commandBuilder.getName();
+        CommandSettings commandSettings = new CommandSettings(commandName);
+        commandSettings.setPrefixes(commandBuilder.getPrefixes());
+        commandSettings.setAliases(commandBuilder.getAliases());
+        commandSettings.setRegex(commandBuilder.getRegex());
+        this.commmands.put(commandName, commandSettings);
+        this.commandDispatcher.getRoot().addChild(commandBuilder.build());
         updatePatterns();
     }
 
     private void updatePatterns() {
         this.patterns.clear();
         for (Entry<String, CommandSettings> entry : this.commmands.entrySet()) {
-            String safeCommandName = StringUtil.safePattern(entry.getKey());
-            for (String prefix : entry.getValue().getPrefixes()) {
-                patterns.put(Pattern.compile(prefix + safeCommandName + ".*"), StringUtil.unsafePattern(prefix));
+            CommandSettings settings = entry.getValue();
+            if (settings.getRegex() != null) {
+                patterns.put(Pattern.compile(settings.getRegex()), entry.getKey());
+            } else {
+                String safeCommandName = StringUtil.safePattern(entry.getKey());
+                for (String prefix : entry.getValue().getPrefixes()) {
+                    patterns.put(Pattern.compile(prefix + safeCommandName), entry.getKey());
+                    for (String alias : entry.getValue().getAliases()) {
+                        patterns.put(Pattern.compile(prefix + StringUtil.safePattern(alias)), entry.getKey());
+                    }
+                }
             }
         }
     }
 
     public void execute(Channel channel, User user, String message) {
         for (Entry<Pattern, String> entry : this.patterns.entrySet()) {
-            if (entry.getKey().matcher(message).matches()) {
+            while (message.endsWith(" ")) {
+                message = message.substring(0, message.length() - 1);
+                if (message.length() == 0)
+                    break;
+            }
+            String partToBeChecked;
+            if (message.contains(" ")) {
+                partToBeChecked = message.split(" ")[0];
+            } else {
+                partToBeChecked = message;
+            }
+            if (entry.getKey().matcher(partToBeChecked).matches()) {
                 try {
-                    while (message.endsWith(" ")) {
-                        message = message.substring(0, message.length() - 1);
-                        if (message.length() == 0)
-                            break;
-                    }
-                    this.commandDispatcher.execute(message.substring(this.patterns.get(entry.getKey()).length()), new CommandSender(this.getKaiheilaBot(), channel, user));
+                    this.commandDispatcher.execute(entry.getValue() + message.substring(partToBeChecked.length()), new CommandSender(this.getKaiheilaBot(), channel, user));
                 } catch (CommandSyntaxException e) {
                     CardMessage msg = new CardMessage();
                     Card card = new Card();

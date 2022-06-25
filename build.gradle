@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'net.deechael'
-version '1.00.0'
+version '1.01.0'
 
 repositories {
     mavenCentral()
@@ -21,6 +21,7 @@ dependencies {
     implementation 'commons-lang:commons-lang:2.6'
     implementation 'org.yaml:snakeyaml:1.30'
     implementation 'com.google.guava:guava:31.0.1-jre'
+    implementation 'net.deechael:Useless:1.01.0'
 }
 
 test {

@@ -4,12 +4,14 @@ import net.deechael.khl.bot.KaiheilaBotBuilder;
 import net.deechael.khl.command.Command;
 import net.deechael.khl.command.CommandSender;
 import net.deechael.khl.command.argument.ChannelArgumentType;
+import net.deechael.khl.command.argument.MessageArgumentType;
 import net.deechael.khl.command.argument.RoleArgumentType;
 import net.deechael.khl.command.argument.UserArgumentType;
 import net.deechael.khl.configuration.file.FileConfiguration;
 import net.deechael.khl.configuration.file.YamlConfiguration;
 import net.deechael.khl.event.channel.UpdateMessageEvent;
 import net.deechael.khl.hook.EventListener;
+import net.deechael.khl.message.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,26 +35,38 @@ public class BotApplication {
         bot.addEventListener(new UserEventHandler());
 
         // 指令注册以及应用，使用mojang开源的brigadier库，minecraft 1.13+以后的指令系统均基于该项目开发
-        bot.getCommandManager().register(Command.literal("test").executes(context -> {
+        bot.getCommandManager().register(Command.create("test").literal().executes(context -> {
             CommandSender sender = context.getSource();
             sender.getChannel().sendTempMessage("You just invoked \"test\" command", sender.getUser().getId(), false);
             return 1;
-        }).then(Command.argument(UserArgumentType.user(bot), "user").executes(context -> {
+        }).then(Command.create("user").argument(UserArgumentType.user(bot)).executes(context -> {
             CommandSender sender = context.getSource();
             sender.getChannel().sendTempMessage("你输入了一个用户：" + UserArgumentType.getUser(context, "user").getUsername(), sender.getUser().getId(), false);
             return 1;
                 }))
-                .then(Command.argument(ChannelArgumentType.channel(bot), "channel").executes(context -> {
+                .then(Command.create("channel").argument(ChannelArgumentType.channel(bot)).executes(context -> {
                     CommandSender sender = context.getSource();
                     sender.getChannel().sendTempMessage("你输入了一个频道：" + ChannelArgumentType.getChannel(context, "channel").getName(), sender.getUser().getId(), false);
                     return 1;
                 }))
-                        .then(Command.argument(RoleArgumentType.role(bot), "role").executes(context -> {
+                        .then(Command.create("role").argument(RoleArgumentType.role(bot)).executes(context -> {
                     CommandSender sender = context.getSource();
                     sender.getChannel().sendTempMessage("你输入了一个角色：" + RoleArgumentType.getRole(context, "role").getName(), sender.getUser().getId(), false);
                     return 1;
                 }))
         );
+        bot.getCommandManager().register(Command.create("aaaa").literal().then(Command.create("msg").argument(MessageArgumentType.message()).executes(context -> {
+            CommandSender sender = context.getSource();
+            TextMessage message = MessageArgumentType.getMessage(context, "msg");
+            String content = message.getContent();
+            sender.getChannel().sendTempMessage(new TextMessage("You sent: " + content), sender.getUser());
+            return 1;
+        })));
+        bot.getCommandManager().register(Command.create("fff").withRegex("(\\.|。|/){1}(fff|ff|f){1}").literal().executes(context -> {
+            CommandSender sender = context.getSource();
+            sender.getChannel().sendTempMessage(new TextMessage("Hello!"), sender.getUser());
+            return 1;
+        }));
 
         // 登录实例
         Log.info("Logging...");
