@@ -4,6 +4,7 @@ import net.deechael.khl.client.http.HttpMethod;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 @SuppressWarnings("unused")
@@ -220,6 +221,18 @@ public class RestRoute {
          * 删除消息的某个回应
          */
         public static final RestRoute DELETE_CHANNEL_MESSAGE_REACTION = new RestRoute(HttpMethod.POST, "message/delete-reaction", false);
+
+    }
+
+    /**
+     * 频道用户
+     */
+    public static class ChannelUser {
+
+        /**
+         * 获取用户所在的语音频道
+         */
+        public static final RestRoute GET_JOINED_CHANNEL = new RestRoute(HttpMethod.GET, "channel-user/get-joined-channel", true);
 
     }
 
@@ -461,12 +474,8 @@ public class RestRoute {
             queryParams.forEach((k, v) -> {
                 String keyEnc = null;
                 String valEnc = null;
-                try {
-                    keyEnc = URLEncoder.encode(k, "UTF-8");
-                    valEnc = URLEncoder.encode(String.valueOf(v), "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                keyEnc = URLEncoder.encode(k, StandardCharsets.UTF_8);
+                valEnc = URLEncoder.encode(String.valueOf(v), StandardCharsets.UTF_8);
                 queryString.append('&').append(keyEnc).append('=').append(valEnc);
             });
             queryString.deleteCharAt(0);

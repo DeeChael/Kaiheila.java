@@ -5,10 +5,14 @@ import net.deechael.khl.api.Bot;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.client.http.HttpHeaders;
+import net.deechael.khl.restful.RestPageable;
+import net.deechael.khl.restful.RestRoute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public abstract class KaiheilaObject {
@@ -34,6 +38,41 @@ public abstract class KaiheilaObject {
     }
 
 
+    protected List<JsonNode> getRestJsonResponse(RestRoute.CompiledRoute compiledRoute, HttpCall call) throws InterruptedException {
+        ArrayList<JsonNode> result = new ArrayList<>();
+        JsonNode root = callRestApi(call);
+        if (root == null) {
+            Log.error("Not set the root");
+            return null;
+        }
+        result.add(root);
+        result.addAll(getRemainPageRestData(compiledRoute, getRestApiData(root)));
+        return result;
+    }
+
+    private List<JsonNode> getRemainPageRestData(RestRoute.CompiledRoute compiledRoute, JsonNode data) throws InterruptedException {
+        ArrayList<JsonNode> result = new ArrayList<>();
+        RestPageable pageable = RestPageable.of(getKaiheilaBot(), compiledRoute, data);
+        while (pageable.hasNext()) {
+            RestRoute.CompiledRoute nextRoute = pageable.next();
+            HttpCall nextCall = HttpCall.createRequest(nextRoute.getMethod(), getCompleteUrl(nextRoute), this.defaultHeaders);
+            JsonNode next = callRestApi(nextCall);
+            if (next == null) {
+                continue;
+            }
+            result.add(next);
+        }
+        return result;
+    }
+
+    private JsonNode getRestApiData(JsonNode node) {
+        return node.get("data");
+    }
+
+    protected String getCompleteUrl(RestRoute.CompiledRoute route) {
+        return getKaiheilaBot().getConfiguration().getApiConfigurer().getBaseUrl() + route.getQueryStringCompleteRoute();
+    }
+
     protected JsonNode callRestApi(HttpCall call) throws InterruptedException {
         JsonNode root = null;
         boolean callFailed;
@@ -43,6 +82,7 @@ public abstract class KaiheilaObject {
             try {
                 response = getKaiheilaBot().getHttpClient().execute(call);
                 if (response.getCode() != 200) {
+                    System.out.println(new String(response.getResponseBody().getBuffer().array()));
                     reportRequestFailed(++callRetry, call.getRequest().getUrl());
                     callFailed = true;
                     continue;

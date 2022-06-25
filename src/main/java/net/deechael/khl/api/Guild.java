@@ -117,4 +117,6 @@ public interface Guild {
 
     String createServerInvite(Channel.InviteDuration duration, Channel.InviteTimes times);
 
+    List<Channel> getJoinedChannel(User user);
+
 }

@@ -193,24 +193,8 @@ public class CacheManager extends KaiheilaObject {
         return result;
     }
 
-    private List<JsonNode> getRestJsonResponse(RestRoute.CompiledRoute compiledRoute, HttpCall call) throws InterruptedException {
-        ArrayList<JsonNode> result = new ArrayList<>();
-        JsonNode root = callRestApi(call);
-        if (root == null) {
-            Log.error("Not set the root");
-            return null;
-        }
-        result.add(root);
-        result.addAll(getRemainPageRestData(compiledRoute, getRestApiData(root)));
-        return result;
-    }
-
     private JsonNode getRestApiData(JsonNode node) {
         return node.get("data");
-    }
-
-    private String getCompleteUrl(RestRoute.CompiledRoute route) {
-        return getKaiheilaBot().getConfiguration().getApiConfigurer().getBaseUrl() + route.getQueryStringCompleteRoute();
     }
 
     public SelfUserEntity getSelfUserCache() {

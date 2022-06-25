@@ -9,6 +9,7 @@ import net.deechael.khl.api.User;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.client.http.RequestBuilder;
 import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.restful.RestPageable;
 import net.deechael.khl.restful.RestRoute;
 
 import java.util.ArrayList;
@@ -319,6 +320,25 @@ public class GuildEntity extends KaiheilaObject implements Guild {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<Channel> getJoinedChannel(User user) {
+        List<Channel> channels = new ArrayList<>();
+        try{
+            RestRoute.CompiledRoute getJoinedChannelRoute = RestRoute.ChannelUser.GET_JOINED_CHANNEL.compile()
+                    .withQueryParam("guild_id", this.getId())
+                    .withQueryParam("user_id", user.getId());
+            HttpCall getJoinedChannelRequest = HttpCall.createRequest(getJoinedChannelRoute.getMethod(), getCompleteUrl(getJoinedChannelRoute), this.defaultHeaders);
+            List<JsonNode> channelList = getRestJsonResponse(getJoinedChannelRoute, getJoinedChannelRequest);
+            for (JsonNode data : channelList) {
+                for (JsonNode channelData : data.get("data").get("items")) {
+                    channels.add(getKaiheilaBot().getEntitiesBuilder().buildChannelEntity(channelData));
+                }
+            }
+        } catch (InterruptedException e) {
+            Log.error("Errors appeared when getting the channels user joined: {}", e.getMessage());
+        }
+        return channels;
     }
 
 }

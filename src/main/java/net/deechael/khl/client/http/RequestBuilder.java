@@ -26,6 +26,10 @@ public class RequestBuilder extends KaiheilaObject {
     return new RequestBuilder(rabbit, route.compile());
   }
 
+  public static RequestBuilder create(KaiheilaBot rabbit, RestRoute.CompiledRoute route) {
+    return new RequestBuilder(rabbit, route);
+  }
+
   public RequestBuilder withData(String key, Object value) {
     if (value == null) return this;
     if (formBuilder == null) {
