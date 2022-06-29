@@ -19,11 +19,11 @@ package net.deechael.khl.event.member;
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.cache.CacheManager;
 import net.deechael.khl.entity.GuildEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.util.TimeUtil;
 
 import java.time.LocalDateTime;
@@ -38,8 +38,8 @@ public class GuildMemberOfflineEvent extends AbstractEvent {
     private final LocalDateTime offlineTime;
     private final List<String> guilds;
 
-    public GuildMemberOfflineEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public GuildMemberOfflineEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         userId = body.get("user_id").asText();
         offlineTime = TimeUtil.convertUnixTimeMillisecondLocalDateTime(body.get("event_time").asLong());

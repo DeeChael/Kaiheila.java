@@ -18,11 +18,11 @@ package net.deechael.khl.hook;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.configurer.event.EventSourceConfigurer;
 import net.deechael.khl.configurer.event.WebhookEventSourceConfigurer;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.event.MessageHandler;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.hook.queue.SequenceMessageQueue;
 import net.deechael.khl.hook.source.webhook.WebhookEventSource;
 import net.deechael.khl.hook.source.websocket.WebSocketEventSource;
@@ -46,15 +46,15 @@ public class EventManager extends KaiheilaObject implements EventManagerReceiver
 
     private final Set<MessageHandler> messageHandlers = new HashSet<>();
 
-    public EventManager(KaiheilaBot rabbit) {
-        super(rabbit);
+    public EventManager(Gateway gateway) {
+        super(gateway);
     }
 
     @Override
     public void initialSn(int sn) {
         messageQueue = new SequenceMessageQueue<>(sn);
         this.shutdownEventParser();
-        this.eventParser = new EventParser(getKaiheilaBot(), messageQueue, listeners);
+        this.eventParser = new EventParser(getGateway(), messageQueue, listeners);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class EventManager extends KaiheilaObject implements EventManagerReceiver
         ) {
             for (MessageHandler handler : this.messageHandlers) {
                 if (handler.getIntTypesList().contains(jsonObject.get("type").getAsInt())) {
-                    handler.onMessage(getKaiheilaBot().getCacheManager().getChannelCache().getElementById(jsonObject.get("target_id").getAsString()), getKaiheilaBot().getCacheManager().getUserCache().getElementById(jsonObject.get("author_id").getAsString()), jsonObject.get("content").getAsString());
+                    handler.onMessage(getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(jsonObject.get("target_id").getAsString()), getGateway().getKaiheilaBot().getCacheManager().getUserCache().getElementById(jsonObject.get("author_id").getAsString()), jsonObject.get("content").getAsString());
                 }
             }
         }
@@ -113,7 +113,7 @@ public class EventManager extends KaiheilaObject implements EventManagerReceiver
     }
 
     public void initializeEventSource() {
-        EventSourceConfigurer configurer = getKaiheilaBot().getConfiguration().getEventSourceConfigurer();
+        EventSourceConfigurer configurer = getGateway().getKaiheilaBot().getConfiguration().getEventSourceConfigurer();
         if (configurer.getEventSourceType() == EventSourceConfigurer.EventSourceType.CUSTOM) {
             if (configurer.getEventSource() == null) {
                 throw new NullPointerException("自定义事件实例不能未空");
@@ -121,9 +121,9 @@ public class EventManager extends KaiheilaObject implements EventManagerReceiver
             this.eventSource = configurer.getEventSource();
         } else if (configurer.getEventSourceType() == EventSourceConfigurer.EventSourceType.WEBHOOK) {
             WebhookEventSourceConfigurer instanceConfigurer = (WebhookEventSourceConfigurer) configurer.getInstanceConfigurer();
-            this.eventSource = new WebhookEventSource(this, Compression.DEFAULT_ZLIB_STREAM, getKaiheilaBot().getJsonEngine(), instanceConfigurer.getVerifyToken(), instanceConfigurer.getEncryptKey());
+            this.eventSource = new WebhookEventSource(this, Compression.DEFAULT_ZLIB_STREAM, getGateway().getKaiheilaBot().getJsonEngine(), instanceConfigurer.getVerifyToken(), instanceConfigurer.getEncryptKey());
         } else if (configurer.getEventSourceType() == EventSourceConfigurer.EventSourceType.WEBSOCKET) {
-            this.eventSource = new WebSocketEventSource(this, getKaiheilaBot(), getKaiheilaBot().getHttpClient(), getKaiheilaBot().getWebsocketClient(), getKaiheilaBot().getJsonEngine(), Compression.DEFAULT_ZLIB_STREAM, WebSocketSessionStorage.DEFAULT_SESSION_STORAGE);
+            this.eventSource = new WebSocketEventSource(this, getGateway().getKaiheilaBot(), getGateway().getKaiheilaBot().getHttpClient(), getGateway().getKaiheilaBot().getWebsocketClient(), getGateway().getKaiheilaBot().getJsonEngine(), Compression.DEFAULT_ZLIB_STREAM, WebSocketSessionStorage.DEFAULT_SESSION_STORAGE);
         }
         this.eventSource.enableEventPipe();
         this.eventSource.start();

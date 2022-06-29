@@ -18,11 +18,11 @@ package net.deechael.khl.event.role;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Role;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.entity.RoleEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 
 public class AddedRoleEvent extends AbstractEvent {
 
@@ -30,8 +30,8 @@ public class AddedRoleEvent extends AbstractEvent {
 
     private final Integer roleId;
 
-    public AddedRoleEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public AddedRoleEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         roleId = body.get("role_id").asInt();
     }

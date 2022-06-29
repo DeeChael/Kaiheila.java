@@ -2,17 +2,17 @@ package net.deechael.khl.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Role;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.entity.*;
+import net.deechael.khl.gate.Gateway;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntitiesBuilder extends KaiheilaObject {
 
-    public EntitiesBuilder(KaiheilaBot rabbit) {
-        super(rabbit);
+    public EntitiesBuilder(Gateway gateway) {
+        super(gateway);
     }
 
     public SelfUserEntity buildSelfUserEntity(JsonNode node) {
@@ -21,7 +21,7 @@ public class EntitiesBuilder extends KaiheilaObject {
     }
 
     public UserEntity buildUserEntity(JsonNode node) {
-        UserEntity user = new UserEntity(getKaiheilaBot());
+        UserEntity user = new UserEntity(getGateway());
         user.setId(node.get("id").asText());
         user.setUsername(node.get("username").asText());
         user.setIdentifyNum(node.get("identify_num").asText());
@@ -35,21 +35,21 @@ public class EntitiesBuilder extends KaiheilaObject {
     }
 
     public GuildUserEntity buildGuildUserEntity(JsonNode node) {
-        GuildUserEntity member = new GuildUserEntity(getKaiheilaBot());
+        GuildUserEntity member = new GuildUserEntity(getGateway());
         member.setId(node.get("id").asText());
         member.setNickname(node.get("nickname").asText());
         member.setJoinedAt(TimeUtil.convertUnixTimeMillisecondLocalDateTime(node.get("joined_at").asLong()));
         member.setActiveTime(TimeUtil.convertUnixTimeMillisecondLocalDateTime(node.get("active_time").asLong()));
         List<Role> roles = new ArrayList<>();
         node.get("roles").forEach(r -> {
-            roles.add(this.getKaiheilaBot().getCacheManager().getRoleCache().getElementById(r.asInt()));
+            roles.add(this.getGateway().getKaiheilaBot().getCacheManager().getRoleCache().getElementById(r.asInt()));
         });
         member.setRoles(roles);
         return member;
     }
 
     public GuildEntity buildGuild(JsonNode node) {
-        GuildEntity guild = new GuildEntity(getKaiheilaBot());
+        GuildEntity guild = new GuildEntity(getGateway());
         guild.setId(node.get("id").asText());
         guild.setTopic(node.get("topic").asText());
         guild.setMasterId(node.get("master_id").asText());
@@ -58,7 +58,7 @@ public class EntitiesBuilder extends KaiheilaObject {
     }
 
     public RoleEntity buildRoleEntity(JsonNode node) {
-        RoleEntity role = new RoleEntity(getKaiheilaBot());
+        RoleEntity role = new RoleEntity(getGateway());
         role.setRoleId(node.get("role_id").asInt());
         role.setName(node.get("name").asText());
         role.setColor(node.get("color").asInt());
@@ -86,7 +86,7 @@ public class EntitiesBuilder extends KaiheilaObject {
     }
 
     private ChannelEntity buildChannelEntityBase(JsonNode node, boolean isUpdate) {
-        ChannelEntity channel = new ChannelEntity(getKaiheilaBot());
+        ChannelEntity channel = new ChannelEntity(getGateway());
         channel.setId(node.get("id").asText());
         channel.setType(node.get("type").asInt());
         channel.setName(node.get("name").asText());
@@ -111,7 +111,7 @@ public class EntitiesBuilder extends KaiheilaObject {
 
 
     public EmojiEntity buildGuildEmojiEntity(JsonNode node) {
-        EmojiEntity emoji = new EmojiEntity(getKaiheilaBot());
+        EmojiEntity emoji = new EmojiEntity(getGateway());
         emoji.setId(node.get("id").asText());
         emoji.setName(node.get("name").asText());
         emoji.setType(node.get("emoji_type").asInt());

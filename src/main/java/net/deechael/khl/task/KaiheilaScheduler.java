@@ -1,8 +1,8 @@
 package net.deechael.khl.task;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.gate.Gateway;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,9 +65,9 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
         RECENT_TICKS = 30;
     }
 
-    public KaiheilaScheduler(KaiheilaBot kaiheilaBot) {
-        super(kaiheilaBot);
-        this.head = new KaiheilaTask(getKaiheilaBot());
+    public KaiheilaScheduler(Gateway gateway) {
+        super(gateway);
+        this.head = new KaiheilaTask(getGateway());
         this.tail = new AtomicReference<>(head);
     }
 
@@ -163,7 +163,7 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
         } else if (period < KaiheilaTask.NO_REPEATING) {
             period = KaiheilaTask.NO_REPEATING;
         }
-        return handle(new KaiheilaTask(getKaiheilaBot(), runnable, nextId(), period), delay);
+        return handle(new KaiheilaTask(getGateway(), runnable, nextId(), period), delay);
     }
 
     @Deprecated
@@ -187,13 +187,13 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
         } else if (period < KaiheilaTask.NO_REPEATING) {
             period = KaiheilaTask.NO_REPEATING;
         }
-        return handle(new KaiheilaAsyncTask(runners, getKaiheilaBot(), runnable, nextId(), period), delay);
+        return handle(new KaiheilaAsyncTask(runners, getGateway(), runnable, nextId(), period), delay);
     }
 
     @Override
     public <T> Future<T> callSyncMethod(final Callable<T> task) {
         validate(task);
-        final KaiheilaFuture<T> future = new KaiheilaFuture<T>(task, getKaiheilaBot(), nextId());
+        final KaiheilaFuture<T> future = new KaiheilaFuture<T>(task, getGateway(), nextId());
         handle(future, 0L);
         return future;
     }
@@ -207,7 +207,7 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
         if (task != null) {
             task.cancel0();
         }
-        task = new KaiheilaTask(getKaiheilaBot(),
+        task = new KaiheilaTask(getGateway(),
                 new Runnable() {
                     @Override
                     public void run() {
@@ -245,7 +245,7 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
 
     @Override
     public void cancelTasks() {
-        final KaiheilaTask task = new KaiheilaTask(getKaiheilaBot(),
+        final KaiheilaTask task = new KaiheilaTask(getGateway(),
                 new Runnable() {
                     @Override
                     public void run() {

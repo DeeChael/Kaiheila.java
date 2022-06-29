@@ -18,9 +18,9 @@ package net.deechael.khl.event.user;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 
 public class MessageBtnClickEvent extends AbstractEvent {
 
@@ -31,8 +31,8 @@ public class MessageBtnClickEvent extends AbstractEvent {
     private final String value;
     private final String targetId; // todo 频道Id，也有可能是 私聊
 
-    public MessageBtnClickEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public MessageBtnClickEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         msgId = body.get("value").asText();
         userId = body.get("msg_id").asText();

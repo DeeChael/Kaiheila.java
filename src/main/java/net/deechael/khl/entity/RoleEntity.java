@@ -1,14 +1,10 @@
 package net.deechael.khl.entity;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.api.Role;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
-import net.deechael.khl.client.http.HttpCall;
-import net.deechael.khl.client.http.RequestBuilder;
 import net.deechael.khl.core.KaiheilaObject;
-import net.deechael.khl.core.OperationResult;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.restful.RestRoute;
 
 public class RoleEntity extends KaiheilaObject implements Role {
@@ -22,8 +18,8 @@ public class RoleEntity extends KaiheilaObject implements Role {
     private int mentionable;
     private int permissions;
 
-    public RoleEntity(KaiheilaBot rabbit) {
-        super(rabbit);
+    public RoleEntity(Gateway gateway) {
+        super(gateway);
     }
 
     public int getRoleId() {
@@ -167,48 +163,28 @@ public class RoleEntity extends KaiheilaObject implements Role {
         this.permissions = permissions;
     }
 
-    public OperationResult grantUser(User user) {
-        return this.grantUser(user.getId());
+    public void grantUser(User user) {
+        this.grantUser(user.getId());
     }
 
-    public OperationResult grantUser(String uid) {
-        HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.GuildRole.GRANT_GUILD_ROLE)
-                .withData("guild_id", guild.getId())
-                .withData("user_id", uid)
-                .withData("role_id", String.valueOf(this.getId()))
-                .build();
-        try {
-            JsonNode data = callRestApi(req);
-            if (handleResult(data))
-                return OperationResult.success(data.get("data"));
-            else
-                return OperationResult.failed();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return OperationResult.failed();
-        }
+    public void grantUser(String uid) {
+        this.getGateway().executeRequest(RestRoute.GuildRole.GRANT_GUILD_ROLE.compile()
+                .withQueryParam("guild_id", guild.getId())
+                .withQueryParam("user_id", uid)
+                .withQueryParam("role_id", String.valueOf(this.getId()))
+        );
     }
 
-    public OperationResult revokeUser(User user) {
-        return this.revokeUser(user.getId());
+    public void revokeUser(User user) {
+        this.revokeUser(user.getId());
     }
 
-    public OperationResult revokeUser(String uid) {
-        HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.GuildRole.REVOKE_GUILD_ROLE)
-                .withData("guild_id", guild.getId())
-                .withData("user_id", uid)
-                .withData("role_id", String.valueOf(this.getId()))
-                .build();
-        try {
-            JsonNode data = callRestApi(req);
-            if (handleResult(data))
-                return OperationResult.success(data.get("data"));
-            else
-                return OperationResult.failed();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return OperationResult.failed();
-        }
+    public void revokeUser(String uid) {
+        this.getGateway().executeRequest(RestRoute.GuildRole.REVOKE_GUILD_ROLE.compile()
+                .withQueryParam("guild_id", guild.getId())
+                .withQueryParam("user_id", uid)
+                .withQueryParam("role_id", String.valueOf(this.getId()))
+        );
     }
 
 }

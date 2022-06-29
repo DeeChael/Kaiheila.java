@@ -18,8 +18,8 @@ package net.deechael.khl.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.util.TimeUtil;
 
 import java.time.LocalDateTime;
@@ -35,8 +35,8 @@ public abstract class AbstractEvent extends KaiheilaObject implements IEvent {
     private final LocalDateTime eventTime;
     private final String eventNonce;
 
-    public AbstractEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit);
+    public AbstractEvent(Gateway gateway, JsonNode node) {
+        super(gateway);
         this.eventChannelType = node.get("channel_type").asText();
         this.eventType = node.get("type").asInt();
         this.eventTargetId = node.get("target_id").asText();
@@ -47,8 +47,8 @@ public abstract class AbstractEvent extends KaiheilaObject implements IEvent {
         this.eventNonce = node.get("nonce").asText();
     }
 
-    protected AbstractEvent(KaiheilaBot rabbit, AbstractEvent event) {
-        super(rabbit);
+    protected AbstractEvent(Gateway gateway, AbstractEvent event) {
+        super(gateway);
         this.eventChannelType = event.eventChannelType;
         this.eventType = event.eventType;
         this.eventTargetId = event.eventTargetId;

@@ -18,9 +18,9 @@ package net.deechael.khl.event.user;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Guild;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 
 public class SelfJoinedGuildEvent extends AbstractEvent {
 
@@ -28,8 +28,8 @@ public class SelfJoinedGuildEvent extends AbstractEvent {
 
     private final String guildId;
 
-    public SelfJoinedGuildEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public SelfJoinedGuildEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         guildId = body.get("guild_id").asText();
     }

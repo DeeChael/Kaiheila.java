@@ -1,6 +1,6 @@
 package net.deechael.khl.task;
 
-import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.gate.Gateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +15,8 @@ class KaiheilaAsyncTask extends KaiheilaTask {
     private final LinkedList<Worker> workers = new LinkedList<Worker>();
     private final Map<Integer, KaiheilaTask> runners;
 
-    KaiheilaAsyncTask(final Map<Integer, KaiheilaTask> runners, final KaiheilaBot kaiheilaBot, final Object task, final int id, final long delay) {
-        super(kaiheilaBot, task, id, delay);
+    KaiheilaAsyncTask(final Map<Integer, KaiheilaTask> runners, final Gateway gateway, final Object task, final int id, final long delay) {
+        super(gateway, task, id, delay);
         this.runners = runners;
     }
 

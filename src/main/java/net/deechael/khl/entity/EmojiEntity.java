@@ -2,8 +2,8 @@ package net.deechael.khl.entity;
 
 import net.deechael.khl.api.Emoji;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.gate.Gateway;
 
 public class EmojiEntity extends KaiheilaObject implements Emoji {
 
@@ -12,8 +12,8 @@ public class EmojiEntity extends KaiheilaObject implements Emoji {
     private String name;
     private String userId;
 
-    public EmojiEntity(KaiheilaBot rabbit) {
-        super(rabbit);
+    public EmojiEntity(Gateway gateway) {
+        super(gateway);
     }
 
     /**
@@ -65,6 +65,6 @@ public class EmojiEntity extends KaiheilaObject implements Emoji {
      */
     @Override
     public User getUploader() {
-        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(userId);
+        return getGateway().getKaiheilaBot().getCacheManager().getUserCache().getElementById(userId);
     }
 }

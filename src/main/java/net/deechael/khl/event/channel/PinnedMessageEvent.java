@@ -19,9 +19,9 @@ package net.deechael.khl.event.channel;
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 
 public class PinnedMessageEvent extends AbstractEvent {
 
@@ -31,8 +31,8 @@ public class PinnedMessageEvent extends AbstractEvent {
     private final String operatorId;
     private final String msgId;
 
-    public PinnedMessageEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public PinnedMessageEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         msgId = body.get("msg_id").asText();
         operatorId = body.get("operator_id").asText();

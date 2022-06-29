@@ -3,6 +3,7 @@ package net.deechael.khl.restful;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.restful.ratelimit.RateLimiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +19,12 @@ public class Requester extends KaiheilaObject {
     private final RateLimiter rateLimiter = new RateLimiter();
     private final ScheduledExecutorService threadPool;
 
-    public Requester(KaiheilaBot rabbit) {
-        this(rabbit, 4);
+    public Requester(Gateway gateway) {
+        this(gateway, 4);
     }
 
-    public Requester(KaiheilaBot rabbit, int workerThread) {
-        super(rabbit);
+    public Requester(Gateway gateway, int workerThread) {
+        super(gateway);
         this.threadPool = Executors.newScheduledThreadPool(workerThread, Requester::requesterThreadFactory);
     }
 

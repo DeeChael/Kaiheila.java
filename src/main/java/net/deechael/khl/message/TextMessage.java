@@ -14,11 +14,6 @@ public class TextMessage implements Message {
     }
 
     @Override
-    public String asString() {
-        return this.getContent();
-    }
-
-    @Override
     public MessageTypes getType() {
         return MessageTypes.TEXT;
     }

@@ -18,11 +18,11 @@ package net.deechael.khl.event.guild;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Guild;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.entity.GuildEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 
 public class UpdatedGuildEvent extends AbstractEvent {
 
@@ -30,8 +30,8 @@ public class UpdatedGuildEvent extends AbstractEvent {
 
     private final String guildId;
 
-    public UpdatedGuildEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public UpdatedGuildEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         guildId = body.get("id").asText();
     }

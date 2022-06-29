@@ -25,8 +25,10 @@ import net.deechael.khl.client.http.HttpHeaders;
 import net.deechael.khl.client.http.IHttpClient;
 import net.deechael.khl.client.ws.IWebSocketClient;
 import net.deechael.khl.command.CommandManager;
+import net.deechael.khl.command.KaiheilaCommandBuilder;
 import net.deechael.khl.configurer.KaiheilaConfiguration;
 import net.deechael.khl.event.MessageHandler;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.hook.EventListener;
 import net.deechael.khl.hook.EventManager;
 import net.deechael.khl.message.MessageTypes;
@@ -61,16 +63,19 @@ public class KaiheilaBot implements Bot {
 
     private boolean botLogged;
 
+    private final Gateway gateway;
+
     public KaiheilaBot(KaiheilaConfiguration kaiheilaConfiguration) {
+        Gateway gateway = new Gateway(this);
         this.kaiheilaConfiguration = kaiheilaConfiguration;
         this.httpClient = kaiheilaConfiguration.getClientConfigurer().getHttpClientFactory().buildHttpClient();
         this.websocketClient = kaiheilaConfiguration.getClientConfigurer().getWebSocketClientFactory().buildWebSocketClient();
         this.jsonEngine = buildJsonEngine();
-        this.entitiesBuilder = new EntitiesBuilder(this);
-        this.requester = new Requester(this, 4);
-        this.cacheManager = new CacheManager(this);
-        this.eventManager = new EventManager(this);
-        this.commandManager = new CommandManager(this);
+        this.entitiesBuilder = new EntitiesBuilder(gateway);
+        this.requester = new Requester(gateway, 4);
+        this.cacheManager = new CacheManager(gateway);
+        this.eventManager = new EventManager(gateway);
+        this.commandManager = new CommandManager(gateway);
         this.defaultMessageHandler = new MessageHandler(new MessageTypes[]{MessageTypes.TEXT, MessageTypes.KMD}) {
             @Override
             public void onMessage(Channel channel, User user, String message) {
@@ -78,7 +83,9 @@ public class KaiheilaBot implements Bot {
             }
         };
         this.getEventManager().register(defaultMessageHandler);
-        this.scheduler = new KaiheilaScheduler(this);
+        this.scheduler = new KaiheilaScheduler(gateway);
+        this.gateway = gateway;
+        this.gateway.initialize();
     }
 
     /**
@@ -214,5 +221,25 @@ public class KaiheilaBot implements Bot {
     @Override
     public List<Guild> getGuilds() {
         return getCacheManager().getGuildCache().getAll().stream().map(id -> getCacheManager().getGuildCache().getElementById(id)).collect(Collectors.toList());
+    }
+
+    @Override
+    public void registerCommand(KaiheilaCommandBuilder command) {
+        this.getCommandManager().register(command);
+    }
+
+    @Override
+    public Channel getChannel(String id) {
+        return getCacheManager().getChannelCache().getElementById(id);
+    }
+
+    @Override
+    public User getUser(String id) {
+        return getCacheManager().getUserCache().getElementById(id);
+    }
+
+    @Override
+    public Gateway getGateway() {
+        return this.gateway;
     }
 }

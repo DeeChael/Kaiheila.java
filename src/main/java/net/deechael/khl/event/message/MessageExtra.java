@@ -20,8 +20,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.api.Role;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.gate.Gateway;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +30,8 @@ public class MessageExtra extends KaiheilaObject {
     protected int type;
     protected String authorId;
 
-    public MessageExtra(KaiheilaBot rabbit) {
-        super(rabbit);
+    public MessageExtra(Gateway gateway) {
+        super(gateway);
     }
 
     public int getType() {
@@ -42,8 +42,8 @@ public class MessageExtra extends KaiheilaObject {
         return getKaiheilaBot().getCacheManager().getUserCache().getElementById(authorId);
     }
 
-    public static PersonalMessageExtra buildPersonalMessageExtra(KaiheilaBot rabbit, JsonNode node) {
-        PersonalMessageExtra r = new PersonalMessageExtra(rabbit);
+    public static PersonalMessageExtra buildPersonalMessageExtra(Gateway gateway, JsonNode node) {
+        PersonalMessageExtra r = new PersonalMessageExtra(gateway);
         JsonNode extra = node.get("extra");
         r.type = extra.get("type").asInt();
         r.chatCode = extra.get("code").asText();
@@ -51,17 +51,17 @@ public class MessageExtra extends KaiheilaObject {
         return r;
     }
 
-    public static MessageExtra buildMessageExtra(KaiheilaBot rabbit, JsonNode node) {
+    public static MessageExtra buildMessageExtra(Gateway gateway, JsonNode node) {
         JsonNode extra = node.get("extra");
         if (node.get("channel_type").asText().equals("PERSON")) {
-            return buildPersonalMessageExtra(rabbit, node);
+            return buildPersonalMessageExtra(gateway, node);
         } else {
-            return buildChannelMessageExtra(rabbit, node);
+            return buildChannelMessageExtra(gateway, node);
         }
     }
 
-    public static ChannelMessageExtra buildChannelMessageExtra(KaiheilaBot rabbit, JsonNode node) {
-        ChannelMessageExtra r = new ChannelMessageExtra(rabbit);
+    public static ChannelMessageExtra buildChannelMessageExtra(Gateway gateway, JsonNode node) {
+        ChannelMessageExtra r = new ChannelMessageExtra(gateway);
         JsonNode extra = node.get("extra");
         r.type = extra.get("type").asInt();
         r.guildId = extra.get("guild_id").asText();
@@ -118,16 +118,16 @@ public class MessageExtra extends KaiheilaObject {
             return mentionHere;
         }
 
-        public ChannelMessageExtra(KaiheilaBot rabbit) {
-            super(rabbit);
+        public ChannelMessageExtra(Gateway gateway) {
+            super(gateway);
         }
     }
 
     public static class PersonalMessageExtra extends MessageExtra {
         String chatCode;
 
-        public PersonalMessageExtra(KaiheilaBot rabbit) {
-            super(rabbit);
+        public PersonalMessageExtra(Gateway gateway) {
+            super(gateway);
         }
 
         public String getChatCode() {

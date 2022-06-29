@@ -18,9 +18,9 @@ package net.deechael.khl.event.message;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Channel;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 
 public class TextMessageEvent extends AbstractEvent {
     public enum Type {
@@ -47,15 +47,15 @@ public class TextMessageEvent extends AbstractEvent {
     private final MessageExtra extra;
     public final String messageID;
 
-    public TextMessageEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public TextMessageEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         type = Type.from(getEventChannelType());
         messageID = node.get("msg_id").asText();
-        this.extra = MessageExtra.buildMessageExtra(rabbit, node);
+        this.extra = MessageExtra.buildMessageExtra(gateway, node);
     }
 
-    protected TextMessageEvent(KaiheilaBot rabbit, TextMessageEvent event) {
-        super(rabbit, event);
+    protected TextMessageEvent(Gateway gateway, TextMessageEvent event) {
+        super(gateway, event);
         this.type = event.type;
         this.extra = event.extra;
         this.messageID = event.messageID;
@@ -66,11 +66,11 @@ public class TextMessageEvent extends AbstractEvent {
     }
 
     public PrivateMessageEvent asPrivateMessageEvent() {
-        return new PrivateMessageEvent(getKaiheilaBot(), this);
+        return new PrivateMessageEvent(getGateway(), this);
     }
 
     public ChannelMessageEvent asChannelMessageEvent() {
-        return new ChannelMessageEvent(getKaiheilaBot(), this);
+        return new ChannelMessageEvent(getGateway(), this);
     }
 
     public Channel getChannel() {
@@ -84,8 +84,8 @@ public class TextMessageEvent extends AbstractEvent {
 
     public static class PrivateMessageEvent extends TextMessageEvent {
 
-        public PrivateMessageEvent(KaiheilaBot rabbit, TextMessageEvent event) {
-            super(rabbit, event);
+        public PrivateMessageEvent(Gateway gateway, TextMessageEvent event) {
+            super(gateway, event);
         }
 
         @Override
@@ -96,8 +96,8 @@ public class TextMessageEvent extends AbstractEvent {
 
     public static class ChannelMessageEvent extends TextMessageEvent {
 
-        public ChannelMessageEvent(KaiheilaBot rabbit, TextMessageEvent event) {
-            super(rabbit, event);
+        public ChannelMessageEvent(Gateway gateway, TextMessageEvent event) {
+            super(gateway, event);
         }
 
         @Override

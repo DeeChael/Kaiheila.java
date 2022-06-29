@@ -1,10 +1,10 @@
 package net.deechael.khl.restful;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.client.http.HttpHeaders;
 import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.gate.Gateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +17,8 @@ public abstract class RestfulService extends KaiheilaObject {
     protected final Logger Log = LoggerFactory.getLogger(this.getClass());
     protected final HttpHeaders defaultHeaders = new HttpHeaders();
 
-    public RestfulService(KaiheilaBot rabbit) {
-        super(rabbit);
+    public RestfulService(Gateway gateway) {
+        super(gateway);
         if (getKaiheilaBot().getConfiguration().getApiConfigurer().getToken().isEmpty()) Log.warn("[数据同步] 未设置token");
         defaultHeaders.addHeader("Authorization", "Bot " + getKaiheilaBot().getConfiguration().getApiConfigurer().getToken());
     }

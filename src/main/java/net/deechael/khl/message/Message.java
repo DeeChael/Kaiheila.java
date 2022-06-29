@@ -4,8 +4,6 @@ public interface Message {
 
     String getContent();
 
-    String asString();
-
     MessageTypes getType();
 
 }

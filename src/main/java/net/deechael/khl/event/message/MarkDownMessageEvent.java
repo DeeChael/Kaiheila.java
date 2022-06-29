@@ -17,17 +17,17 @@
 package net.deechael.khl.event.message;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 
 public class MarkDownMessageEvent extends AbstractEvent {
 
     private final MessageExtra extra;
 
-    public MarkDownMessageEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
-        this.extra = MessageExtra.buildMessageExtra(rabbit, node);
+    public MarkDownMessageEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
+        this.extra = MessageExtra.buildMessageExtra(gateway, node);
     }
 
     public MessageExtra getExtra() {

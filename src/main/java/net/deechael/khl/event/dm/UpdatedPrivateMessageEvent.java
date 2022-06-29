@@ -18,9 +18,9 @@ package net.deechael.khl.event.dm;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.util.TimeUtil;
 
 import java.time.LocalDateTime;
@@ -36,8 +36,8 @@ public class UpdatedPrivateMessageEvent extends AbstractEvent {
     private final String chatCode;
     private final LocalDateTime updatedAt;
 
-    public UpdatedPrivateMessageEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public UpdatedPrivateMessageEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         msgId = body.get("msg_id").asText();
         authorId = body.get("author_id").asText();
@@ -52,11 +52,11 @@ public class UpdatedPrivateMessageEvent extends AbstractEvent {
     }
 
     public User getAuthor() {
-        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(authorId);
+        return getGateway().getKaiheilaBot().getCacheManager().getUserCache().getElementById(authorId);
     }
 
     public User getTarget() {
-        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(targetId);
+        return getGateway().getKaiheilaBot().getCacheManager().getUserCache().getElementById(targetId);
     }
 
     public String getContent() {

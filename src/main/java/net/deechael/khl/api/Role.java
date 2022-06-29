@@ -1,11 +1,9 @@
 package net.deechael.khl.api;
 
-import net.deechael.khl.core.OperationResult;
-
 /**
  * 服务器角色，用户自定义创建的角色（用户标签）
  */
-public interface Role {
+public interface Role extends KHLObject {
 
     /**
      * 开黑啦唯一标识符 角色 Id
@@ -65,12 +63,12 @@ public interface Role {
 
     String getGuildId();
 
-    OperationResult grantUser(User user);
+    void grantUser(User user);
 
-    OperationResult grantUser(String uid);
+    void grantUser(String uid);
 
-    OperationResult revokeUser(User user);
+    void revokeUser(User user);
 
-    OperationResult revokeUser(String uid);
+    void revokeUser(String uid);
 
 }

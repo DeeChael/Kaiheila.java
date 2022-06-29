@@ -20,9 +20,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.Emoji;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 
 public class DeletedReactionEvent extends AbstractEvent {
 
@@ -33,8 +33,8 @@ public class DeletedReactionEvent extends AbstractEvent {
     private final String channelId;
     private final String emojiId;
 
-    public DeletedReactionEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public DeletedReactionEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         msgId = body.get("msg_id").asText();
         userId = body.get("user_id").asText();

@@ -3,11 +3,9 @@ package net.deechael.khl.hook;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.event.FailureEvent;
 import net.deechael.khl.event.IEvent;
-import net.deechael.khl.event.UnknownEvent;
 import net.deechael.khl.event.channel.*;
 import net.deechael.khl.event.dm.DeletedPrivateMessageEvent;
 import net.deechael.khl.event.dm.PrivateAddedReactionEvent;
@@ -18,11 +16,11 @@ import net.deechael.khl.event.guild.DeletedBlockListEvent;
 import net.deechael.khl.event.guild.DeletedGuildEvent;
 import net.deechael.khl.event.guild.UpdatedGuildEvent;
 import net.deechael.khl.event.member.*;
-import net.deechael.khl.event.message.*;
 import net.deechael.khl.event.role.AddedRoleEvent;
 import net.deechael.khl.event.role.DeletedRoleEvent;
 import net.deechael.khl.event.role.UpdatedRoleEvent;
 import net.deechael.khl.event.user.*;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.hook.queue.SequenceMessageQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +37,8 @@ public class EventParser extends KaiheilaObject implements Runnable {
     private final SequenceMessageQueue<String> messageQueue;
     private final List<EventListener> listeners;
 
-    public EventParser(KaiheilaBot rabbit, SequenceMessageQueue<String> messageQueue, List<EventListener> listeners) {
-        super(rabbit);
+    public EventParser(Gateway gateway, SequenceMessageQueue<String> messageQueue, List<EventListener> listeners) {
+        super(gateway);
         this.messageQueue = messageQueue;
         this.listeners = listeners;
         this.handleThread = new Thread(this);
@@ -60,7 +58,7 @@ public class EventParser extends KaiheilaObject implements Runnable {
     }
 
     private void eventHandler(String data) {
-        ObjectMapper jsonEngine = getKaiheilaBot().getJsonEngine();
+        ObjectMapper jsonEngine = getGateway().getKaiheilaBot().getJsonEngine();
         JsonNode dataNode;
         try {
             dataNode = jsonEngine.readTree(data);
@@ -71,7 +69,7 @@ public class EventParser extends KaiheilaObject implements Runnable {
             return;
         }
         IEvent event = createEventObject(dataNode);
-        this.listeners.forEach(eventListener -> eventListener.handle(getKaiheilaBot(), event));
+        this.listeners.forEach(eventListener -> eventListener.handle(getGateway().getKaiheilaBot(), event));
     }
 
     private boolean isBotEvent(JsonNode data) {
@@ -85,37 +83,39 @@ public class EventParser extends KaiheilaObject implements Runnable {
                 String sType = dataNode.get("extra").get("type").asText();
                 Class<? extends IEvent> clazz = eventClasses.get(sType);
                 try {
-                    IEvent event = clazz.getConstructor(KaiheilaBot.class, JsonNode.class).newInstance(getKaiheilaBot(), dataNode);
-                    Log.info("系统事件解析成功 [{}]", event.getClass().getSimpleName());
+                    IEvent event = clazz.getConstructor(Gateway.class, JsonNode.class).newInstance(getGateway(), dataNode);
                     return event.handleSystemEvent(dataNode);
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                          NoSuchMethodException e) {
                     e.printStackTrace();
-                    return new FailureEvent(getKaiheilaBot(), dataNode, e);
+                    return new FailureEvent(getGateway(), dataNode, e);
                 }
             }
+            /*
             switch (type) {
                 case 1:
-                    if (isBotEvent(dataNode)) return new BotMessageEvent(getKaiheilaBot(), dataNode);
-                    return new TextMessageEvent(getKaiheilaBot(), dataNode);
+                    if (isBotEvent(dataNode)) return new BotMessageEvent(getGateway().getKaiheilaBot(), dataNode);
+                    return new TextMessageEvent(getGateway().getKaiheilaBot(), dataNode);
                 case 2:
-                    return new ImageMessageEvent(getKaiheilaBot(), dataNode);
+                    return new ImageMessageEvent(getGateway().getKaiheilaBot(), dataNode);
                 case 3:
-                    return new VideoMessageEvent(getKaiheilaBot(), dataNode);
+                    return new VideoMessageEvent(getGateway().getKaiheilaBot(), dataNode);
                 case 4:
                 case 8:
-                    return new FileMessageEvent(getKaiheilaBot(), dataNode);
+                    return new FileMessageEvent(getGateway().getKaiheilaBot(), dataNode);
                 case 9:
-                    return new MarkDownMessageEvent(getKaiheilaBot(), dataNode);
+                    return new MarkDownMessageEvent(getGateway().getKaiheilaBot(), dataNode);
                 case 10:
-                    return new CardMessageEvent(getKaiheilaBot(), dataNode);
+                    return new CardMessageEvent(getGateway().getKaiheilaBot(), dataNode);
                 default:
-                    return new UnknownEvent(getKaiheilaBot(), dataNode);
+                    return new UnknownEvent(getGateway().getKaiheilaBot(), dataNode);
             }
+            */
         } catch (Exception e) {
             Log.error("事件解析失败 [{}]", dataNode);
-            return new FailureEvent(getKaiheilaBot(), dataNode, e);
+            return new FailureEvent(getGateway(), dataNode, e);
         }
+        return new FailureEvent(getGateway(), dataNode, new RuntimeException("Unknown error"));
     }
 
     public Thread getHandleThread() {

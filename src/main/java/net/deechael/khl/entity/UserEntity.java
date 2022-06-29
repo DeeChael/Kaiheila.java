@@ -2,12 +2,10 @@ package net.deechael.khl.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
-import net.deechael.khl.client.http.HttpCall;
-import net.deechael.khl.client.http.RequestBuilder;
 import net.deechael.khl.core.KaiheilaObject;
-import net.deechael.khl.core.OperationResult;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.message.Message;
+import net.deechael.khl.message.ReceivedMessage;
 import net.deechael.khl.message.TextMessage;
 import net.deechael.khl.message.kmarkdown.KMarkdownMessage;
 import net.deechael.khl.restful.RestRoute;
@@ -25,8 +23,8 @@ public class UserEntity extends KaiheilaObject implements User {
     private String vipAvatar;
     private boolean mobileVerified;
 
-    public UserEntity(KaiheilaBot rabbit) {
-        super(rabbit);
+    public UserEntity(Gateway gateway) {
+        super(gateway);
     }
 
     public String getName() {
@@ -204,83 +202,47 @@ public class UserEntity extends KaiheilaObject implements User {
     }
 
 
-    public OperationResult sendMessage(String message, boolean isKMarkdown) {
+    public ReceivedMessage sendMessage(String message, boolean isKMarkdown) {
         return this.sendMessage(isKMarkdown ? KMarkdownMessage.create(message) : new TextMessage(message));
     }
 
-    public OperationResult sendMessage(Message message) {
-        HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.DirectMessage.SEND_DIRECT_MESSAGE)
-                .withData("target_id", this.getId())
-                .withData("nonce", "bot-message")
-                .withData("content", message.asString())
-                .withData("type", message.getType().getType())
-                .build();
-        try {
-            JsonNode data = callRestApi(req);
-            if (handleResult(data))
-                return OperationResult.success(data.get("data"));
-            else
-                return OperationResult.failed();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return OperationResult.failed();
-        }
+    public ReceivedMessage sendMessage(Message message) {
+        JsonNode data = this.getGateway().executeRequest(RestRoute.DirectMessage.SEND_DIRECT_MESSAGE.compile()
+                .withQueryParam("target_id", this.getId())
+                .withQueryParam("nonce", "bot-message")
+                .withQueryParam("content", message.getContent())
+                .withQueryParam("type", message.getType().getType())
+        );
+        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf().getUser(), null);
     }
 
-    public OperationResult reply(String message, String msgId, boolean isKMarkdown) {
+    public ReceivedMessage reply(String message, String msgId, boolean isKMarkdown) {
         return this.reply(isKMarkdown ? KMarkdownMessage.create(message) : new TextMessage(message), msgId);
     }
 
-    public OperationResult reply(Message message, String msgId) {
-        HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.DirectMessage.SEND_DIRECT_MESSAGE)
-                .withData("target_id", this.getId())
-                .withData("nonce", "bot-message")
-                .withData("content", message.asString())
-                .withData("type", message.getType().getType())
-                .withData("quote", msgId)
-                .build();
-        try {
-            JsonNode data = callRestApi(req);
-            if (handleResult(data))
-                return OperationResult.success(data.get("data"));
-            else
-                return OperationResult.failed();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return OperationResult.failed();
-        }
+    public ReceivedMessage reply(Message message, String msgId) {
+        JsonNode data = this.getGateway().executeRequest(RestRoute.DirectMessage.SEND_DIRECT_MESSAGE.compile()
+                .withQueryParam("target_id", this.getId())
+                .withQueryParam("nonce", "bot-message")
+                .withQueryParam("content", message.getContent())
+                .withQueryParam("type", message.getType().getType())
+                .withQueryParam("quote", msgId)
+        );
+        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf().getUser(), null);
     }
 
-    public OperationResult updateIntimacy(int value) {
-        RestRoute.CompiledRoute route = RestRoute.Intimacy.UPDATE_USER_INTIMACY.compile()
+    public void updateIntimacy(int value) {
+        this.getGateway().executeRequest(RestRoute.Intimacy.UPDATE_USER_INTIMACY.compile()
                 .withQueryParam("user_id", this.getId())
-                .withQueryParam("score", value);
-        HttpCall req = HttpCall.createRequest(route.getMethod(), getKaiheilaBot().getConfiguration().getApiConfigurer().getBaseUrl() + route.getQueryStringCompleteRoute(), this.getDefaultHeaders());
-        try {
-            JsonNode data = callRestApi(req);
-            if (handleResult(data))
-                return OperationResult.success(data.get("data"));
-            else
-                return OperationResult.failed();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return OperationResult.failed();
-        }
+                .withQueryParam("score", value)
+        );
     }
 
     public int getUserIntimacy() {
-        HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.Intimacy.INTIMACY_LIST)
-                .withQuery("user_id", this.getId())
-                .build();
-        try {
-            JsonNode data = callRestApi(req);
-            if (handleResult(data)) {
-                return data.get("score").asInt();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return -1;
+        JsonNode data = this.getGateway().executeRequest(RestRoute.Intimacy.INTIMACY_LIST.compile()
+                .withQueryParam("user_id", this.getId())
+        );
+        return data.get("score").asInt();
     }
 
 }

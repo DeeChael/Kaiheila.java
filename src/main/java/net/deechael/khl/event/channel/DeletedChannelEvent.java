@@ -18,12 +18,12 @@ package net.deechael.khl.event.channel;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Channel;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.entity.ChannelEntity;
 import net.deechael.khl.entity.GuildEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.util.TimeUtil;
 
 import java.time.LocalDateTime;
@@ -35,8 +35,8 @@ public class DeletedChannelEvent extends AbstractEvent {
     private final String channelId;
     private final LocalDateTime deletedAt;
 
-    public DeletedChannelEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public DeletedChannelEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         channelId = body.get("id").asText();
         deletedAt = TimeUtil.convertUnixTimeMillisecondLocalDateTime(body.get("deleted_at").asLong());

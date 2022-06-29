@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * 服务器
  */
-public interface Guild {
+public interface Guild extends KHLObject {
 
     /**
      * 开黑啦唯一标识符 服务器 Id

@@ -18,9 +18,9 @@ package net.deechael.khl.event.dm;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.util.TimeUtil;
 
 import java.time.LocalDateTime;
@@ -35,8 +35,8 @@ public class DeletedPrivateMessageEvent extends AbstractEvent {
     private final String chatCode;
     private final LocalDateTime deletedAt;
 
-    public DeletedPrivateMessageEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public DeletedPrivateMessageEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         msgId = body.get("msg_id").asText();
         authorId = body.get("author_id").asText();

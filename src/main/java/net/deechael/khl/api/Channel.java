@@ -1,12 +1,12 @@
 package net.deechael.khl.api;
 
-import net.deechael.khl.core.OperationResult;
 import net.deechael.khl.message.Message;
+import net.deechael.khl.message.ReceivedMessage;
 
 /**
  * 服务器表情，用户可以创建文本频道或语言频道
  */
-public interface Channel {
+public interface Channel extends KHLObject {
 
     /**
      * 开黑啦唯一标识符 频道 Id
@@ -74,23 +74,23 @@ public interface Channel {
      */
     Guild getGuild();
 
-    OperationResult sendMessage(String message, boolean isKMarkdown);
+    ReceivedMessage sendMessage(String message, boolean isKMarkdown);
 
-    OperationResult sendMessage(Message message);
+    ReceivedMessage sendMessage(Message message);
 
-    OperationResult sendTempMessage(String message, String uid, boolean isKMarkdown);
+    ReceivedMessage sendTempMessage(String message, String uid, boolean isKMarkdown);
 
-    OperationResult sendTempMessage(String message, User user, boolean isKMarkdown);
+    ReceivedMessage sendTempMessage(String message, User user, boolean isKMarkdown);
 
-    OperationResult sendTempMessage(Message message, User user);
+    ReceivedMessage sendTempMessage(Message message, User user);
 
-    OperationResult sendTempMessage(Message message, String uid);
+    ReceivedMessage sendTempMessage(Message message, String uid);
 
-    OperationResult reply(Message message, String msgId);
+    ReceivedMessage reply(Message message, String msgId);
 
-    OperationResult replyTemp(Message message, User user, String msgId);
+    ReceivedMessage replyTemp(Message message, User user, String msgId);
 
-    OperationResult replyTemp(Message message, String uid, String msgId);
+    ReceivedMessage replyTemp(Message message, String uid, String msgId);
 
     String createChannelInvite(InviteDuration duration, InviteTimes times);
 

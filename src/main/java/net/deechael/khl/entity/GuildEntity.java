@@ -5,10 +5,8 @@ import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.api.Role;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
-import net.deechael.khl.client.http.HttpCall;
-import net.deechael.khl.client.http.RequestBuilder;
 import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.restful.RestRoute;
 
 import java.util.ArrayList;
@@ -36,8 +34,8 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     private int onlineCount;
     private int offlineCount;
 
-    public GuildEntity(KaiheilaBot rabbit) {
-        super(rabbit);
+    public GuildEntity(Gateway gateway) {
+        super(gateway);
     }
 
     /**
@@ -79,7 +77,7 @@ public class GuildEntity extends KaiheilaObject implements Guild {
      */
     @Override
     public User getCreator() {
-        return getKaiheilaBot().getCacheManager().getUserCache().getElementById(masterId);
+        return getGateway().getKaiheilaBot().getCacheManager().getUserCache().getElementById(masterId);
     }
 
     /**
@@ -131,7 +129,7 @@ public class GuildEntity extends KaiheilaObject implements Guild {
      */
     @Override
     public Channel getDefaultChannel() {
-        return getKaiheilaBot().getCacheManager().getChannelCache().getElementById(defaultChannelId);
+        return getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(defaultChannelId);
     }
 
     /**
@@ -141,7 +139,7 @@ public class GuildEntity extends KaiheilaObject implements Guild {
      */
     @Override
     public Channel getWelcomeChannel() {
-        return getKaiheilaBot().getCacheManager().getChannelCache().getElementById(welcomeChannelId);
+        return getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(welcomeChannelId);
     }
 
     /**
@@ -265,12 +263,12 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     }
 
     public List<Channel> getChannels() {
-        return channels.stream().map(id -> (Channel) getKaiheilaBot().getCacheManager().getChannelCache().getElementById(id)).collect(Collectors.toList());
+        return channels.stream().map(id -> (Channel) getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(id)).collect(Collectors.toList());
     }
 
     @Override
     public List<GuildUserEntity> getMembers() {
-        return new ArrayList<>(getKaiheilaBot().getCacheManager().getGuildUsersCache().get(this.id).values());
+        return new ArrayList<>(getGateway().getKaiheilaBot().getCacheManager().getGuildUsersCache().get(this.id).values());
     }
 
     public List<String> getChannelIDs() {
@@ -302,40 +300,22 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     }
 
     public String createServerInvite(Channel.InviteDuration duration, Channel.InviteTimes times) {
-        HttpCall req = RequestBuilder.create(getKaiheilaBot(), RestRoute.Invite.CREATE_INVITE)
-                .withData("guild_id", this.getId())
-                .withData("duration", duration)
-                .withData("setting_times", times)
-                .build();
-        try {
-            JsonNode data = callRestApi(req);
-            if (handleResult(data)) {
-                return data.get("data").get("url").asText();
-            } else {
-                Log.error("Failed to create server invite! Reason: {}", data.get("message").asText());
-            }
-        } catch (InterruptedException e) {
-            Log.error("Failed to create server invite! Reason: {}", e.getMessage());
-            e.printStackTrace();
-        }
-        return null;
+        JsonNode data = this.getGateway().executeRequest(RestRoute.Invite.CREATE_INVITE.compile()
+                .withQueryParam("guild_id", this.getId())
+                .withQueryParam("duration", duration)
+                .withQueryParam("setting_times", times)
+        );
+        return data.get("url").asText();
     }
 
     public List<Channel> getJoinedChannel(User user) {
         List<Channel> channels = new ArrayList<>();
-        try {
-            RestRoute.CompiledRoute getJoinedChannelRoute = RestRoute.ChannelUser.GET_JOINED_CHANNEL.compile()
-                    .withQueryParam("guild_id", this.getId())
-                    .withQueryParam("user_id", user.getId());
-            HttpCall getJoinedChannelRequest = HttpCall.createRequest(getJoinedChannelRoute.getMethod(), getCompleteUrl(getJoinedChannelRoute), this.defaultHeaders);
-            List<JsonNode> channelList = getRestJsonResponse(getJoinedChannelRoute, getJoinedChannelRequest);
-            for (JsonNode data : channelList) {
-                for (JsonNode channelData : data.get("data").get("items")) {
-                    channels.add(getKaiheilaBot().getEntitiesBuilder().buildChannelEntity(channelData));
-                }
-            }
-        } catch (InterruptedException e) {
-            Log.error("Errors appeared when getting the channels user joined: {}", e.getMessage());
+        List<JsonNode> data = this.getGateway().executePaginationRequest(RestRoute.ChannelUser.GET_JOINED_CHANNEL.compile()
+                .withQueryParam("guild_id", this.getId())
+                .withQueryParam("user_id", user.getId())
+        );
+        for (JsonNode channelData : data) {
+            channels.add(getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(channelData.get("id").asText()));
         }
         return channels;
     }

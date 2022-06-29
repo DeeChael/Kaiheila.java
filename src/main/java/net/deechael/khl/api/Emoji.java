@@ -3,7 +3,7 @@ package net.deechael.khl.api;
 /**
  * 服务器表情，用户自定义上传的表情
  */
-public interface Emoji {
+public interface Emoji extends KHLObject {
 
     /**
      * 开黑啦唯一标识符 Emoji Id

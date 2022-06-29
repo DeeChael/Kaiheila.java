@@ -18,11 +18,11 @@ package net.deechael.khl.event.role;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Role;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.entity.RoleEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 
 public class UpdatedRoleEvent extends AbstractEvent {
 
@@ -30,21 +30,21 @@ public class UpdatedRoleEvent extends AbstractEvent {
 
     private final Integer roleId;
 
-    public UpdatedRoleEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public UpdatedRoleEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         roleId = body.get("role_id").asInt();
     }
 
     public Role getRole() {
-        return getKaiheilaBot().getCacheManager().getRoleCache().getElementById(roleId);
+        return getGateway().getKaiheilaBot().getCacheManager().getRoleCache().getElementById(roleId);
     }
 
     @Override
     public IEvent handleSystemEvent(JsonNode body) {
         JsonNode node = super.getEventExtraBody(body);
-        RoleEntity roleEntity = getKaiheilaBot().getEntitiesBuilder().buildRoleEntity(node);
-        BaseCache<Integer, RoleEntity> roleCache = (BaseCache<Integer, RoleEntity>) getKaiheilaBot().getCacheManager().getRoleCache();
+        RoleEntity roleEntity = getGateway().getKaiheilaBot().getEntitiesBuilder().buildRoleEntity(node);
+        BaseCache<Integer, RoleEntity> roleCache = (BaseCache<Integer, RoleEntity>) getGateway().getKaiheilaBot().getCacheManager().getRoleCache();
         roleCache.updateElementById(roleEntity.getRoleId(), roleEntity);
         return this;
     }

@@ -18,9 +18,9 @@ package net.deechael.khl.event.guild;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +33,8 @@ public class AddedBlockListEvent extends AbstractEvent {
     private final String remark;
     private final List<String> userId;
 
-    public AddedBlockListEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public AddedBlockListEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         operatorId = body.get("operator_id").asText();
         remark = body.get("remark").asText();

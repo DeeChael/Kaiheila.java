@@ -1,13 +1,11 @@
 package net.deechael.khl.command;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.message.cardmessage.Card;
 import net.deechael.khl.message.cardmessage.CardMessage;
 import net.deechael.khl.message.cardmessage.Theme;
@@ -18,11 +16,9 @@ import net.deechael.khl.message.cardmessage.module.Section;
 import net.deechael.khl.message.kmarkdown.KMarkdownMessage;
 import net.deechael.khl.util.StringUtil;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class CommandManager extends KaiheilaObject {
@@ -33,8 +29,8 @@ public final class CommandManager extends KaiheilaObject {
 
     private final Map<Pattern, String> patterns = new HashMap<>();
 
-    public CommandManager(KaiheilaBot kaiheilaBot) {
-        super(kaiheilaBot);
+    public CommandManager(Gateway gateway) {
+        super(gateway);
         this.commandDispatcher = new CommandDispatcher<>();
     }
 
@@ -82,7 +78,7 @@ public final class CommandManager extends KaiheilaObject {
             }
             if (entry.getKey().matcher(partToBeChecked).matches()) {
                 try {
-                    this.commandDispatcher.execute(entry.getValue() + message.substring(partToBeChecked.length()), new CommandSender(this.getKaiheilaBot(), channel, user));
+                    this.commandDispatcher.execute(entry.getValue() + message.substring(partToBeChecked.length()), new CommandSender(this.getGateway(), channel, user));
                 } catch (CommandSyntaxException e) {
                     CardMessage msg = new CardMessage();
                     Card card = new Card();

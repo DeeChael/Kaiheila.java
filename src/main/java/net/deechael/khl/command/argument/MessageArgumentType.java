@@ -14,7 +14,8 @@ public class MessageArgumentType implements ArgumentType<TextMessage> {
     private static final Collection<String> EXAMPLES = Arrays.asList("Hello worlds!", "foo", "Aaa");
 
 
-    private MessageArgumentType() {}
+    private MessageArgumentType() {
+    }
 
     public static TextMessage getMessage(final CommandContext<?> context, final String name) {
         return context.getArgument(name, TextMessage.class);

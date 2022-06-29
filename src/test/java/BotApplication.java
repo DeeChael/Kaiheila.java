@@ -1,4 +1,5 @@
 import net.deechael.khl.api.Bot;
+import net.deechael.khl.api.Channel;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.bot.KaiheilaBotBuilder;
 import net.deechael.khl.command.Command;

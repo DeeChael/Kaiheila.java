@@ -19,9 +19,9 @@ package net.deechael.khl.event.dm;
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Emoji;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 
 public class PrivateAddedReactionEvent extends AbstractEvent {
 
@@ -32,8 +32,8 @@ public class PrivateAddedReactionEvent extends AbstractEvent {
     private final String chatCode;
     private final String emojiId;
 
-    public PrivateAddedReactionEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public PrivateAddedReactionEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         msgId = body.get("msg_id").asText();
         userId = body.get("user_id").asText();

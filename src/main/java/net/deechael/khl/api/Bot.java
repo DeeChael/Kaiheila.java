@@ -16,6 +16,7 @@
 
 package net.deechael.khl.api;
 
+import net.deechael.khl.command.KaiheilaCommandBuilder;
 import net.deechael.khl.hook.EventListener;
 
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.List;
 /**
  * 开黑啦开放平台控制接口
  */
-public interface Bot {
+public interface Bot extends KHLObject {
 
     /**
      * 使用当前配置登录平台
@@ -64,4 +65,11 @@ public interface Bot {
     Guild getGuild(String id);
 
     List<Guild> getGuilds();
+
+    void registerCommand(KaiheilaCommandBuilder command);
+
+    Channel getChannel(String id);
+
+    User getUser(String id);
+
 }

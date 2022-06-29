@@ -18,11 +18,11 @@ package net.deechael.khl.event.user;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.entity.UserEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,8 +35,8 @@ public class UserUpdatedEvent extends AbstractEvent {
     private final String username;
     private final String avatar;
 
-    public UserUpdatedEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public UserUpdatedEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         userId = body.get("user_id").asText();
         username = body.get("username").asText();

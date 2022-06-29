@@ -18,7 +18,6 @@ package net.deechael.khl.event.guild;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Guild;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.cache.CacheManager;
 import net.deechael.khl.entity.ChannelEntity;
@@ -27,6 +26,7 @@ import net.deechael.khl.entity.GuildEntity;
 import net.deechael.khl.entity.RoleEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 
 public class DeletedGuildEvent extends AbstractEvent {
 
@@ -34,8 +34,8 @@ public class DeletedGuildEvent extends AbstractEvent {
 
     private final String guildId;
 
-    public DeletedGuildEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public DeletedGuildEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         guildId = body.get("id").asText();
     }

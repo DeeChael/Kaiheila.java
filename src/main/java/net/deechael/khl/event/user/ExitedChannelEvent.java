@@ -19,9 +19,9 @@ package net.deechael.khl.event.user;
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.util.TimeUtil;
 
 import java.time.LocalDateTime;
@@ -34,8 +34,8 @@ public class ExitedChannelEvent extends AbstractEvent {
     private final String channelId;
     private final LocalDateTime exitedAt;
 
-    public ExitedChannelEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public ExitedChannelEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         userId = body.get("user_id").asText();
         channelId = body.get("channel_id").asText();

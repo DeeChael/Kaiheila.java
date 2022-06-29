@@ -1,7 +1,7 @@
 package net.deechael.khl.task;
 
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.gate.Gateway;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class KaiheilaRunnable extends KaiheilaObject implements Runnable {
     private Task task;
 
-    public KaiheilaRunnable(KaiheilaBot kaiheilaBot) {
-        super(kaiheilaBot);
+    public KaiheilaRunnable(Gateway gateway) {
+        super(gateway);
     }
 
 

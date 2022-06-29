@@ -3,8 +3,7 @@ package net.deechael.khl.entity;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.api.GuildUser;
 import net.deechael.khl.api.Role;
-import net.deechael.khl.bot.KaiheilaBot;
-import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.gate.Gateway;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,8 +18,8 @@ public class GuildUserEntity extends UserEntity implements GuildUser {
 
     private Guild guild;
 
-    public GuildUserEntity(KaiheilaBot rabbit) {
-        super(rabbit);
+    public GuildUserEntity(Gateway gateway) {
+        super(gateway);
     }
 
     public String getId() {

@@ -18,9 +18,9 @@ package net.deechael.khl.event.channel;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Channel;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 
 public class DeletedMessageEvent extends AbstractEvent {
 
@@ -29,8 +29,8 @@ public class DeletedMessageEvent extends AbstractEvent {
     private final String msgId;
     private final String channelId;
 
-    public DeletedMessageEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public DeletedMessageEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         channelId = body.get("channel_id").asText();
         msgId = body.get("msg_id").asText();

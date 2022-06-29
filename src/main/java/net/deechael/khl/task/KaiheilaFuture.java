@@ -1,6 +1,6 @@
 package net.deechael.khl.task;
 
-import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.gate.Gateway;
 
 import java.util.concurrent.*;
 
@@ -10,8 +10,8 @@ class KaiheilaFuture<T> extends KaiheilaTask implements Future<T> {
     private T value;
     private Exception exception = null;
 
-    KaiheilaFuture(final Callable<T> callable, final KaiheilaBot kaiheilaBot, final int id) {
-        super(kaiheilaBot, null, id, KaiheilaTask.NO_REPEATING);
+    KaiheilaFuture(final Callable<T> callable, final Gateway gateway, final int id) {
+        super(gateway, null, id, KaiheilaTask.NO_REPEATING);
         this.callable = callable;
     }
 

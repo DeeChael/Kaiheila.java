@@ -18,9 +18,9 @@ package net.deechael.khl.event.member;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.User;
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.util.TimeUtil;
 
 import java.time.LocalDateTime;
@@ -32,8 +32,8 @@ public class JoinedGuildEvent extends AbstractEvent {
     private final String userId;
     private final LocalDateTime joinedAt;
 
-    public JoinedGuildEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public JoinedGuildEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         JsonNode body = super.getEventExtraBody(node);
         userId = body.get("user_id").asText();
         joinedAt = TimeUtil.convertUnixTimeMillisecondLocalDateTime(body.get("joined_at").asLong());

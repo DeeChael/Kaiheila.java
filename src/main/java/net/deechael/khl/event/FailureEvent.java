@@ -1,14 +1,14 @@
 package net.deechael.khl.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.gate.Gateway;
 
 public class FailureEvent extends AbstractEvent {
     private final Throwable throwable;
     private final String rawEventData;
 
-    public FailureEvent(KaiheilaBot rabbit, JsonNode node, Throwable t) {
-        super(rabbit, node);
+    public FailureEvent(Gateway gateway, JsonNode node, Throwable t) {
+        super(gateway, node);
         this.throwable = t;
         this.rawEventData = node.toString();
     }

@@ -17,14 +17,14 @@
 package net.deechael.khl.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import net.deechael.khl.bot.KaiheilaBot;
+import net.deechael.khl.gate.Gateway;
 
 public final class UnknownEvent extends AbstractEvent {
 
     private final String rawEventData;
 
-    public UnknownEvent(KaiheilaBot rabbit, JsonNode node) {
-        super(rabbit, node);
+    public UnknownEvent(Gateway gateway, JsonNode node) {
+        super(gateway, node);
         this.rawEventData = node.toString();
     }
 

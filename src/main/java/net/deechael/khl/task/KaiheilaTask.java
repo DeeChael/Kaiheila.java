@@ -1,7 +1,7 @@
 package net.deechael.khl.task;
 
-import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.gate.Gateway;
 
 import java.util.function.Consumer;
 
@@ -28,16 +28,16 @@ class KaiheilaTask extends KaiheilaObject implements Task, Runnable {
     private final int id;
     private final long createdAt = System.nanoTime();
 
-    KaiheilaTask(KaiheilaBot kaiheilaBot) {
-        this(kaiheilaBot, null, KaiheilaTask.NO_REPEATING, KaiheilaTask.NO_REPEATING);
+    KaiheilaTask(Gateway gateway) {
+        this(gateway, null, KaiheilaTask.NO_REPEATING, KaiheilaTask.NO_REPEATING);
     }
 
-    KaiheilaTask(KaiheilaBot kaiheilaBot, final Object task) {
-        this(kaiheilaBot, task, KaiheilaTask.NO_REPEATING, KaiheilaTask.NO_REPEATING);
+    KaiheilaTask(Gateway gateway, final Object task) {
+        this(gateway, task, KaiheilaTask.NO_REPEATING, KaiheilaTask.NO_REPEATING);
     }
 
-    KaiheilaTask(KaiheilaBot kaiheilaBot, final Object task, final int id, final long period) {
-        super(kaiheilaBot);
+    KaiheilaTask(Gateway gateway, final Object task, final int id, final long period) {
+        super(gateway);
         if (task instanceof Runnable) {
             this.rTask = (Runnable) task;
             this.cTask = null;

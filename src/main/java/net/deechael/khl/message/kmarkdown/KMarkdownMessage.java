@@ -43,11 +43,6 @@ public class KMarkdownMessage implements Message {
     }
 
     @Override
-    public String asString() {
-        return getContent();
-    }
-
-    @Override
     public MessageTypes getType() {
         return MessageTypes.KMD;
     }

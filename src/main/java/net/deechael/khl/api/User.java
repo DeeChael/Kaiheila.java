@@ -1,12 +1,12 @@
 package net.deechael.khl.api;
 
-import net.deechael.khl.core.OperationResult;
 import net.deechael.khl.message.Message;
+import net.deechael.khl.message.ReceivedMessage;
 
 /**
  * 开黑啦用户，每一个用户为独立实体
  */
-public interface User {
+public interface User extends KHLObject {
 
     /**
      * 开黑啦唯一表示符 用户 Id
@@ -97,15 +97,15 @@ public interface User {
      */
     boolean isMobileVerified();
 
-    OperationResult sendMessage(String message, boolean isKMarkdown);
+    ReceivedMessage sendMessage(String message, boolean isKMarkdown);
 
-    OperationResult sendMessage(Message message);
+    ReceivedMessage sendMessage(Message message);
 
-    OperationResult reply(String message, String msgId, boolean isKMarkdown);
+    ReceivedMessage reply(String message, String msgId, boolean isKMarkdown);
 
-    OperationResult reply(Message message, String msgId);
+    ReceivedMessage reply(Message message, String msgId);
 
-    OperationResult updateIntimacy(int value);
+    void updateIntimacy(int value);
 
     int getUserIntimacy();
 
