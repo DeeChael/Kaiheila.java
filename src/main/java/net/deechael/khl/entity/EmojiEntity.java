@@ -1,5 +1,6 @@
 package net.deechael.khl.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Emoji;
 import net.deechael.khl.api.User;
 import net.deechael.khl.core.KaiheilaObject;
@@ -12,8 +13,12 @@ public class EmojiEntity extends KaiheilaObject implements Emoji {
     private String name;
     private String userId;
 
-    public EmojiEntity(Gateway gateway) {
+    public EmojiEntity(Gateway gateway, JsonNode node) {
         super(gateway);
+        this.setId(node.get("id").asText());
+        this.setName(node.get("name").asText());
+        this.setType(node.get("emoji_type").asInt());
+        this.setUserId(node.get("user_info").get("id").asText());
     }
 
     /**

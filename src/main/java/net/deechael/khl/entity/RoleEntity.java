@@ -1,5 +1,6 @@
 package net.deechael.khl.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.api.Role;
 import net.deechael.khl.api.User;
@@ -18,8 +19,15 @@ public class RoleEntity extends KaiheilaObject implements Role {
     private int mentionable;
     private int permissions;
 
-    public RoleEntity(Gateway gateway) {
+    public RoleEntity(Gateway gateway, JsonNode node) {
         super(gateway);
+        this.setRoleId(node.get("role_id").asInt());
+        this.setName(node.get("name").asText());
+        this.setColor(node.get("color").asInt());
+        this.setPosition(node.get("position").asInt());
+        this.setHoist(node.get("hoist").asInt());
+        this.setMentionable(node.get("mentionable").asInt());
+        this.setPermissions(node.get("permissions").asInt());
     }
 
     public int getRoleId() {

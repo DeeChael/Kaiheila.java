@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CacheManager extends KaiheilaObject {
     protected static final Logger Log = LoggerFactory.getLogger(CacheManager.class);
 
-    private SelfUserEntity selfUserCache;
+    private UserEntity selfCache;
     private final BaseCache<String, GuildEntity> guildCache = new BaseCache<>(GuildEntity::getName);
     private final BaseCache<Integer, RoleEntity> roleCache = new BaseCache<>(RoleEntity::getName);
     private final BaseCache<String, ChannelEntity> channelCache = new BaseCache<>(ChannelEntity::getName);
@@ -31,7 +31,7 @@ public class CacheManager extends KaiheilaObject {
     }
 
     public void unloadCache() {
-        this.selfUserCache = null;
+        this.selfCache = null;
         this.guildCache.unloadAll();
         this.roleCache.unloadAll();
         this.channelCache.unloadAll();
@@ -43,8 +43,8 @@ public class CacheManager extends KaiheilaObject {
     public boolean checkTokenAvailable() {
         if (getGateway().getKaiheilaBot().getConfiguration().getApiConfigurer().getToken().isEmpty()) return false;
         try {
-            fetchSelfUser();
-            if (this.selfUserCache != null) {
+            fetchSelf();
+            if (this.selfCache != null) {
                 return true;
             }
         } catch (InterruptedException e) {
@@ -56,16 +56,16 @@ public class CacheManager extends KaiheilaObject {
     public void updateCache() {
         unloadCache();
         try {
-            fetchSelfUser();
+            fetchSelf();
             fetchGuildBaseData();
         } catch (InterruptedException e) {
             unloadCache();
         }
     }
 
-    private void fetchSelfUser() throws InterruptedException {
+    private void fetchSelf() throws InterruptedException {
         JsonNode data = getGateway().executeRequest(RestRoute.Misc.SELF_USER.compile());
-        this.selfUserCache = getGateway().getKaiheilaBot().getEntitiesBuilder().buildSelfUserEntity(data);
+        this.selfCache = new UserEntity(this.getGateway(), data);
     }
 
     private void fetchGuildBaseData() throws InterruptedException {
@@ -80,10 +80,10 @@ public class CacheManager extends KaiheilaObject {
 
     private void fetchGuildData(String guildId) {
         JsonNode node = getGateway().executeRequest(RestRoute.Guild.GET_GUILD_INFO.compile().withQueryParam("guild_id", guildId));
-        GuildEntity guild = getGateway().getKaiheilaBot().getEntitiesBuilder().buildGuild(node);
+        GuildEntity guild = new GuildEntity(this.getGateway(), node);
         ArrayList<String> channelId = new ArrayList<>();
         for (JsonNode channel : node.get("channels")) {
-            ChannelEntity entity = getGateway().getKaiheilaBot().getEntitiesBuilder().buildChannelEntity(channel);
+            ChannelEntity entity = new ChannelEntity(this.getGateway(), channel);
             entity.setGuild(guild);
             this.channelCache.updateElementById(entity.getId(), entity);
             channelId.add(entity.getId());
@@ -91,7 +91,7 @@ public class CacheManager extends KaiheilaObject {
         guild.setChannels(channelId);
         ArrayList<Integer> roleId = new ArrayList<>();
         for (JsonNode role : node.get("roles")) {
-            RoleEntity entity = getGateway().getKaiheilaBot().getEntitiesBuilder().buildRoleEntity(role);
+            RoleEntity entity = new RoleEntity(this.getGateway(), role);
             entity.setGuild(guild);
             if (entity.getRoleId() != 0) {
                 this.roleCache.updateElementById(entity.getRoleId(), entity);
@@ -108,9 +108,9 @@ public class CacheManager extends KaiheilaObject {
         List<JsonNode> members = getGateway().executePaginationRequest(RestRoute.Guild.GET_GUILE_MEMBER_LIST.compile().withQueryParam("guild_id", guildId));
         HashMap<String, GuildUserEntity> guildUserEntities = new HashMap<>();
         for (JsonNode items : members) {
-            UserEntity userEntity = getGateway().getKaiheilaBot().getEntitiesBuilder().buildUserEntity(items);
+            UserEntity userEntity = new UserEntity(this.getGateway(), items);
             this.userCache.updateElementById(userEntity.getId(), userEntity);
-            GuildUserEntity guildUserEntity = getGateway().getKaiheilaBot().getEntitiesBuilder().buildGuildUserEntity(items);
+            GuildUserEntity guildUserEntity = new GuildUserEntity(this.getGateway(), items);
             guildUserEntity.setGuild(this.getGuildCache().getElementById(guildId));
             guildUserEntities.put(guildUserEntity.getId(), guildUserEntity);
         }
@@ -122,7 +122,7 @@ public class CacheManager extends KaiheilaObject {
         List<String> emojiList = new ArrayList<>();
         emojis.forEach(node -> {
             for (JsonNode items : emojis) {
-                EmojiEntity emojiEntity = getGateway().getKaiheilaBot().getEntitiesBuilder().buildGuildEmojiEntity(items);
+                EmojiEntity emojiEntity = new EmojiEntity(this.getGateway(), items);
                 emojiList.add(emojiEntity.getId());
                 this.guildEmojisCache.updateElementById(guildId, emojiEntity);
             }
@@ -130,8 +130,8 @@ public class CacheManager extends KaiheilaObject {
         this.guildCache.getElementById(guildId).setEmojis(emojiList);
     }
 
-    public SelfUserEntity getSelfUserCache() {
-        return selfUserCache;
+    public UserEntity getSelfCache() {
+        return selfCache;
     }
 
     public ICacheView<String, GuildEntity> getGuildCache() {

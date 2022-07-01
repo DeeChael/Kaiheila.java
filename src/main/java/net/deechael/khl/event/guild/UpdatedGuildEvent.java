@@ -44,7 +44,15 @@ public class UpdatedGuildEvent extends AbstractEvent {
     public IEvent handleSystemEvent(JsonNode body) {
         BaseCache<String, GuildEntity> guildCache = (BaseCache<String, GuildEntity>) getKaiheilaBot().getCacheManager().getGuildCache();
         GuildEntity guildEntity = guildCache.getElementById(guildId);
-        guildEntity = getKaiheilaBot().getEntitiesBuilder().updateGuildEntityForEvent(guildEntity, super.getEventExtraBody(body));
+        JsonNode node = super.getEventExtraBody(body);
+        guildEntity.setName(node.get("name").asText());
+        guildEntity.setIcon(node.get("icon").asText());
+        guildEntity.setNotifyType(node.get("notify_type").asInt());
+        guildEntity.setRegion(node.get("region").asText());
+        guildEntity.setEnableOpen(node.get("enable_open").asBoolean());
+        guildEntity.setOpenId(node.get("open_id").asText());
+        guildEntity.setDefaultChannelId(node.get("default_channel_id").asText());
+        guildEntity.setWelcomeChannelId(node.get("welcome_channel_id").asText());
         guildCache.updateElementById(guildId, guildEntity);
         return this;
     }

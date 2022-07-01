@@ -23,8 +23,17 @@ public class UserEntity extends KaiheilaObject implements User {
     private String vipAvatar;
     private boolean mobileVerified;
 
-    public UserEntity(Gateway gateway) {
+    public UserEntity(Gateway gateway, JsonNode node) {
         super(gateway);
+        this.setId(node.get("id").asText());
+        this.setUsername(node.get("username").asText());
+        this.setIdentifyNum(node.get("identify_num").asText());
+        this.setOnline(node.get("online").asBoolean());
+        this.setBanner(node.get("banner").asText());
+        this.setBot(node.get("bot").asBoolean());
+        this.setStatus(node.get("status").asInt());
+        this.setAvatar(node.get("avatar").asText());
+        this.setMobileVerified(node.get("mobile_verified").asBoolean());
     }
 
     public String getName() {
@@ -213,7 +222,7 @@ public class UserEntity extends KaiheilaObject implements User {
                 .withQueryParam("content", message.getContent())
                 .withQueryParam("type", message.getType().getType())
         );
-        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf().getUser(), null);
+        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), null);
     }
 
     public ReceivedMessage reply(String message, String msgId, boolean isKMarkdown) {
@@ -228,7 +237,7 @@ public class UserEntity extends KaiheilaObject implements User {
                 .withQueryParam("type", message.getType().getType())
                 .withQueryParam("quote", msgId)
         );
-        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf().getUser(), null);
+        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), null);
     }
 
     public void updateIntimacy(int value) {

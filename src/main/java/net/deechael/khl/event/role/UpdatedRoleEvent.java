@@ -43,7 +43,7 @@ public class UpdatedRoleEvent extends AbstractEvent {
     @Override
     public IEvent handleSystemEvent(JsonNode body) {
         JsonNode node = super.getEventExtraBody(body);
-        RoleEntity roleEntity = getGateway().getKaiheilaBot().getEntitiesBuilder().buildRoleEntity(node);
+        RoleEntity roleEntity = new RoleEntity(this.getGateway(), node);
         BaseCache<Integer, RoleEntity> roleCache = (BaseCache<Integer, RoleEntity>) getGateway().getKaiheilaBot().getCacheManager().getRoleCache();
         roleCache.updateElementById(roleEntity.getRoleId(), roleEntity);
         return this;

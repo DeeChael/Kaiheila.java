@@ -34,8 +34,19 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     private int onlineCount;
     private int offlineCount;
 
-    public GuildEntity(Gateway gateway) {
+    public GuildEntity(Gateway gateway, JsonNode node) {
         super(gateway);
+        this.setId(node.get("id").asText());
+        this.setTopic(node.get("topic").asText());
+        this.setMasterId(node.get("master_id").asText());
+        this.setName(node.get("name").asText());
+        this.setIcon(node.get("icon").asText());
+        this.setNotifyType(node.get("notify_type").asInt());
+        this.setRegion(node.get("region").asText());
+        this.setEnableOpen(node.get("enable_open").asBoolean());
+        this.setOpenId(node.get("open_id").asText());
+        this.setDefaultChannelId(node.get("default_channel_id").asText());
+        this.setWelcomeChannelId(node.get("welcome_channel_id").asText());
     }
 
     /**

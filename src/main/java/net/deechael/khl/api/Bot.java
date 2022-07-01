@@ -43,7 +43,7 @@ public interface Bot extends KHLObject {
      *
      * @return 当前用户
      */
-    SelfUser getSelf();
+    User getSelf();
 
     /**
      * 添加事件监听器

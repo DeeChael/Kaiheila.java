@@ -1,11 +1,14 @@
 package net.deechael.khl.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.api.GuildUser;
 import net.deechael.khl.api.Role;
 import net.deechael.khl.gate.Gateway;
+import net.deechael.khl.util.TimeUtil;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GuildUserEntity extends UserEntity implements GuildUser {
@@ -18,8 +21,17 @@ public class GuildUserEntity extends UserEntity implements GuildUser {
 
     private Guild guild;
 
-    public GuildUserEntity(Gateway gateway) {
-        super(gateway);
+    public GuildUserEntity(Gateway gateway, JsonNode node) {
+        super(gateway, node);
+        this.setId(node.get("id").asText());
+        this.setNickname(node.get("nickname").asText());
+        this.setJoinedAt(TimeUtil.convertUnixTimeMillisecondLocalDateTime(node.get("joined_at").asLong()));
+        this.setActiveTime(TimeUtil.convertUnixTimeMillisecondLocalDateTime(node.get("active_time").asLong()));
+        List<Role> roles = new ArrayList<>();
+        node.get("roles").forEach(r -> {
+            roles.add(this.getGateway().getKaiheilaBot().getCacheManager().getRoleCache().getElementById(r.asInt()));
+        });
+        this.setRoles(roles);
     }
 
     public String getId() {

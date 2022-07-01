@@ -50,7 +50,7 @@ public class UpdatedChannelEvent extends AbstractEvent {
     @Override
     public IEvent handleSystemEvent(JsonNode body) {
         JsonNode node = super.getEventExtraBody(body);
-        ChannelEntity entity = getKaiheilaBot().getEntitiesBuilder().buildChannelEntityForEvent(node);
+        ChannelEntity entity = new ChannelEntity(this.getGateway(), node, true);
         // 更新缓存
         BaseCache<String, ChannelEntity> channelCache = (BaseCache<String, ChannelEntity>) getKaiheilaBot().getCacheManager().getChannelCache();
         ChannelEntity oldEntity = channelCache.getElementById(entity.getId());

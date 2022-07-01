@@ -12,6 +12,7 @@ import net.deechael.khl.message.TextMessage;
 import net.deechael.khl.message.kmarkdown.KMarkdownMessage;
 import net.deechael.khl.restful.RestRoute;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChannelEntity extends KaiheilaObject implements Channel {
@@ -32,8 +33,57 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
     private boolean permissionSync;
     private Guild guild;
 
-    public ChannelEntity(Gateway gateway) {
+    public ChannelEntity(Gateway gateway, JsonNode node) {
+        this(gateway, node, false);
+    }
+
+    public ChannelEntity(Gateway gateway, JsonNode node, boolean isEvent) {
         super(gateway);
+        if (!isEvent) {
+            this.setId(node.get("id").asText());
+            this.setType(node.get("type").asInt());
+            this.setName(node.get("name").asText());
+            this.setMasterId(node.get("master_id").asText());
+            this.setGuildId(node.get("guild_id").asText());
+            this.setTopic(node.get("topic").asText());
+            this.setCategory(node.get("is_category").asBoolean());
+            this.setParentId(node.get("parent_id").asText());
+            this.setLevel(node.get("level").asInt());
+            this.setSlowMode(node.get("slow_mode").asInt());
+            this.setLimitAmount(node.get("limit_amount").asInt());
+            ArrayList<PermissionOverwrite> overwrites = new ArrayList<>();
+            node.get("permission_overwrites").forEach(item -> {
+                PermissionOverwrite overwrite = new PermissionOverwrite();
+                overwrite.setAllow(item.get("allow").asInt());
+                overwrite.setDeny(item.get("deny").asInt());
+                overwrite.setTargetRoleId(item.get("role_id").asInt());
+                overwrites.add(overwrite);
+            });
+            this.setPermissionOverwrites(overwrites);
+            ArrayList<PermissionOverwrite> userOverwrites = new ArrayList<>();
+            node.get("permission_users").forEach(item -> {
+                PermissionOverwrite overwrite = new PermissionOverwrite();
+                overwrite.setAllow(item.get("allow").asInt());
+                overwrite.setDeny(item.get("deny").asInt());
+                overwrite.setTargetUserId(item.get("user").get("id").asText());
+                userOverwrites.add(overwrite);
+            });
+            this.setPermissionUsers(userOverwrites);
+            this.setPermissionSync(node.get("permission_sync").asInt() == 1);
+        } else {
+            this.setId(node.get("id").asText());
+            this.setType(node.get("type").asInt());
+            this.setName(node.get("name").asText());
+            this.setGuildId(node.get("guild_id").asText());
+            this.setTopic(node.get("topic").asText());
+            this.setCategory(node.get("is_category").asBoolean());
+            this.setParentId(node.get("parent_id").asText());
+            this.setLevel(node.get("level").asInt());
+            this.setSlowMode(node.get("slow_mode").asInt());
+            this.setPermissionOverwrites( new ArrayList<>());
+            this.setPermissionUsers( new ArrayList<>());
+            this.setPermissionSync(true);
+        }
     }
 
     /**
@@ -233,7 +283,7 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
                 .withQueryParam("content", message.getContent())
                 .withQueryParam("type", message.getType().getType())
         );
-        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf().getUser(), this);
+        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), this);
     }
 
     public ReceivedMessage sendTempMessage(String message, String uid, boolean isKMarkdown) {
@@ -256,7 +306,7 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
                 .withQueryParam("type", message.getType().getType())
                 .withQueryParam("temp_target_id", uid)
         );
-        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf().getUser(), this);
+        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), this);
     }
 
     public ReceivedMessage reply(Message message, String msgId) {
@@ -267,7 +317,7 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
                 .withQueryParam("content", message.getContent())
                 .withQueryParam("quote", msgId)
         );
-        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf().getUser(), this);
+        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), this);
     }
 
     public ReceivedMessage replyTemp(Message message, User user, String msgId) {
@@ -283,7 +333,7 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
                 .withQueryParam("quote", msgId)
                 .withQueryParam("temp_target_id", uid)
         );
-        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf().getUser(), this);
+        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), this);
     }
 
     public String createChannelInvite(InviteDuration duration, InviteTimes times) {

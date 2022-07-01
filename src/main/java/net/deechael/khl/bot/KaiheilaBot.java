@@ -36,7 +36,6 @@ import net.deechael.khl.restful.Requester;
 import net.deechael.khl.restful.RestRoute;
 import net.deechael.khl.task.KaiheilaScheduler;
 import net.deechael.khl.task.TaskScheduler;
-import net.deechael.khl.util.EntitiesBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,8 +54,6 @@ public class KaiheilaBot implements Bot {
     private final IHttpClient httpClient;
     private final IWebSocketClient websocketClient;
     private final ObjectMapper jsonEngine;
-    private final EntitiesBuilder entitiesBuilder;
-
     private final CommandManager commandManager;
     private final TaskScheduler scheduler;
     private final MessageHandler defaultMessageHandler;
@@ -71,7 +68,6 @@ public class KaiheilaBot implements Bot {
         this.httpClient = kaiheilaConfiguration.getClientConfigurer().getHttpClientFactory().buildHttpClient();
         this.websocketClient = kaiheilaConfiguration.getClientConfigurer().getWebSocketClientFactory().buildWebSocketClient();
         this.jsonEngine = buildJsonEngine();
-        this.entitiesBuilder = new EntitiesBuilder(gateway);
         this.requester = new Requester(gateway, 4);
         this.cacheManager = new CacheManager(gateway);
         this.eventManager = new EventManager(gateway);
@@ -94,8 +90,8 @@ public class KaiheilaBot implements Bot {
      * @return 当前用户
      */
     @Override
-    public SelfUser getSelf() {
-        return getCacheManager().getSelfUserCache();
+    public User getSelf() {
+        return getCacheManager().getSelfCache();
     }
 
     /**
@@ -171,10 +167,6 @@ public class KaiheilaBot implements Bot {
 
     private static ObjectMapper buildJsonEngine() {
         return new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-    }
-
-    public EntitiesBuilder getEntitiesBuilder() {
-        return entitiesBuilder;
     }
 
     public Requester getRequester() {

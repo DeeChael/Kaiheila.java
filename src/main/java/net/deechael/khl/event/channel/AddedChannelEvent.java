@@ -52,7 +52,7 @@ public class AddedChannelEvent extends AbstractEvent {
     @Override
     public IEvent handleSystemEvent(JsonNode body) {
         JsonNode node = super.getEventExtraBody(body);
-        ChannelEntity entity = getKaiheilaBot().getEntitiesBuilder().buildChannelEntityForEvent(node);
+        ChannelEntity entity = new ChannelEntity(this.getGateway(), node, true);
         // 更新缓存
         CacheManager cacheManager = getKaiheilaBot().getCacheManager();
         GuildEntity guild = cacheManager.getGuildCache().getElementById(guildId);
