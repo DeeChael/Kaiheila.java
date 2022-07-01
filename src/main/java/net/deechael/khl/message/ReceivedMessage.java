@@ -3,6 +3,7 @@ package net.deechael.khl.message;
 import net.deechael.khl.api.User;
 import net.deechael.khl.message.cardmessage.CardMessage;
 import net.deechael.khl.message.kmarkdown.KMarkdownMessage;
+import net.deechael.khl.restful.RestRoute;
 
 public abstract class ReceivedMessage implements Message {
     private final String id;
@@ -58,6 +59,12 @@ public abstract class ReceivedMessage implements Message {
 
     public Message getMessage() {
         return this.message;
+    }
+
+    public void delete() {
+        this.getAuthor().getGateway().executeRequest(RestRoute.ChannelMessage.UPDATE_CHANNEL_MESSAGE.compile()
+                .withQueryParam("msg_id", this.getId())
+        );
     }
 
 }
