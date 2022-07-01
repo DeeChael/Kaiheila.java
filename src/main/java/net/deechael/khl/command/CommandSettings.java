@@ -18,7 +18,6 @@ public class CommandSettings {
 
     public CommandSettings(String commandName) {
         this.commandName = commandName;
-        this.prefixes.add("\\.");
     }
 
     public Set<String> getAliases() {
@@ -28,8 +27,8 @@ public class CommandSettings {
     public void setAliases(Collection<String> aliases) {
         this.aliases.clear();
         Set<String> checked = new HashSet<>();
-        for (String prefix : aliases) {
-            checked.add(StringUtil.safePattern(prefix));
+        for (String alias : aliases) {
+            checked.add(StringUtil.safePattern(alias));
         }
         this.aliases.addAll(checked);
     }
@@ -45,7 +44,7 @@ public class CommandSettings {
     public void setPrefixes(Collection<String> prefixes) {
         this.prefixes.clear();
         Set<String> checked = new HashSet<>();
-        for (String prefix : aliases) {
+        for (String prefix : prefixes) {
             if (prefix.length() <= 0)
                 continue;
             checked.add(StringUtil.safePattern(prefix));
@@ -59,12 +58,12 @@ public class CommandSettings {
         this.prefixes.add(StringUtil.safePattern(prefix));
     }
 
-    public void setRegex(String regex) {
-        this.regex = regex;
-    }
-
     public String getRegex() {
         return regex;
+    }
+
+    public void setRegex(String regex) {
+        this.regex = regex;
     }
 
 }

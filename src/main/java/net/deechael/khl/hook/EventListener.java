@@ -15,7 +15,6 @@ import net.deechael.khl.event.guild.DeletedBlockListEvent;
 import net.deechael.khl.event.guild.DeletedGuildEvent;
 import net.deechael.khl.event.guild.UpdatedGuildEvent;
 import net.deechael.khl.event.member.*;
-import net.deechael.khl.event.message.*;
 import net.deechael.khl.event.role.AddedRoleEvent;
 import net.deechael.khl.event.role.DeletedRoleEvent;
 import net.deechael.khl.event.role.UpdatedRoleEvent;
@@ -39,24 +38,6 @@ public abstract class EventListener {
     }
 
     public void onFailureEvent(Bot bot, FailureEvent event) {
-    }
-
-    public void onCardMessageEvent(Bot bot, CardMessageEvent event) {
-    }
-
-    public void onFileMessageEvent(Bot bot, FileMessageEvent event) {
-    }
-
-    public void onImageMessageEvent(Bot bot, ImageMessageEvent event) {
-    }
-
-    public void onMarkDownMessageEvent(Bot bot, MarkDownMessageEvent event) {
-    }
-
-    public void onTextMessageEvent(Bot bot, TextMessageEvent event) {
-    }
-
-    public void onVideoMessageEvent(Bot bot, VideoMessageEvent event) {
     }
 
     public void onAddedChannelEvent(Bot bot, AddedChannelEvent event) {
@@ -152,8 +133,6 @@ public abstract class EventListener {
     public void onUserUpdatedEvent(Bot bot, UserUpdatedEvent event) {
     }
 
-    public void onBotMessageEvent(Bot bot, BotMessageEvent event) {
-    }
     // @formatter:on
 
     public final void handle(KaiheilaBot rabbit, IEvent event) {

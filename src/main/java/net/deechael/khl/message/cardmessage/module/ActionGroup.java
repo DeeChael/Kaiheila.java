@@ -9,18 +9,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ActionGroup extends Module {
-    private static final String type = "action-group";
+
     private final List<Button> elements = new ArrayList<>();
 
-    public net.deechael.khl.message.cardmessage.module.ActionGroup add(Button button) {
+    public ActionGroup() {
+        super("action-group");
+    }
+
+    public void add(Button button) {
         elements.add(button);
-        return this;
     }
 
     @Override
     public JsonObject asJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("type", type);
+        JsonObject json = super.asJson();
         JsonArray array = new JsonArray();
         for (Element element : this.elements) {
             array.add(element.asJson());

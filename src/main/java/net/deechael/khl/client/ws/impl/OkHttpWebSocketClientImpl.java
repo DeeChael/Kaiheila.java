@@ -45,9 +45,9 @@ public class OkHttpWebSocketClientImpl implements IWebSocketClient {
     }
 
     public static class OkhttpWebSocketClientContext extends WebSocketListener implements IWebSocketContext {
+        private final IWebSocketListener listener;
         private WebSocket websocket;
         private boolean closed = true;
-        private final IWebSocketListener listener;
         private Thread receiverThread;
 
         public OkhttpWebSocketClientContext(IWebSocketListener listener) {
@@ -73,13 +73,13 @@ public class OkHttpWebSocketClientImpl implements IWebSocketClient {
             websocket.close(code, reason);
         }
 
-        public void setClosed(boolean closed) {
-            this.closed = closed;
-        }
-
         @Override
         public boolean isClosed() {
             return closed;
+        }
+
+        public void setClosed(boolean closed) {
+            this.closed = closed;
         }
 
         @Override

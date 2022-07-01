@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
  * Configuration}
  */
 public class ConfigurationOptions {
+    private final Configuration configuration;
     private char pathSeparator = '.';
     private boolean copyDefaults = false;
-    private final Configuration configuration;
 
     protected ConfigurationOptions(@NotNull Configuration configuration) {
         this.configuration = configuration;

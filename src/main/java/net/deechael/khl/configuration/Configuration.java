@@ -56,17 +56,6 @@ public interface Configuration extends ConfigurationSection {
     void addDefaults(@NotNull Configuration defaults);
 
     /**
-     * Sets the source of all default values for this {@link Configuration}.
-     * <p>
-     * If a previous source was set, or previous default values were defined,
-     * then they will not be copied to the new source.
-     *
-     * @param defaults New source of default values for this configuration.
-     * @throws IllegalArgumentException Thrown if defaults is null or this.
-     */
-    void setDefaults(@NotNull Configuration defaults);
-
-    /**
      * Gets the source {@link Configuration} for this configuration.
      * <p>
      * If no configuration source was set, but default values were added, then
@@ -77,6 +66,17 @@ public interface Configuration extends ConfigurationSection {
      */
     @Nullable
     Configuration getDefaults();
+
+    /**
+     * Sets the source of all default values for this {@link Configuration}.
+     * <p>
+     * If a previous source was set, or previous default values were defined,
+     * then they will not be copied to the new source.
+     *
+     * @param defaults New source of default values for this configuration.
+     * @throws IllegalArgumentException Thrown if defaults is null or this.
+     */
+    void setDefaults(@NotNull Configuration defaults);
 
     /**
      * Gets the {@link ConfigurationOptions} for this {@link Configuration}.

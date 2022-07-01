@@ -27,13 +27,14 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
         }
         return previous + 1;
     };
+    private static final int RECENT_TICKS;
+
+    static {
+        RECENT_TICKS = 30;
+    }
 
     private final AtomicInteger ids = new AtomicInteger(START_ID);
-
-    private volatile KaiheilaTask head;
-
     private final AtomicReference<KaiheilaTask> tail;
-
     private final PriorityQueue<KaiheilaTask> pending = new PriorityQueue<KaiheilaTask>(10,
             new Comparator<KaiheilaTask>() {
                 @Override
@@ -44,14 +45,12 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
                     return value != 0 ? value : Long.compare(o1.getCreatedAt(), o2.getCreatedAt());
                 }
             });
-
     private final List<KaiheilaTask> temp = new ArrayList<KaiheilaTask>();
-
     private final ConcurrentHashMap<Integer, KaiheilaTask> runners = new ConcurrentHashMap<Integer, KaiheilaTask>();
-
+    private final Executor executor = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("Craft Scheduler Thread - %d").build());
+    private volatile KaiheilaTask head;
     private volatile KaiheilaTask currentTask = null;
     private volatile int currentTick = -1;
-    private final Executor executor = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("Craft Scheduler Thread - %d").build());
     private KaiheilaAsyncDebugger debugHead = new KaiheilaAsyncDebugger(-1, null) {
         @Override
         StringBuilder debugTo(StringBuilder string) {
@@ -59,16 +58,16 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
         }
     };
     private KaiheilaAsyncDebugger debugTail = debugHead;
-    private static final int RECENT_TICKS;
-
-    static {
-        RECENT_TICKS = 30;
-    }
 
     public KaiheilaScheduler(Gateway gateway) {
         super(gateway);
         this.head = new KaiheilaTask(getGateway());
         this.tail = new AtomicReference<>(head);
+    }
+
+    private static void validate(final Object task) {
+        Validate.notNull(task, "Task cannot be null");
+        Validate.isTrue(task instanceof Runnable || task instanceof Consumer || task instanceof Callable, "Task must be Runnable, Consumer, or Callable");
     }
 
     @Override
@@ -412,11 +411,6 @@ public class KaiheilaScheduler extends KaiheilaObject implements TaskScheduler {
         task.setNextRun(currentTick + delay);
         addTask(task);
         return task;
-    }
-
-    private static void validate(final Object task) {
-        Validate.notNull(task, "Task cannot be null");
-        Validate.isTrue(task instanceof Runnable || task instanceof Consumer || task instanceof Callable, "Task must be Runnable, Consumer, or Callable");
     }
 
     private int nextId() {

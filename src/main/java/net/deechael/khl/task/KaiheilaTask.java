@@ -7,12 +7,16 @@ import java.util.function.Consumer;
 
 class KaiheilaTask extends KaiheilaObject implements Task, Runnable {
 
-    private volatile KaiheilaTask next = null;
     public static final int ERROR = 0;
     public static final int NO_REPEATING = -1;
     public static final int CANCEL = -2;
     public static final int PROCESS_FOR_FUTURE = -3;
     public static final int DONE_FOR_FUTURE = -4;
+    private final Runnable rTask;
+    private final Consumer<Task> cTask;
+    private final int id;
+    private final long createdAt = System.nanoTime();
+    private volatile KaiheilaTask next = null;
     /**
      * -1 means no repeating <br>
      * -2 means cancel <br>
@@ -23,10 +27,6 @@ class KaiheilaTask extends KaiheilaObject implements Task, Runnable {
      */
     private volatile long period;
     private long nextRun;
-    private final Runnable rTask;
-    private final Consumer<Task> cTask;
-    private final int id;
-    private final long createdAt = System.nanoTime();
 
     KaiheilaTask(Gateway gateway) {
         this(gateway, null, KaiheilaTask.NO_REPEATING, KaiheilaTask.NO_REPEATING);

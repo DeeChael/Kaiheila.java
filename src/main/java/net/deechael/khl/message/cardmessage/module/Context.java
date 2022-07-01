@@ -8,19 +8,20 @@ import net.deechael.khl.message.cardmessage.Structable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Content extends Module implements Structable {
-    private static final String type = "context";
+public class Context extends Module implements Structable {
     private final List<Contentable> elements = new ArrayList<>();
 
-    public net.deechael.khl.message.cardmessage.module.Content add(Contentable content) {
+    public Context() {
+        super("context");
+    }
+
+    public void add(Contentable content) {
         elements.add(content);
-        return this;
     }
 
     @Override
     public JsonObject asJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("type", type);
+        JsonObject json = super.asJson();
         JsonArray array = new JsonArray();
         for (Contentable contentable : this.elements) {
             array.add(contentable.asJson());

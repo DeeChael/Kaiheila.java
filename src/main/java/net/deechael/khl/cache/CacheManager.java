@@ -16,14 +16,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CacheManager extends KaiheilaObject {
     protected static final Logger Log = LoggerFactory.getLogger(CacheManager.class);
-
-    private UserEntity selfCache;
     private final BaseCache<String, GuildEntity> guildCache = new BaseCache<>(GuildEntity::getName);
     private final BaseCache<Integer, RoleEntity> roleCache = new BaseCache<>(RoleEntity::getName);
     private final BaseCache<String, ChannelEntity> channelCache = new BaseCache<>(ChannelEntity::getName);
     private final BaseCache<String, UserEntity> userCache = new BaseCache<>(UserEntity::getName);
     private final BaseCache<String, EmojiEntity> guildEmojisCache = new BaseCache<>(EmojiEntity::getName);
     private final ConcurrentHashMap<String, Map<String, GuildUserEntity>> guildUsersCache = new ConcurrentHashMap<>();
+    private UserEntity selfCache;
 //    private final ConcurrentHashMap<String, Map<String, MemberEntity>> guildInvites = new ConcurrentHashMap<>();
 
     public CacheManager(Gateway gateway) {

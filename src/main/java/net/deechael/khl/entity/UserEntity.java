@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.User;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.gate.Gateway;
+import net.deechael.khl.message.BotChannelMessage;
 import net.deechael.khl.message.Message;
 import net.deechael.khl.message.ReceivedMessage;
 import net.deechael.khl.message.TextMessage;
@@ -50,6 +51,10 @@ public class UserEntity extends KaiheilaObject implements User {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     /**
      * 当前用户名，不带标识数字
      *
@@ -60,6 +65,10 @@ public class UserEntity extends KaiheilaObject implements User {
     @Override
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**
@@ -86,6 +95,10 @@ public class UserEntity extends KaiheilaObject implements User {
         return identifyNum;
     }
 
+    public void setIdentifyNum(String identifyNum) {
+        this.identifyNum = identifyNum;
+    }
+
     /**
      * 当前用户是否在线
      *
@@ -94,6 +107,10 @@ public class UserEntity extends KaiheilaObject implements User {
     @Override
     public boolean isOnline() {
         return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
     }
 
     /**
@@ -105,6 +122,12 @@ public class UserEntity extends KaiheilaObject implements User {
     public boolean isBot() {
         return bot;
     }
+
+    public void setBot(boolean bot) {
+        this.bot = bot;
+    }
+
+    // getter / setter
 
     /**
      * 当前用户是否被开黑啦封禁
@@ -124,6 +147,10 @@ public class UserEntity extends KaiheilaObject implements User {
     @Override
     public String getBanner() {
         return banner;
+    }
+
+    public void setBanner(String banner) {
+        this.banner = banner;
     }
 
     /**
@@ -156,26 +183,8 @@ public class UserEntity extends KaiheilaObject implements User {
         return mobileVerified;
     }
 
-    // getter / setter
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setIdentifyNum(String identifyNum) {
-        this.identifyNum = identifyNum;
-    }
-
-    public void setOnline(boolean online) {
-        this.online = online;
-    }
-
-    public void setBot(boolean bot) {
-        this.bot = bot;
+    public void setMobileVerified(boolean mobileVerified) {
+        this.mobileVerified = mobileVerified;
     }
 
     public int getStatus() {
@@ -184,10 +193,6 @@ public class UserEntity extends KaiheilaObject implements User {
 
     public void setStatus(int status) {
         this.status = status;
-    }
-
-    public void setBanner(String banner) {
-        this.banner = banner;
     }
 
     public String getAvatar() {
@@ -206,11 +211,6 @@ public class UserEntity extends KaiheilaObject implements User {
         this.vipAvatar = vipAvatar;
     }
 
-    public void setMobileVerified(boolean mobileVerified) {
-        this.mobileVerified = mobileVerified;
-    }
-
-
     public ReceivedMessage sendMessage(String message, boolean isKMarkdown) {
         return this.sendMessage(isKMarkdown ? KMarkdownMessage.create(message) : new TextMessage(message));
     }
@@ -222,7 +222,7 @@ public class UserEntity extends KaiheilaObject implements User {
                 .withQueryParam("content", message.getContent())
                 .withQueryParam("type", message.getType().getType())
         );
-        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), null);
+        return new BotChannelMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), null);
     }
 
     public ReceivedMessage reply(String message, String msgId, boolean isKMarkdown) {
@@ -237,7 +237,7 @@ public class UserEntity extends KaiheilaObject implements User {
                 .withQueryParam("type", message.getType().getType())
                 .withQueryParam("quote", msgId)
         );
-        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), null);
+        return new BotChannelMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), null);
     }
 
     public void updateIntimacy(int value) {

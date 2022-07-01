@@ -9,18 +9,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImageGroup extends Module {
-    private static final String type = "image-group";
+
     private final List<Image> elements = new ArrayList<>();
 
-    public net.deechael.khl.message.cardmessage.module.ImageGroup add(Image image) {
+    public ImageGroup() {
+        super("image-group");
+    }
+
+    public void add(Image image) {
         elements.add(image);
-        return this;
     }
 
     @Override
     public JsonObject asJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("type", type);
+        JsonObject json = super.asJson();
         JsonArray array = new JsonArray();
         for (Element element : this.elements) {
             array.add(element.asJson());
@@ -28,4 +30,5 @@ public class ImageGroup extends Module {
         json.add("elements", array);
         return json;
     }
+
 }

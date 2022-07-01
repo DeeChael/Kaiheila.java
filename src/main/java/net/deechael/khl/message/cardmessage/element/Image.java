@@ -6,39 +6,45 @@ import net.deechael.khl.message.cardmessage.Contentable;
 import net.deechael.khl.message.cardmessage.Size;
 
 public class Image extends Element implements Accessoriable, Contentable {
+
     private static final String type = "image";
     private String src;
     private String alt;
     private Size size;
-    private boolean circle;
+    private boolean circle = false;
 
-    public Image setSrc(String src) {
+    public Image() {
+        super("image");
+    }
+
+    public void setSrc(String src) {
         this.src = src;
-        return this;
     }
 
-    public Image setAlt(String alt) {
+    public void setAlt(String alt) {
         this.alt = alt;
-        return this;
     }
 
-    public Image setSize(Size size) {
+    public void setSize(Size size) {
         this.size = size;
-        return this;
     }
 
-    public Image setCircle(boolean circle) {
+    public void setCircle(boolean circle) {
         this.circle = circle;
-        return this;
     }
 
     @Override
     public JsonObject asJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("type", type);
-        json.addProperty("src", src);
-        json.addProperty("alt", alt);
-        json.addProperty("size", size.value);
+        JsonObject json = super.asJson();
+        if (src != null) {
+            json.addProperty("src", src);
+        }
+        if (alt != null) {
+            json.addProperty("alt", alt);
+        }
+        if (size != null) {
+            json.addProperty("size", size.toString());
+        }
         json.addProperty("circle", circle);
         return json;
     }

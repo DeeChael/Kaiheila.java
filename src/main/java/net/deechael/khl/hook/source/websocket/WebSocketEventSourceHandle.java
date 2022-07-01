@@ -18,9 +18,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
 public class WebSocketEventSourceHandle extends IWebSocketListener implements Runnable {
-    protected static WebSocketEventSourceHandle INSTANCE;
     protected static final Logger Log = LoggerFactory.getLogger(WebSocketEventSourceHandle.class);
-
+    protected static WebSocketEventSourceHandle INSTANCE;
     private final WebSocketEventSource eventSource;
     private IWebSocketContext client;
 

@@ -5,34 +5,35 @@ import net.deechael.khl.message.cardmessage.Accessoriable;
 import net.deechael.khl.message.cardmessage.element.Text;
 
 public class Section extends Module {
-    private static final String type = "section";
     private Mode mode = Mode.RIGHT;
     private Text text;
     private Accessoriable accessory;
 
-    public net.deechael.khl.message.cardmessage.module.Section setMode(Mode mode) {
+    public Section() {
+        super("section");
+    }
+
+    public void setMode(Mode mode) {
         this.mode = mode;
-        return this;
     }
 
-    public net.deechael.khl.message.cardmessage.module.Section setText(Text text) {
+    public void setText(Text text) {
         this.text = text;
-        return this;
     }
 
-    public net.deechael.khl.message.cardmessage.module.Section setAccessory(Accessoriable accessory) {
+    public void setAccessory(Accessoriable accessory) {
         this.accessory = accessory;
-        return this;
     }
 
     @Override
     public JsonObject asJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("type", type);
+        JsonObject json = super.asJson();
         if (mode != null) {
             json.addProperty("mode", mode.toString());
         }
-        json.add("text", text.asJson());
+        if (text != null) {
+            json.add("text", text.asJson());
+        }
         if (accessory != null) {
             json.add("accessory", accessory.asJson());
         }

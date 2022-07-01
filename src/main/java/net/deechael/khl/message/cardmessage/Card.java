@@ -17,14 +17,8 @@ public class Card implements Serializable {
         return new Card();
     }
 
-    public Card setSize(Size size) {
-        this.size = size;
-        return this;
-    }
-
-    public Card setTheme(Theme theme) {
-        this.theme = theme;
-        return this;
+    public Color getColor() {
+        return color;
     }
 
     public Card setColor(Color color) {
@@ -33,16 +27,22 @@ public class Card implements Serializable {
         return this;
     }
 
-    public Color getColor() {
-        return color;
-    }
-
     public Theme getTheme() {
         return theme;
     }
 
+    public Card setTheme(Theme theme) {
+        this.theme = theme;
+        return this;
+    }
+
     public Size getSize() {
         return size;
+    }
+
+    public Card setSize(Size size) {
+        this.size = size;
+        return this;
     }
 
     public Card setType(String type) {

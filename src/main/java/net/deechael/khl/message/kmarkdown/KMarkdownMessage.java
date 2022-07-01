@@ -18,35 +18,6 @@ public class KMarkdownMessage implements Message {
         this.content = content;
     }
 
-    public KMarkdownMessage expendLine(KMarkdownMessage markdown) {
-        expansion.add(new KMarkdownMessage("\n" + markdown.getContent()));
-        return this;
-    }
-
-    public KMarkdownMessage expend(KMarkdownMessage markdown) {
-        expansion.add(new KMarkdownMessage(markdown.getContent()));
-        return this;
-    }
-
-    public KMarkdownMessage expendSpace(KMarkdownMessage markdown) {
-        expansion.add(new KMarkdownMessage(" " + markdown.getContent()));
-        return this;
-    }
-
-    @Override
-    public String getContent() {
-        StringBuilder base = new StringBuilder(this.content);
-        for (KMarkdownMessage message : this.expansion) {
-            base.append(message.getContent());
-        }
-        return base.toString();
-    }
-
-    @Override
-    public MessageTypes getType() {
-        return MessageTypes.KMD;
-    }
-
     public static KMarkdownMessage bold(String value) {
         return new KMarkdownMessage(String.format("**%s**", value));
     }
@@ -54,7 +25,6 @@ public class KMarkdownMessage implements Message {
     public static KMarkdownMessage italic(String value) {
         return new KMarkdownMessage(String.format("*%s*", value));
     }
-
 
     public static KMarkdownMessage boldItalic(String value) {
         return new KMarkdownMessage(String.format("***%s***", value));
@@ -130,6 +100,35 @@ public class KMarkdownMessage implements Message {
 
     public static KMarkdownMessage create(String content) {
         return new KMarkdownMessage(content);
+    }
+
+    public KMarkdownMessage expendLine(KMarkdownMessage markdown) {
+        expansion.add(new KMarkdownMessage("\n" + markdown.getContent()));
+        return this;
+    }
+
+    public KMarkdownMessage expend(KMarkdownMessage markdown) {
+        expansion.add(new KMarkdownMessage(markdown.getContent()));
+        return this;
+    }
+
+    public KMarkdownMessage expendSpace(KMarkdownMessage markdown) {
+        expansion.add(new KMarkdownMessage(" " + markdown.getContent()));
+        return this;
+    }
+
+    @Override
+    public String getContent() {
+        StringBuilder base = new StringBuilder(this.content);
+        for (KMarkdownMessage message : this.expansion) {
+            base.append(message.getContent());
+        }
+        return base.toString();
+    }
+
+    @Override
+    public MessageTypes getType() {
+        return MessageTypes.KMD;
     }
 
 }

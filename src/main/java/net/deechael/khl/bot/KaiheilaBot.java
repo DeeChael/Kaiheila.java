@@ -18,7 +18,10 @@ package net.deechael.khl.bot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import net.deechael.khl.api.*;
+import net.deechael.khl.api.Bot;
+import net.deechael.khl.api.Channel;
+import net.deechael.khl.api.Guild;
+import net.deechael.khl.api.User;
 import net.deechael.khl.cache.CacheManager;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.client.http.HttpHeaders;
@@ -31,7 +34,7 @@ import net.deechael.khl.event.MessageHandler;
 import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.hook.EventListener;
 import net.deechael.khl.hook.EventManager;
-import net.deechael.khl.message.MessageTypes;
+import net.deechael.khl.message.ReceivedChannelMessage;
 import net.deechael.khl.restful.Requester;
 import net.deechael.khl.restful.RestRoute;
 import net.deechael.khl.task.KaiheilaScheduler;
@@ -57,10 +60,8 @@ public class KaiheilaBot implements Bot {
     private final CommandManager commandManager;
     private final TaskScheduler scheduler;
     private final MessageHandler defaultMessageHandler;
-
-    private boolean botLogged;
-
     private final Gateway gateway;
+    private boolean botLogged;
 
     public KaiheilaBot(KaiheilaConfiguration kaiheilaConfiguration) {
         Gateway gateway = new Gateway(this);
@@ -72,16 +73,30 @@ public class KaiheilaBot implements Bot {
         this.cacheManager = new CacheManager(gateway);
         this.eventManager = new EventManager(gateway);
         this.commandManager = new CommandManager(gateway);
-        this.defaultMessageHandler = new MessageHandler(new MessageTypes[]{MessageTypes.TEXT, MessageTypes.KMD}) {
+        this.defaultMessageHandler = new MessageHandler() {
             @Override
-            public void onMessage(Channel channel, User user, String message) {
-                KaiheilaBot.this.getCommandManager().execute(channel, user, message);
+            public void onText(ReceivedChannelMessage message) {
+                KaiheilaBot.this.getCommandManager().execute(message.getChannel(), message.getAuthor(), message.getMessage().getContent());
+            }
+
+            @Override
+            public void onKMarkdown(ReceivedChannelMessage message) {
+                KaiheilaBot.this.getCommandManager().execute(message.getChannel(), message.getAuthor(), message.getMessage().getContent());
+            }
+
+            @Override
+            public void onCardMessage(ReceivedChannelMessage message) {
+                message.reply(message.getMessage());
             }
         };
         this.getEventManager().register(defaultMessageHandler);
         this.scheduler = new KaiheilaScheduler(gateway);
         this.gateway = gateway;
         this.gateway.initialize();
+    }
+
+    private static ObjectMapper buildJsonEngine() {
+        return new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
     }
 
     /**
@@ -163,10 +178,6 @@ public class KaiheilaBot implements Bot {
         } catch (IOException e) {
             Log.warn("安全退出失败 - 发送机器人离线请求失败", e);
         }
-    }
-
-    private static ObjectMapper buildJsonEngine() {
-        return new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
     }
 
     public Requester getRequester() {

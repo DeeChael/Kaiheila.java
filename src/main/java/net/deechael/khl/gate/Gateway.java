@@ -1,15 +1,20 @@
 package net.deechael.khl.gate;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.Gson;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.client.http.HttpHeaders;
+import net.deechael.khl.client.http.HttpMediaType;
+import net.deechael.khl.client.http.HttpRequestBody;
 import net.deechael.khl.restful.RestPageable;
 import net.deechael.khl.restful.RestRoute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +51,12 @@ public class Gateway {
     }
 
     public JsonNode executeRequest(RestRoute.CompiledRoute route) {
-        HttpCall request = HttpCall.createRequest(route.getMethod(), getCompleteUrl(route), this.defaultHeaders);
+        String jsonString = new Gson().toJson(route.getQueryJson());
+        HttpRequestBody requestBody = null;
+        if (route.getMethod() == "POST") {
+            requestBody = new HttpRequestBody(jsonString.length(), HttpMediaType.JSON, ByteBuffer.wrap(jsonString.getBytes(StandardCharsets.UTF_8)));
+        }
+        HttpCall request = HttpCall.createRequest(route.getMethod(), getCompleteUrl(route), this.defaultHeaders, requestBody);
         List<JsonNode> data = getRestJsonResponse(route, request);
         if (data == null) {
             throw new RuntimeException("An error was thrown when executing " + route.getCompiledRoute());
@@ -75,7 +85,6 @@ public class Gateway {
         ArrayList<JsonNode> result = new ArrayList<>();
         JsonNode root = callRestApi(call);
         if (root == null) {
-            Log.error("Not set the root");
             return null;
         }
         result.add(root);
@@ -152,7 +161,7 @@ public class Gateway {
             return true;
         }
         if (root.get("code").asInt() != 0) {
-            Log.error("[数据同步] API请求失败，错误码：{}, 错误消息{}", root.get("code").asInt(), root.get("message").asText());
+            Log.error("[数据同步] API请求失败，错误码：{}, 错误消息：{}", root.get("code").asInt(), root.get("message").asText());
             return true;
         }
         return false;

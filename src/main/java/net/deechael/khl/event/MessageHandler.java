@@ -1,68 +1,38 @@
 package net.deechael.khl.event;
 
-import net.deechael.khl.api.Channel;
-import net.deechael.khl.api.User;
-import net.deechael.khl.message.MessageTypes;
-import org.apache.commons.lang.ArrayUtils;
-
-import java.util.Arrays;
-import java.util.List;
+import net.deechael.khl.message.ReceivedChannelMessage;
 
 public abstract class MessageHandler {
 
-    private final MessageTypes[] type;
-
-    public MessageHandler(MessageTypes messageType) {
-        this(new MessageTypes[]{messageType});
-    }
-
-    public MessageHandler(MessageTypes[] messageTypes) {
-        this.type = messageTypes;
-    }
-
-    public abstract void onMessage(Channel channel, User user, String message);
-
-    public MessageTypes[] getTypes() {
-        return type;
-    }
-
-    public int[] getIntTypes() {
-        return ArrayUtils.toPrimitive(Arrays.stream(this.getTypes()).map(MessageTypes::getType).toList().toArray(new Integer[0]));
-    }
-
-    public List<Integer> getIntTypesList() {
-        return Arrays.stream(this.getTypes()).map(MessageTypes::getType).toList();
-    }
-
-    public void onText(String text) {
+    public void onText(ReceivedChannelMessage message) {
 
     }
 
-    public void onImage(String url) {
+    public void onImage(ReceivedChannelMessage message) {
 
     }
 
-    public void onVideo(String url) {
+    public void onVideo(ReceivedChannelMessage message) {
 
     }
 
-    public void onFile(String url) {
+    public void onFile(ReceivedChannelMessage message) {
 
     }
 
-    public void onAudio(String url) {
+    public void onAudio(ReceivedChannelMessage message) {
 
     }
 
-    public void onKMarkdown(String text) {
+    public void onKMarkdown(ReceivedChannelMessage message) {
 
     }
 
-    public void onCardMessage(String content) {
+    public void onCardMessage(ReceivedChannelMessage message) {
 
     }
 
-    public void onSystem(String text) {
+    public void onSystem(ReceivedChannelMessage message) {
 
     }
 

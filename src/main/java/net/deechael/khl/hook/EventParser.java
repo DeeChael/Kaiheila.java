@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.event.FailureEvent;
 import net.deechael.khl.event.IEvent;
+import net.deechael.khl.event.UnknownEvent;
 import net.deechael.khl.event.channel.*;
 import net.deechael.khl.event.dm.DeletedPrivateMessageEvent;
 import net.deechael.khl.event.dm.PrivateAddedReactionEvent;
@@ -32,114 +33,6 @@ import java.util.List;
 public class EventParser extends KaiheilaObject implements Runnable {
     protected static final Logger Log = LoggerFactory.getLogger(EventParser.class);
     private static final HashMap<String, Class<? extends IEvent>> eventClasses = new HashMap<>();
-
-    private final Thread handleThread;
-    private final SequenceMessageQueue<String> messageQueue;
-    private final List<EventListener> listeners;
-
-    public EventParser(Gateway gateway, SequenceMessageQueue<String> messageQueue, List<EventListener> listeners) {
-        super(gateway);
-        this.messageQueue = messageQueue;
-        this.listeners = listeners;
-        this.handleThread = new Thread(this);
-        this.handleThread.setName("EventParserThread");
-        this.handleThread.setDaemon(true);
-        this.handleThread.start();
-    }
-
-    public void shutdown() {
-        if (handleThread != null) {
-            handleThread.interrupt();
-            try {
-                handleThread.join();
-            } catch (InterruptedException ignore) {
-            }
-        }
-    }
-
-    private void eventHandler(String data) {
-        ObjectMapper jsonEngine = getGateway().getKaiheilaBot().getJsonEngine();
-        JsonNode dataNode;
-        try {
-            dataNode = jsonEngine.readTree(data);
-        } catch (JsonProcessingException ignored) {
-            if (Log.isWarnEnabled()) {
-                Log.warn("事件 JSON 数据解析失败 [{}]", data);
-            }
-            return;
-        }
-        IEvent event = createEventObject(dataNode);
-        this.listeners.forEach(eventListener -> eventListener.handle(getGateway().getKaiheilaBot(), event));
-    }
-
-    private boolean isBotEvent(JsonNode data) {
-        return data.get("nonce").asText().equalsIgnoreCase("bot-message");
-    }
-
-    private IEvent createEventObject(JsonNode dataNode) {
-        int type = dataNode.get("type").asInt();
-        try {
-            if (type == 255) {
-                String sType = dataNode.get("extra").get("type").asText();
-                Class<? extends IEvent> clazz = eventClasses.get(sType);
-                try {
-                    IEvent event = clazz.getConstructor(Gateway.class, JsonNode.class).newInstance(getGateway(), dataNode);
-                    return event.handleSystemEvent(dataNode);
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                         NoSuchMethodException e) {
-                    e.printStackTrace();
-                    return new FailureEvent(getGateway(), dataNode, e);
-                }
-            }
-            /*
-            switch (type) {
-                case 1:
-                    if (isBotEvent(dataNode)) return new BotMessageEvent(getGateway().getKaiheilaBot(), dataNode);
-                    return new TextMessageEvent(getGateway().getKaiheilaBot(), dataNode);
-                case 2:
-                    return new ImageMessageEvent(getGateway().getKaiheilaBot(), dataNode);
-                case 3:
-                    return new VideoMessageEvent(getGateway().getKaiheilaBot(), dataNode);
-                case 4:
-                case 8:
-                    return new FileMessageEvent(getGateway().getKaiheilaBot(), dataNode);
-                case 9:
-                    return new MarkDownMessageEvent(getGateway().getKaiheilaBot(), dataNode);
-                case 10:
-                    return new CardMessageEvent(getGateway().getKaiheilaBot(), dataNode);
-                default:
-                    return new UnknownEvent(getGateway().getKaiheilaBot(), dataNode);
-            }
-            */
-        } catch (Exception e) {
-            Log.error("事件解析失败 [{}]", dataNode);
-            return new FailureEvent(getGateway(), dataNode, e);
-        }
-        return new FailureEvent(getGateway(), dataNode, new RuntimeException("Unknown error"));
-    }
-
-    public Thread getHandleThread() {
-        return handleThread;
-    }
-
-    @Override
-    public void run() {
-        Log.debug("{} 线程启动", Thread.currentThread().getName());
-        while (!Thread.interrupted()) {
-            try {
-                String take = this.messageQueue.take();
-                eventHandler(take);
-            } catch (InterruptedException e) {
-                if (Log.isWarnEnabled()) {
-                    Log.warn("{} 线程被中断", Thread.currentThread().getName());
-                }
-                break;
-            }
-        }
-        if (Log.isWarnEnabled()) {
-            Log.warn("{} 线程退出", Thread.currentThread().getName());
-        }
-    }
 
     static {
         //--Channel
@@ -215,6 +108,90 @@ public class EventParser extends KaiheilaObject implements Runnable {
         eventClasses.put(SelfExitedGuildEvent._AcceptType, SelfExitedGuildEvent.class);
         // Card 消息中的 Button 点击事件
         eventClasses.put(MessageBtnClickEvent._AcceptType, MessageBtnClickEvent.class);
+    }
+
+    private final Thread handleThread;
+    private final SequenceMessageQueue<String> messageQueue;
+    private final List<EventListener> listeners;
+
+    public EventParser(Gateway gateway, SequenceMessageQueue<String> messageQueue, List<EventListener> listeners) {
+        super(gateway);
+        this.messageQueue = messageQueue;
+        this.listeners = listeners;
+        this.handleThread = new Thread(this);
+        this.handleThread.setName("EventParserThread");
+        this.handleThread.setDaemon(true);
+        this.handleThread.start();
+    }
+
+    public void shutdown() {
+        if (handleThread != null) {
+            handleThread.interrupt();
+            try {
+                handleThread.join();
+            } catch (InterruptedException ignore) {
+            }
+        }
+    }
+
+    private void eventHandler(String data) {
+        ObjectMapper jsonEngine = getGateway().getKaiheilaBot().getJsonEngine();
+        JsonNode dataNode;
+        try {
+            dataNode = jsonEngine.readTree(data);
+        } catch (JsonProcessingException ignored) {
+            if (Log.isWarnEnabled()) {
+                Log.warn("事件 JSON 数据解析失败 [{}]", data);
+            }
+            return;
+        }
+        IEvent event = createEventObject(dataNode);
+        this.listeners.forEach(eventListener -> eventListener.handle(getGateway().getKaiheilaBot(), event));
+    }
+
+    private IEvent createEventObject(JsonNode dataNode) {
+        int type = dataNode.get("type").asInt();
+        try {
+            if (type == 255) {
+                String sType = dataNode.get("extra").get("type").asText();
+                Class<? extends IEvent> clazz = eventClasses.get(sType);
+                try {
+                    IEvent event = clazz.getConstructor(Gateway.class, JsonNode.class).newInstance(getGateway(), dataNode);
+                    return event.handleSystemEvent(dataNode);
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                         NoSuchMethodException e) {
+                    e.printStackTrace();
+                    return new FailureEvent(getGateway(), dataNode, e);
+                }
+            }
+            return new UnknownEvent(getGateway(), dataNode);
+        } catch (Exception e) {
+            Log.error("事件解析失败 [{}]", dataNode);
+            return new FailureEvent(getGateway(), dataNode, e);
+        }
+    }
+
+    public Thread getHandleThread() {
+        return handleThread;
+    }
+
+    @Override
+    public void run() {
+        Log.debug("{} 线程启动", Thread.currentThread().getName());
+        while (!Thread.interrupted()) {
+            try {
+                String take = this.messageQueue.take();
+                eventHandler(take);
+            } catch (InterruptedException e) {
+                if (Log.isWarnEnabled()) {
+                    Log.warn("{} 线程被中断", Thread.currentThread().getName());
+                }
+                break;
+            }
+        }
+        if (Log.isWarnEnabled()) {
+            Log.warn("{} 线程退出", Thread.currentThread().getName());
+        }
     }
 
 }

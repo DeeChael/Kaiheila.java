@@ -26,6 +26,16 @@ final class BukkitYaml extends Yaml {
     private static final Field blockCommentsCollector;
     private static final Field inlineCommentsCollector;
 
+    static {
+        events = getEmitterField("events");
+        blockCommentsCollector = getEmitterField("blockCommentsCollector");
+        inlineCommentsCollector = getEmitterField("inlineCommentsCollector");
+    }
+
+    public BukkitYaml(@NotNull BaseConstructor constructor, @NotNull Representer representer, @NotNull DumperOptions dumperOptions, @NotNull LoaderOptions loadingConfig) {
+        super(constructor, representer, dumperOptions, loadingConfig);
+    }
+
     private static Field getEmitterField(String name) {
         Field field = null;
         try {
@@ -35,16 +45,6 @@ final class BukkitYaml extends Yaml {
             // Ignore as a fail-safe fallback
         }
         return field;
-    }
-
-    static {
-        events = getEmitterField("events");
-        blockCommentsCollector = getEmitterField("blockCommentsCollector");
-        inlineCommentsCollector = getEmitterField("inlineCommentsCollector");
-    }
-
-    public BukkitYaml(@NotNull BaseConstructor constructor, @NotNull Representer representer, @NotNull DumperOptions dumperOptions, @NotNull LoaderOptions loadingConfig) {
-        super(constructor, representer, dumperOptions, loadingConfig);
     }
 
     @Override

@@ -7,26 +7,26 @@ import net.deechael.khl.message.cardmessage.Structable;
 import net.deechael.khl.message.cardmessage.Textable;
 
 public class PlainText extends Text implements Structable, Textable, Contentable {
-    private boolean emoji;
+
+    private boolean emoji = true;
 
     public PlainText() {
         super(MessageTypes.TEXT);
-    }
-
-    public void setEmoji(boolean emoji) {
-        this.emoji = emoji;
     }
 
     public boolean isEmoji() {
         return emoji;
     }
 
+    public void setEmoji(boolean emoji) {
+        this.emoji = emoji;
+    }
+
     @Override
     public JsonObject asJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("type", getType().getName());
-        json.addProperty("content", getContent());
+        JsonObject json = super.asJson();
         json.addProperty("emoji", emoji);
         return json;
     }
+
 }

@@ -2,6 +2,9 @@ package net.deechael.khl.util;
 
 public final class StringUtil {
 
+    private StringUtil() {
+    }
+
     public static String safePattern(String string) {
         String[] keywords = new String[]{"*", ".", "?", "+", "$", "^", "[", "]", "(", ")", "{", "}", "|", "\"", "/"};
         for (String keyword : keywords) {
@@ -16,9 +19,6 @@ public final class StringUtil {
             string = string.replace("\\" + keyword, keyword);
         }
         return string;
-    }
-
-    private StringUtil() {
     }
 
 }

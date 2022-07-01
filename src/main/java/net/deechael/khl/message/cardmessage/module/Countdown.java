@@ -3,33 +3,33 @@ package net.deechael.khl.message.cardmessage.module;
 import com.google.gson.JsonObject;
 
 public class Countdown extends Module {
-    private static final String type = "countdown";
-    private int startTime;
-    private int endTime;
-    private Mode mode;
 
-    public net.deechael.khl.message.cardmessage.module.Countdown setStartTime(int startTime) {
+    private long startTime = 0;
+    private long endTime = 0;
+    private Mode mode = Mode.DAY;
+
+    public Countdown() {
+        super("countdown");
+    }
+
+    public void setStartTime(long startTime) {
         this.startTime = startTime;
-        return this;
     }
 
-    public net.deechael.khl.message.cardmessage.module.Countdown setEndTime(int endTime) {
+    public void setEndTime(long endTime) {
         this.endTime = endTime;
-        return this;
     }
 
-    public net.deechael.khl.message.cardmessage.module.Countdown setMode(Mode mode) {
+    public void setMode(Mode mode) {
         this.mode = mode;
-        return this;
     }
 
     @Override
     public JsonObject asJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("type", type);
+        JsonObject json = super.asJson();
         json.addProperty("startTime", startTime);
         json.addProperty("endTime", endTime);
-        json.addProperty("mode", mode.value);
+        json.addProperty("mode", mode.toString());
         return json;
     }
 
@@ -44,7 +44,8 @@ public class Countdown extends Module {
             this.value = this.name().toLowerCase();
         }
 
-        public String getValue() {
+        @Override
+        public String toString() {
             return value;
         }
 

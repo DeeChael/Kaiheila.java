@@ -4,35 +4,32 @@ import com.google.gson.JsonObject;
 
 public class Media extends Module {
 
-    private final String type;
     private String src;
     private String title;
 
     public Media(String type) {
-        this.type = type;
-    }
-
-    public net.deechael.khl.message.cardmessage.module.Media setSrc(String src) {
-        this.src = src;
-        return this;
+        super(type);
     }
 
     public String getSrc() {
         return src;
     }
 
-    public net.deechael.khl.message.cardmessage.module.Media setTitle(String title) {
-        this.title = title;
-        return this;
+    public void setSrc(String src) {
+        this.src = src;
     }
 
     public String getTitle() {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     @Override
     public JsonObject asJson() {
-        JsonObject json = new JsonObject();
+        JsonObject json = super.asJson();
         json.addProperty("src", src);
         json.addProperty("title", title);
         return json;

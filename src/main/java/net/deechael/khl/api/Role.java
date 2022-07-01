@@ -53,7 +53,7 @@ public interface Role extends KHLObject {
 
     /**
      * 角色在服务器中拥有的默认权限
-     * <a href="https://developer.kaiheila.cn/doc/http/guild-role">查看权限文档</a>
+     * <a href="https://developer.kookapp.cn/doc/http/guild-role">查看权限文档</a>
      *
      * @return 原始权限值
      */

@@ -36,9 +36,9 @@ public class BotApplication {
         bot.addEventListener(new UserEventHandler());
 
         // 指令注册以及应用，使用mojang开源的brigadier库，minecraft 1.13+以后的指令系统均基于该项目开发
-        bot.getCommandManager().register(Command.create("test").literal().executes(context -> {
+        bot.getCommandManager().register(Command.create("test").withPrefix(".").literal().executes(context -> {
             CommandSender sender = context.getSource();
-            sender.getChannel().sendTempMessage("You just invoked \"test\" command", sender.getUser().getId(), false);
+            sender.getChannel().sendTempMessage("You just invoked \"test\" command", sender.getUser(), false);
             return 1;
         }).then(Command.create("user").argument(UserArgumentType.user(bot)).executes(context -> {
             CommandSender sender = context.getSource();

@@ -2,7 +2,6 @@ package net.deechael.khl.command;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import net.deechael.khl.util.StringUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,26 +9,27 @@ import java.util.Set;
 public final class Command {
 
     private final String name;
-
-    private String regex = null;
-
     private final Set<String> prefixes = new HashSet<>();
-
     private final Set<String> aliases = new HashSet<>();
+    private String regex = null;
 
     private Command(String name) {
         this.name = name;
     }
 
-    public Command addAlias(String alias) {
-        this.aliases.add(StringUtil.safePattern(alias));
+    public static Command create(String literal) {
+        return new Command(literal);
+    }
+
+    public Command withAlias(String alias) {
+        this.aliases.add(alias);
         return this;
     }
 
-    public Command addPrefix(String prefix) {
+    public Command withPrefix(String prefix) {
         if (prefix.length() <= 0)
             return this;
-        this.prefixes.add(StringUtil.safePattern(prefix));
+        this.prefixes.add(prefix);
         return this;
     }
 
@@ -38,11 +38,10 @@ public final class Command {
         return this;
     }
 
-    public static Command create(String literal) {
-        return new Command(literal);
-    }
-
     public KaiheilaCommandBuilder literal() {
+        if (this.prefixes.isEmpty()) {
+            this.prefixes.add(".");
+        }
         return new KaiheilaCommandBuilder(this.name, this.prefixes, this.aliases, this.regex);
     }
 

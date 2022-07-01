@@ -1,9 +1,9 @@
 package net.deechael.khl.task;
 
 class KaiheilaAsyncDebugger {
-    private KaiheilaAsyncDebugger next = null;
     private final int expiry;
     private final Class<?> clazz;
+    private KaiheilaAsyncDebugger next = null;
 
     KaiheilaAsyncDebugger(final int expiry, final Class<?> clazz) {
         this.expiry = expiry;

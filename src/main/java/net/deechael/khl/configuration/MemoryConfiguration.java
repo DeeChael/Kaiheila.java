@@ -64,16 +64,16 @@ public class MemoryConfiguration extends MemorySection implements Configuration 
     }
 
     @Override
+    @Nullable
+    public Configuration getDefaults() {
+        return defaults;
+    }
+
+    @Override
     public void setDefaults(@NotNull Configuration defaults) {
         Validate.notNull(defaults, "Defaults may not be null");
 
         this.defaults = defaults;
-    }
-
-    @Override
-    @Nullable
-    public Configuration getDefaults() {
-        return defaults;
     }
 
     @Nullable

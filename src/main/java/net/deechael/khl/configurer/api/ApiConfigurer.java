@@ -28,7 +28,7 @@ public class ApiConfigurer extends AbstractConfigurer<KaiheilaBotBuilder, Bot> {
 
     private String token;
 
-    private String baseUrl = "https://www.kaiheila.cn/api/v3/";
+    private String baseUrl = "https://www.kookapp.cn/api/v3/";
 
     public ApiConfigurer(KaiheilaBotBuilder kaiheilaBotBuilder) {
         super(kaiheilaBotBuilder);

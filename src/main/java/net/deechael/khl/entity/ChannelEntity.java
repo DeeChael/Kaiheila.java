@@ -6,6 +6,7 @@ import net.deechael.khl.api.Guild;
 import net.deechael.khl.api.User;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.gate.Gateway;
+import net.deechael.khl.message.BotChannelMessage;
 import net.deechael.khl.message.Message;
 import net.deechael.khl.message.ReceivedMessage;
 import net.deechael.khl.message.TextMessage;
@@ -80,8 +81,8 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
             this.setParentId(node.get("parent_id").asText());
             this.setLevel(node.get("level").asInt());
             this.setSlowMode(node.get("slow_mode").asInt());
-            this.setPermissionOverwrites( new ArrayList<>());
-            this.setPermissionUsers( new ArrayList<>());
+            this.setPermissionOverwrites(new ArrayList<>());
+            this.setPermissionUsers(new ArrayList<>());
             this.setPermissionSync(true);
         }
     }
@@ -96,6 +97,10 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     /**
      * 在服务器里的频道名称
      *
@@ -104,6 +109,10 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
     @Override
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -127,6 +136,10 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
         return category;
     }
 
+    public void setCategory(boolean category) {
+        this.category = category;
+    }
+
     /**
      * 当前频道的上级频道 Id
      *
@@ -136,6 +149,10 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
     @Override
     public String getParentId() {
         return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     /**
@@ -150,6 +167,10 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
     @Override
     public int getLevel() {
         return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     /**
@@ -180,14 +201,6 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
         this.guild = guild;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getMasterId() {
         return masterId;
     }
@@ -210,18 +223,6 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
 
     public void setTopic(String topic) {
         this.topic = topic;
-    }
-
-    public void setCategory(boolean category) {
-        this.category = category;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
     }
 
     public int getSlowMode() {
@@ -283,7 +284,7 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
                 .withQueryParam("content", message.getContent())
                 .withQueryParam("type", message.getType().getType())
         );
-        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), this);
+        return new BotChannelMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), this);
     }
 
     public ReceivedMessage sendTempMessage(String message, String uid, boolean isKMarkdown) {
@@ -306,18 +307,18 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
                 .withQueryParam("type", message.getType().getType())
                 .withQueryParam("temp_target_id", uid)
         );
-        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), this);
+        return new BotChannelMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), this);
     }
 
     public ReceivedMessage reply(Message message, String msgId) {
         JsonNode data = this.getGateway().executeRequest(RestRoute.ChannelMessage.SEND_CHANNEL_MESSAGE.compile()
-                .withQueryParam("channel_id", this.getId())
+                .withQueryParam("target_id", this.getId())
                 .withQueryParam("nonce", "bot-message")
-                .withQueryParam("type", 9)
+                .withQueryParam("type", message.getType().getType())
                 .withQueryParam("content", message.getContent())
                 .withQueryParam("quote", msgId)
         );
-        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), this);
+        return new BotChannelMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), this);
     }
 
     public ReceivedMessage replyTemp(Message message, User user, String msgId) {
@@ -326,14 +327,14 @@ public class ChannelEntity extends KaiheilaObject implements Channel {
 
     public ReceivedMessage replyTemp(Message message, String uid, String msgId) {
         JsonNode data = this.getGateway().executeRequest(RestRoute.ChannelMessage.SEND_CHANNEL_MESSAGE.compile()
-                .withQueryParam("channel_id", this.getId())
+                .withQueryParam("target_id", this.getId())
                 .withQueryParam("nonce", "bot-message")
-                .withQueryParam("type", 9)
+                .withQueryParam("type", message.getType().getType())
                 .withQueryParam("content", message.getContent())
                 .withQueryParam("quote", msgId)
                 .withQueryParam("temp_target_id", uid)
         );
-        return new ReceivedMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), this);
+        return new BotChannelMessage(data.get("msg_id").asText(), data.get("msg_timestamp").asInt(), message, getGateway().getKaiheilaBot().getSelf(), this);
     }
 
     public String createChannelInvite(InviteDuration duration, InviteTimes times) {

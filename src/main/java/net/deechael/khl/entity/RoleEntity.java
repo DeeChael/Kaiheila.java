@@ -58,6 +58,10 @@ public class RoleEntity extends KaiheilaObject implements Role {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /**
      * 角色 RGB 颜色代码
      * <ul>
@@ -104,7 +108,7 @@ public class RoleEntity extends KaiheilaObject implements Role {
 
     /**
      * 角色在服务器中拥有的默认权限
-     * <a href="https://developer.kaiheila.cn/doc/http/guild-role">查看权限文档</a>
+     * <a href="https://developer.kookapp.cn/doc/http/guild-role">查看权限文档</a>
      *
      * @return 原始权限值
      */
@@ -118,17 +122,13 @@ public class RoleEntity extends KaiheilaObject implements Role {
         return this.guild;
     }
 
-    @Override
-    public String getGuildId() {
-        return this.guild.getId();
-    }
-
     public void setGuild(Guild guild) {
         this.guild = guild;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public String getGuildId() {
+        return this.guild.getId();
     }
 
     public int getColor() {

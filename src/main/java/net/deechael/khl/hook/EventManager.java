@@ -16,6 +16,7 @@
 
 package net.deechael.khl.hook;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.deechael.khl.configurer.event.EventSourceConfigurer;
@@ -27,6 +28,9 @@ import net.deechael.khl.hook.queue.SequenceMessageQueue;
 import net.deechael.khl.hook.source.webhook.WebhookEventSource;
 import net.deechael.khl.hook.source.websocket.WebSocketEventSource;
 import net.deechael.khl.hook.source.websocket.session.storage.WebSocketSessionStorage;
+import net.deechael.khl.message.*;
+import net.deechael.khl.message.cardmessage.CardMessage;
+import net.deechael.khl.message.kmarkdown.KMarkdownMessage;
 import net.deechael.khl.util.compression.Compression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,11 +44,10 @@ public class EventManager extends KaiheilaObject implements EventManagerReceiver
     protected static final Logger Log = LoggerFactory.getLogger(EventManager.class);
 
     private final List<EventListener> listeners = new LinkedList<>();
+    private final Set<MessageHandler> messageHandlers = new HashSet<>();
     private SequenceMessageQueue<String> messageQueue;
     private EventParser eventParser;
     private EventSource eventSource;
-
-    private final Set<MessageHandler> messageHandlers = new HashSet<>();
 
     public EventManager(Gateway gateway) {
         super(gateway);
@@ -61,13 +64,113 @@ public class EventManager extends KaiheilaObject implements EventManagerReceiver
     public int process(int sn, String data) {
         messageQueue.push(sn, data);
         JsonObject jsonObject = JsonParser.parseString(data).getAsJsonObject();
-        if (jsonObject.getAsJsonObject("extra").get("type").isJsonPrimitive()
-                && jsonObject.getAsJsonObject("extra").getAsJsonPrimitive("type").isNumber()
-                && jsonObject.get("type").getAsInt() == jsonObject.getAsJsonObject("extra").get("type").getAsInt()
-        ) {
-            for (MessageHandler handler : this.messageHandlers) {
-                if (handler.getIntTypesList().contains(jsonObject.get("type").getAsInt())) {
-                    handler.onMessage(getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(jsonObject.get("target_id").getAsString()), getGateway().getKaiheilaBot().getCacheManager().getUserCache().getElementById(jsonObject.get("author_id").getAsString()), jsonObject.get("content").getAsString());
+        JsonElement element = jsonObject.get("type");
+        if (element.isJsonPrimitive()) {
+            if (element.getAsJsonPrimitive().isNumber()) {
+                if (jsonObject.getAsJsonObject("extra").get("type").isJsonPrimitive()
+                        && jsonObject.getAsJsonObject("extra").getAsJsonPrimitive("type").isNumber()
+                        && jsonObject.get("type").getAsInt() == jsonObject.getAsJsonObject("extra").get("type").getAsInt()
+                ) {
+                    switch (element.getAsInt()) {
+                        case 1:
+                            for (MessageHandler handler : this.messageHandlers) {
+                                handler
+                                        .onText(
+                                                new ReceivedChannelMessage(
+                                                        jsonObject.get("msg_id").getAsString(),
+                                                        jsonObject.get("msg_timestamp").getAsLong(),
+                                                        new TextMessage(jsonObject.get("content").getAsString()),
+                                                        getGateway().getKaiheilaBot().getCacheManager().getUserCache().getElementById(jsonObject.get("author_id").getAsString()),
+                                                        getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(jsonObject.get("target_id").getAsString())
+                                                )
+                                        );
+                            }
+                            break;
+                        case 2:
+                            for (MessageHandler handler : this.messageHandlers) {
+                                handler
+                                        .onImage(
+                                                new ReceivedChannelMessage(
+                                                        jsonObject.get("msg_id").getAsString(),
+                                                        jsonObject.get("msg_timestamp").getAsLong(),
+                                                        new ImageMessage(jsonObject.get("content").getAsString()),
+                                                        getGateway().getKaiheilaBot().getCacheManager().getUserCache().getElementById(jsonObject.get("author_id").getAsString()),
+                                                        getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(jsonObject.get("target_id").getAsString())
+                                                )
+                                        );
+                            }
+                            break;
+                        case 3:
+                            for (MessageHandler handler : this.messageHandlers) {
+                                handler
+                                        .onVideo(
+                                                new ReceivedChannelMessage(
+                                                        jsonObject.get("msg_id").getAsString(),
+                                                        jsonObject.get("msg_timestamp").getAsLong(),
+                                                        new VideoMessage(jsonObject.get("content").getAsString()),
+                                                        getGateway().getKaiheilaBot().getCacheManager().getUserCache().getElementById(jsonObject.get("author_id").getAsString()),
+                                                        getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(jsonObject.get("target_id").getAsString())
+                                                )
+                                        );
+                            }
+                            break;
+                        case 4:
+                            for (MessageHandler handler : this.messageHandlers) {
+                                handler
+                                        .onFile(
+                                                new ReceivedChannelMessage(
+                                                        jsonObject.get("msg_id").getAsString(),
+                                                        jsonObject.get("msg_timestamp").getAsLong(),
+                                                        new FileMessage(jsonObject.get("content").getAsString()),
+                                                        getGateway().getKaiheilaBot().getCacheManager().getUserCache().getElementById(jsonObject.get("author_id").getAsString()),
+                                                        getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(jsonObject.get("target_id").getAsString())
+                                                )
+                                        );
+                            }
+                            break;
+                        case 8:
+                            for (MessageHandler handler : this.messageHandlers) {
+                                handler
+                                        .onAudio(
+                                                new ReceivedChannelMessage(
+                                                        jsonObject.get("msg_id").getAsString(),
+                                                        jsonObject.get("msg_timestamp").getAsLong(),
+                                                        new AudioMessage(jsonObject.get("content").getAsString()),
+                                                        getGateway().getKaiheilaBot().getCacheManager().getUserCache().getElementById(jsonObject.get("author_id").getAsString()),
+                                                        getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(jsonObject.get("target_id").getAsString())
+                                                )
+                                        );
+                            }
+                            break;
+                        case 9:
+                            for (MessageHandler handler : this.messageHandlers) {
+                                handler
+                                        .onKMarkdown(
+                                                new ReceivedChannelMessage(
+                                                        jsonObject.get("msg_id").getAsString(),
+                                                        jsonObject.get("msg_timestamp").getAsLong(),
+                                                        KMarkdownMessage.create(jsonObject.get("content").getAsString()),
+                                                        getGateway().getKaiheilaBot().getCacheManager().getUserCache().getElementById(jsonObject.get("author_id").getAsString()),
+                                                        getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(jsonObject.get("target_id").getAsString())
+                                                )
+                                        );
+                            }
+                            break;
+                        case 10:
+                            for (MessageHandler handler : this.messageHandlers) {
+                                handler
+                                        .onCardMessage(
+                                                new ReceivedChannelMessage(
+                                                        jsonObject.get("msg_id").getAsString(),
+                                                        jsonObject.get("msg_timestamp").getAsLong(),
+                                                        CardMessage.parse(jsonObject.get("content").getAsString()),
+                                                        getGateway().getKaiheilaBot().getCacheManager().getUserCache().getElementById(jsonObject.get("author_id").getAsString()),
+                                                        getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(jsonObject.get("target_id").getAsString())
+                                                )
+                                        );
+                            }
+                            break;
+                    }
                 }
             }
         }

@@ -9,13 +9,11 @@ import org.slf4j.LoggerFactory;
 
 public class KaiheilaConfiguration {
     protected static final Logger Log = LoggerFactory.getLogger(KaiheilaConfiguration.class);
-
+    public static boolean isDebug;
     private final SdkConfigurer sdkConfigurer;
     private final ApiConfigurer apiConfigurer;
     private final ClientConfigurer clientConfigurer;
     private final EventSourceConfigurer eventSourceConfigurer;
-
-    public static boolean isDebug;
 
     public KaiheilaConfiguration(SdkConfigurer sdkConfigurer, ClientConfigurer clientConfigurer, ApiConfigurer apiConfigurer, EventSourceConfigurer eventSourceConfigurer) {
         this.sdkConfigurer = sdkConfigurer;

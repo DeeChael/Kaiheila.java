@@ -61,6 +61,10 @@ public class GuildEntity extends KaiheilaObject implements Guild {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     /**
      * 服务器名称
      *
@@ -71,6 +75,10 @@ public class GuildEntity extends KaiheilaObject implements Guild {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /**
      * 服务器主题
      *
@@ -79,6 +87,10 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     @Override
     public String getTopic() {
         return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 
     /**
@@ -101,6 +113,10 @@ public class GuildEntity extends KaiheilaObject implements Guild {
         return icon;
     }
 
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
     /**
      * 当前服务器语音服务器区域
      *
@@ -109,6 +125,10 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     @Override
     public String getRegion() {
         return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
     }
 
     /**
@@ -163,6 +183,10 @@ public class GuildEntity extends KaiheilaObject implements Guild {
         return defaultRole;
     }
 
+    public void setDefaultRole(RoleEntity defaultRole) {
+        this.defaultRole = defaultRole;
+    }
+
     /**
      * 当前服务器总用户数
      *
@@ -171,6 +195,10 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     @Override
     public int getUserCount() {
         return userCount;
+    }
+
+    public void setUserCount(int userCount) {
+        this.userCount = userCount;
     }
 
     /**
@@ -183,6 +211,10 @@ public class GuildEntity extends KaiheilaObject implements Guild {
         return onlineCount;
     }
 
+    public void setOnlineCount(int onlineCount) {
+        this.onlineCount = onlineCount;
+    }
+
     /**
      * 当前服务器总离线用户数
      *
@@ -193,16 +225,8 @@ public class GuildEntity extends KaiheilaObject implements Guild {
         return offlineCount;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public void setOfflineCount(int offlineCount) {
+        this.offlineCount = offlineCount;
     }
 
     public String getMasterId() {
@@ -213,20 +237,12 @@ public class GuildEntity extends KaiheilaObject implements Guild {
         this.masterId = masterId;
     }
 
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
     public int getNotifyType() {
         return notifyType;
     }
 
     public void setNotifyType(int notifyType) {
         this.notifyType = notifyType;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
     }
 
     public boolean isEnableOpen() {
@@ -261,10 +277,6 @@ public class GuildEntity extends KaiheilaObject implements Guild {
         this.welcomeChannelId = welcomeChannelId;
     }
 
-    public void setDefaultRole(RoleEntity defaultRole) {
-        this.defaultRole = defaultRole;
-    }
-
     public List<Integer> getRoles() {
         return roles;
     }
@@ -277,6 +289,10 @@ public class GuildEntity extends KaiheilaObject implements Guild {
         return channels.stream().map(id -> (Channel) getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(id)).collect(Collectors.toList());
     }
 
+    public void setChannels(List<String> channels) {
+        this.channels = channels;
+    }
+
     @Override
     public List<GuildUserEntity> getMembers() {
         return new ArrayList<>(getGateway().getKaiheilaBot().getCacheManager().getGuildUsersCache().get(this.id).values());
@@ -286,28 +302,12 @@ public class GuildEntity extends KaiheilaObject implements Guild {
         return channels;
     }
 
-    public void setChannels(List<String> channels) {
-        this.channels = channels;
-    }
-
     public List<String> getEmojis() {
         return emojis;
     }
 
     public void setEmojis(List<String> emojis) {
         this.emojis = emojis;
-    }
-
-    public void setUserCount(int userCount) {
-        this.userCount = userCount;
-    }
-
-    public void setOnlineCount(int onlineCount) {
-        this.onlineCount = onlineCount;
-    }
-
-    public void setOfflineCount(int offlineCount) {
-        this.offlineCount = offlineCount;
     }
 
     public String createServerInvite(Channel.InviteDuration duration, Channel.InviteTimes times) {

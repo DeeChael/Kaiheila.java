@@ -12,20 +12,20 @@ public class OperationResult {
         this.response = response;
     }
 
-    public JsonNode getResponse() {
-        return response;
-    }
-
-    public Result getResult() {
-        return result;
-    }
-
     public static OperationResult success(JsonNode response) {
         return new OperationResult(Result.SUCCESS, response);
     }
 
     public static OperationResult failed() {
         return new OperationResult(Result.FAILED, null);
+    }
+
+    public JsonNode getResponse() {
+        return response;
+    }
+
+    public Result getResult() {
+        return result;
     }
 
 }

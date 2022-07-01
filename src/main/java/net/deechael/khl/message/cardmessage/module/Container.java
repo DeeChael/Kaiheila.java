@@ -8,18 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Container extends Module {
-    private static final String type = "container";
+
     private final List<Image> elements = new ArrayList<>();
 
-    public net.deechael.khl.message.cardmessage.module.Container add(Image image) {
+    public Container() {
+        super("container");
+    }
+
+    public void add(Image image) {
         elements.add(image);
-        return this;
     }
 
     @Override
     public JsonObject asJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("type", type);
+        JsonObject json = super.asJson();
         JsonArray array = new JsonArray();
         for (Image image : this.elements) {
             array.add(image.asJson());

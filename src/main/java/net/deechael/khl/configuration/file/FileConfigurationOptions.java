@@ -63,20 +63,6 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
     }
 
     /**
-     * @return The string header.
-     * @deprecated use getHeader() instead.
-     */
-    @NotNull
-    @Deprecated
-    public String header() {
-        StringBuilder stringHeader = new StringBuilder();
-        for (String line : header) {
-            stringHeader.append(line == null ? "\n" : line + "\n");
-        }
-        return stringHeader.toString();
-    }
-
-    /**
      * Sets the header that will be applied to the top of the saved output.
      * <p>
      * This header will be commented out and applied directly at the top of
@@ -96,6 +82,20 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
     public FileConfigurationOptions setHeader(@Nullable List<String> value) {
         this.header = (value == null) ? Collections.emptyList() : Collections.unmodifiableList(value);
         return this;
+    }
+
+    /**
+     * @return The string header.
+     * @deprecated use getHeader() instead.
+     */
+    @NotNull
+    @Deprecated
+    public String header() {
+        StringBuilder stringHeader = new StringBuilder();
+        for (String line : header) {
+            stringHeader.append(line == null ? "\n" : line + "\n");
+        }
+        return stringHeader.toString();
     }
 
     /**

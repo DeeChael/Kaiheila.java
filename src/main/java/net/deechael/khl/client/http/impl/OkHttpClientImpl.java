@@ -46,7 +46,7 @@ public class OkHttpClientImpl implements IHttpClient {
             }
         }
         HttpMediaType contentType = httpRequestBody.getContentType();
-        MediaType mediaType = MediaType.get(contentType.name());
+        MediaType mediaType = MediaType.get(contentType.getName());
         return RequestBody.create(httpRequestBody.getBuffer().array(), mediaType);
     }
 

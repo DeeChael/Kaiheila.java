@@ -1,5 +1,6 @@
 package net.deechael.khl.restful;
 
+import com.google.gson.JsonObject;
 import net.deechael.khl.client.http.HttpMethod;
 
 import java.net.URLEncoder;
@@ -479,6 +480,14 @@ public class RestRoute {
             });
             queryString.deleteCharAt(0);
             return compiledRoute + "?" + queryString;
+        }
+
+        public JsonObject getQueryJson() {
+            JsonObject object = new JsonObject();
+            queryParams.forEach((k, v) -> {
+                object.addProperty(k, v.toString());
+            });
+            return object;
         }
 
         @Override

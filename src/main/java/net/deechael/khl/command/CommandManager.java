@@ -25,7 +25,7 @@ public final class CommandManager extends KaiheilaObject {
 
     private final CommandDispatcher<CommandSender> commandDispatcher;
 
-    private final Map<String, CommandSettings> commmands = new HashMap<>();
+    private final Map<String, CommandSettings> commands = new HashMap<>();
 
     private final Map<Pattern, String> patterns = new HashMap<>();
 
@@ -40,14 +40,14 @@ public final class CommandManager extends KaiheilaObject {
         commandSettings.setPrefixes(commandBuilder.getPrefixes());
         commandSettings.setAliases(commandBuilder.getAliases());
         commandSettings.setRegex(commandBuilder.getRegex());
-        this.commmands.put(commandName, commandSettings);
+        this.commands.put(commandName, commandSettings);
         this.commandDispatcher.getRoot().addChild(commandBuilder.build());
         updatePatterns();
     }
 
     private void updatePatterns() {
         this.patterns.clear();
-        for (Entry<String, CommandSettings> entry : this.commmands.entrySet()) {
+        for (Entry<String, CommandSettings> entry : this.commands.entrySet()) {
             CommandSettings settings = entry.getValue();
             if (settings.getRegex() != null) {
                 patterns.put(Pattern.compile(settings.getRegex()), entry.getKey());
@@ -64,18 +64,18 @@ public final class CommandManager extends KaiheilaObject {
     }
 
     public void execute(Channel channel, User user, String message) {
+        while (message.endsWith(" ")) {
+            message = message.substring(0, message.length() - 1);
+            if (message.length() == 0)
+                break;
+        }
+        String partToBeChecked;
+        if (message.contains(" ")) {
+            partToBeChecked = message.split(" ")[0];
+        } else {
+            partToBeChecked = message;
+        }
         for (Entry<Pattern, String> entry : this.patterns.entrySet()) {
-            while (message.endsWith(" ")) {
-                message = message.substring(0, message.length() - 1);
-                if (message.length() == 0)
-                    break;
-            }
-            String partToBeChecked;
-            if (message.contains(" ")) {
-                partToBeChecked = message.split(" ")[0];
-            } else {
-                partToBeChecked = message;
-            }
             if (entry.getKey().matcher(partToBeChecked).matches()) {
                 try {
                     this.commandDispatcher.execute(entry.getValue() + message.substring(partToBeChecked.length()), new CommandSender(this.getGateway(), channel, user));
@@ -85,12 +85,16 @@ public final class CommandManager extends KaiheilaObject {
                     card.setTheme(Theme.DANGER);
                     PlainText error = new PlainText();
                     error.setContent("错误");
-                    card.append(new Header().setText(error));
+                    Header header = new Header();
+                    header.setText(error);
+                    card.append(header);
                     KMarkdownText content = new KMarkdownText();
                     content.setContent(KMarkdownMessage.mentionUser(user).expendSpace(KMarkdownMessage.create(e.getMessage())));
-                    card.append(new Section().setText(content));
+                    Section section = new Section();
+                    section.setText(content);
+                    card.append(section);
                     msg.append(card);
-                    channel.sendTempMessage(msg, user);
+                    channel.sendMessage(msg);
                 }
             }
         }
