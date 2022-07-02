@@ -4,6 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.deechael.khl.annotation.OptionalParameters;
+import net.deechael.khl.annotation.Parameter;
+import net.deechael.khl.annotation.RequiredParameters;
 import net.deechael.khl.client.http.HttpMethod;
 
 import java.lang.reflect.Array;
@@ -118,16 +121,39 @@ public class RestRoute {
         /**
          * 获取当前用户加入的服务器列表
          */
+        @OptionalParameters({
+                @Parameter(name = "page", location = "query", type = int.class),
+                @Parameter(name = "page_size", location = "query", type = int.class),
+                @Parameter(name = "sort", location = "query", type = String.class)
+        })
         public static final RestRoute GET_GUILD_LIST = new RestRoute(HttpMethod.GET, "guild/list", true);
 
         /**
          * 获取服务器详情
          */
+        @RequiredParameters({
+                @Parameter(name = "guild_id", type = String.class)
+        })
         public static final RestRoute GET_GUILD_INFO = new RestRoute(HttpMethod.GET, "guild/view", false);
 
         /**
          * 获取服务器中的用户列表
          */
+        @RequiredParameters({
+                @Parameter(name = "guild_id", location = "query", type = String.class)
+        })
+        @OptionalParameters({
+                @Parameter(name = "sort", location = "query", type = String.class),
+                @Parameter(name = "channel_id", location = "query", type = String.class),
+                @Parameter(name = "search", location = "query", type = String.class),
+                @Parameter(name = "role_id", location = "query", type = int.class),
+                @Parameter(name = "mobile_verified", location = "query", type = int.class),
+                @Parameter(name = "active_time", location = "query", type = int.class),
+                @Parameter(name = "joined_at", location = "query", type = int.class),
+                @Parameter(name = "page", location = "query", type = int.class),
+                @Parameter(name = "page_size", location = "query", type = int.class),
+                @Parameter(name = "filter_user_id", location = "query", type = String.class)
+        })
         public static final RestRoute GET_GUILE_MEMBER_LIST = new RestRoute(HttpMethod.GET, "guild/user-list", true);
 
         /**
