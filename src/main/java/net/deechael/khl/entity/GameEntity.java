@@ -8,13 +8,13 @@ import java.util.List;
 
 public class GameEntity implements Game {
 
-    private int id;
-    private String name;
-    private Type type;
-    private String options;
-    private String[] processName;
-    private String[] productName;
-    private String icon;
+    private final int id;
+    private final String name;
+    private final Type type;
+    private final String options;
+    private final String[] processName;
+    private final String[] productName;
+    private final String icon;
 
     public GameEntity(JsonNode node) {
         this.id = node.get("id").asInt();

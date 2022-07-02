@@ -1,7 +1,6 @@
 package net.deechael.khl.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.PermissionOverwrite;
 import net.deechael.khl.api.Role;
 import net.deechael.khl.api.User;

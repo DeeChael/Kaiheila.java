@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 public class GuildEntity extends KaiheilaObject implements Guild {
 
+    private final List<GuildUser> users = new ArrayList<>();
     private String id;
     private String name;
     private String topic;
@@ -31,10 +32,7 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     private int userCount;
     private int onlineCount;
     private int offlineCount;
-
     private GuildStatusEntity status = null;
-
-    private final List<GuildUser> users = new ArrayList<>();
 
     public GuildEntity(Gateway gateway, JsonNode node) {
         super(gateway);
@@ -414,6 +412,10 @@ public class GuildEntity extends KaiheilaObject implements Guild {
             return this.offlineUsers;
         }
 
+        public void setOfflineUsers(int offlineUsers) {
+            this.offlineUsers = offlineUsers;
+        }
+
         @Override
         public void update() {
             JsonNode node = gateway.executeRequest(RestRoute.Guild.GET_GUILD_USER_LIST.compile().withQueryParam("guild_id", this.getGuild().getId()));
@@ -425,10 +427,6 @@ public class GuildEntity extends KaiheilaObject implements Guild {
         @Override
         public Guild getGuild() {
             return guild;
-        }
-
-        public void setOfflineUsers(int offlineUsers) {
-            this.offlineUsers = offlineUsers;
         }
 
     }

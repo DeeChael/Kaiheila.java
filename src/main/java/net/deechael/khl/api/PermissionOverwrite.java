@@ -6,15 +6,15 @@ public interface PermissionOverwrite {
 
     int getAllow();
 
+    void setAllow(int allow);
+
     int getDeny();
 
-    void setAllow(int allow);
+    void setDeny(int deny);
 
     void addAllow(Permissions permission);
 
     void addDeny(Permissions permission);
-
-    void setDeny(int deny);
 
     void update();
 

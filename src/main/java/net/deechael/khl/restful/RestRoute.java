@@ -114,6 +114,14 @@ public class RestRoute {
         return method + " /" + path;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RestRoute restRoute = (RestRoute) o;
+        return pageable == restRoute.pageable && paramCount == restRoute.paramCount && method.equals(restRoute.method) && path.equals(restRoute.path);
+    }
+
     /**
      * 服务器操作
      */
@@ -481,7 +489,7 @@ public class RestRoute {
         /**
          * 上传文件/图片
          */
-        public static final RestRoute UPLOAD_ASSET = new RestRoute(HttpMethod.GET, "asset/create", false);
+        public static final RestRoute UPLOAD_ASSET = new RestRoute(HttpMethod.POST, "asset/create", false);
 
         /**
          * 获取当前用户信息

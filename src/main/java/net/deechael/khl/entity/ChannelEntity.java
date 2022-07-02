@@ -6,9 +6,7 @@ import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.restful.RestRoute;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public abstract class ChannelEntity extends KaiheilaObject implements Channel {
@@ -252,12 +250,12 @@ public abstract class ChannelEntity extends KaiheilaObject implements Channel {
         this.permissionSync = permissionSync;
     }
 
-    public Map<Integer, PermissionOverwriteEntity> getPermissionOverwrites() {
-        return permissionOverwrites;
-    }
-
     public Map<String, PermissionOverwriteEntity> getPermissionUsers() {
         return permissionUsers;
+    }
+
+    public void setPermissionUsers(Map<String, PermissionOverwriteEntity> permissionUsers) {
+        this.permissionUsers = permissionUsers;
     }
 
     public String createChannelInvite(InviteDuration duration, InviteTimes times) {
@@ -287,6 +285,18 @@ public abstract class ChannelEntity extends KaiheilaObject implements Channel {
     public PermissionOverwrite getPermissionOverwrite(Role role) {
         PermissionOverwriteEntity permissionOverwrite = this.permissionOverwrites.get(role.getId());
         return permissionOverwrite != null ? permissionOverwrite : new PermissionOverwriteEntity(this, role);
+    }
+
+    public Map<Integer, PermissionOverwriteEntity> getPermissionOverwrites() {
+        return this.permissionOverwrites;
+    }
+
+    public void setPermissionOverwrites(Map<Integer, PermissionOverwriteEntity> permissionOverwrites) {
+        this.permissionOverwrites = permissionOverwrites;
+    }
+
+    public Map<String, PermissionOverwriteEntity> GETPermissionUsers() {
+        return this.permissionUsers;
     }
 
 }

@@ -9,9 +9,13 @@ import net.deechael.khl.client.http.HttpMediaType;
 import net.deechael.khl.client.http.HttpRequestBody;
 import net.deechael.khl.restful.RestPageable;
 import net.deechael.khl.restful.RestRoute;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -56,12 +60,31 @@ public class Gateway {
         if (route.getMethod() == "POST") {
             requestBody = new HttpRequestBody(jsonString.length(), HttpMediaType.JSON, ByteBuffer.wrap(jsonString.getBytes(StandardCharsets.UTF_8)));
         }
-        HttpCall request = HttpCall.createRequest(route.getMethod(), getCompleteUrl(route), this.defaultHeaders, requestBody);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        this.defaultHeaders.forEach(httpHeaders::addHeaders);
+        if (route.getRoute().equals(RestRoute.Misc.UPLOAD_ASSET)) {
+            httpHeaders.addHeader("Content-Type", "multipart/form-data");
+            requestBody = new HttpRequestBody(jsonString.length(), HttpMediaType.FORM_DATA, ByteBuffer.wrap(jsonString.getBytes(StandardCharsets.UTF_8)));
+        }
+        HttpCall request = HttpCall.createRequest(route.getMethod(), getCompleteUrl(route), httpHeaders, requestBody);
         List<JsonNode> data = getRestJsonResponse(route, request);
         if (data == null) {
             throw new RuntimeException("An error was thrown when executing " + route.getCompiledRoute());
         }
         return data.get(0).get("data");
+    }
+
+    public String uploadAsset(File file) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        this.defaultHeaders.forEach(httpHeaders::addHeaders);
+        httpHeaders.addHeader("Content-Type", "multipart/form-data");
+        HttpCall request = HttpCall.createRequest(RestRoute.Misc.UPLOAD_ASSET.compile().getMethod(), getCompleteUrl(RestRoute.Misc.UPLOAD_ASSET.compile()), httpHeaders, null);
+        request.getRequest().setBody(new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("file", file.getName(), RequestBody.create(MediaType.parse(HttpMediaType.FORM_DATA.getName()), file)).build());
+        List<JsonNode> data = getRestJsonResponse(RestRoute.Misc.UPLOAD_ASSET.compile(), request);
+        if (data == null) {
+            throw new RuntimeException("An error was thrown when executing " + RestRoute.Misc.UPLOAD_ASSET.compile().getCompiledRoute());
+        }
+        return data.get(0).get("data").get("url").asText();
     }
 
     public List<JsonNode> executePaginationRequest(RestRoute.CompiledRoute route) {

@@ -21,7 +21,6 @@ import net.deechael.khl.api.Role;
 import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.cache.CacheManager;
 import net.deechael.khl.entity.GuildEntity;
-import net.deechael.khl.entity.RoleEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import net.deechael.khl.gate.Gateway;

@@ -41,6 +41,7 @@ import net.deechael.khl.task.TaskScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -280,6 +281,11 @@ public class KaiheilaBot implements Bot {
     public void deleteGame(Game game) {
         this.getGateway().executeRequest(RestRoute.Game.DELETE_GAME.compile().withQueryParam("id", game.getId()));
         this.getCacheManager().getGameCache().unloadElementById(game.getId());
+    }
+
+    @Override
+    public String uploadAsset(File file) {
+        return this.getGateway().uploadAsset(file);
     }
 
     @Override

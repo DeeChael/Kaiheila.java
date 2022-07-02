@@ -19,6 +19,7 @@ package net.deechael.khl.api;
 import net.deechael.khl.command.KaiheilaCommandBuilder;
 import net.deechael.khl.hook.EventListener;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -85,5 +86,7 @@ public interface Bot extends KHLObject {
     void updateGameIcon(Game game, String icon);
 
     void deleteGame(Game game);
+
+    String uploadAsset(File file);
 
 }

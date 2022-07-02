@@ -117,6 +117,10 @@ public class HttpCall {
         public RequestBody getBody() {
             return body;
         }
+
+        public void setBody(RequestBody body) {
+            this.body = body;
+        }
     }
 
     public static class Response {
