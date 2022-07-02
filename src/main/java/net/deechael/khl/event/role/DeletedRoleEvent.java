@@ -45,8 +45,8 @@ public class DeletedRoleEvent extends AbstractEvent {
     @Override
     public IEvent handleSystemEvent(JsonNode body) {
         CacheManager cacheManager = getGateway().getKaiheilaBot().getCacheManager();
-        ((BaseCache<Integer, RoleEntity>) cacheManager.getRoleCache()).unloadElementById(roleId);
-        BaseCache<String, GuildEntity> guildCache = (BaseCache<String, GuildEntity>) cacheManager.getGuildCache();
+        cacheManager.getRoleCache().unloadElementById(roleId);
+        BaseCache<String, GuildEntity> guildCache = cacheManager.getGuildCache();
         for (GuildEntity guild : guildCache) {
             guild.getRoles().remove(roleId);
         }

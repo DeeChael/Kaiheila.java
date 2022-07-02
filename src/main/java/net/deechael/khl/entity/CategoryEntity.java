@@ -17,7 +17,7 @@ public class CategoryEntity extends ChannelEntity implements Category {
     public CategoryEntity(Gateway gateway, JsonNode node, boolean isEvent) {
         super(gateway, node, isEvent);
     }
-    
+
     @Override
     public ReceivedMessage sendMessage(String message, boolean isKMarkdown) {
         throw new RuntimeException("你不能在一个频道分组中发送消息");

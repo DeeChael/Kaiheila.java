@@ -84,7 +84,7 @@ public class CacheManager extends KaiheilaObject {
         for (JsonNode channel : node.get("channels")) {
             ChannelEntity entity;
             if (channel.get("type").asInt() == 1) {
-                 entity = new TextChannelEntity(this.getGateway(), channel);
+                entity = new TextChannelEntity(this.getGateway(), channel);
             } else if (channel.get("type").asInt() == 2) {
                 entity = new VoiceChannelEntity(this.getGateway(), channel);
             } else {

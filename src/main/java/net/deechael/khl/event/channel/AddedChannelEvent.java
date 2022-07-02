@@ -19,7 +19,6 @@ package net.deechael.khl.event.channel;
 import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.Guild;
-import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.cache.CacheManager;
 import net.deechael.khl.entity.*;
 import net.deechael.khl.event.AbstractEvent;

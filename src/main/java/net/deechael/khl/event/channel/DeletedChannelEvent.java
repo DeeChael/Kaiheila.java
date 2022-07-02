@@ -53,8 +53,8 @@ public class DeletedChannelEvent extends AbstractEvent {
     @Override
     public IEvent handleSystemEvent(JsonNode body) {
         // 更新缓存
-        BaseCache<String, GuildEntity> guildCache = (BaseCache<String, GuildEntity>) getKaiheilaBot().getCacheManager().getGuildCache();
-        BaseCache<String, ChannelEntity> channelCache = (BaseCache<String, ChannelEntity>) getKaiheilaBot().getCacheManager().getChannelCache();
+        BaseCache<String, GuildEntity> guildCache = getKaiheilaBot().getCacheManager().getGuildCache();
+        BaseCache<String, ChannelEntity> channelCache = getKaiheilaBot().getCacheManager().getChannelCache();
         channelCache.unloadElementById(channelId);
         for (GuildEntity guild : guildCache) {
             guild.getChannels().remove(channelId);

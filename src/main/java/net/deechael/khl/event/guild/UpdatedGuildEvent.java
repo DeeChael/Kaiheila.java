@@ -42,7 +42,7 @@ public class UpdatedGuildEvent extends AbstractEvent {
 
     @Override
     public IEvent handleSystemEvent(JsonNode body) {
-        BaseCache<String, GuildEntity> guildCache = (BaseCache<String, GuildEntity>) getKaiheilaBot().getCacheManager().getGuildCache();
+        BaseCache<String, GuildEntity> guildCache = getKaiheilaBot().getCacheManager().getGuildCache();
         GuildEntity guildEntity = guildCache.getElementById(guildId);
         JsonNode node = super.getEventExtraBody(body);
         guildEntity.setName(node.get("name").asText());

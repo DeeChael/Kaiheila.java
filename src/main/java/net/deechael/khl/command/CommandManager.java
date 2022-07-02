@@ -2,8 +2,6 @@ package net.deechael.khl.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.deechael.khl.api.Channel;
-import net.deechael.khl.api.User;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.message.ReceivedChannelMessage;

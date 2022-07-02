@@ -26,6 +26,37 @@ public class RestRoute {
         this.paramCount = getConstructionPathParamCount(path);
     }
 
+    private static JsonArray dealArray(Object object) {
+        JsonArray array = new JsonArray();
+        int length = Array.getLength(object);
+        for (int i = 0; i < length; i++) {
+            Object v = Array.get(object, i);
+            if (v.getClass().isArray()) {
+                array.add(dealArray(v));
+            } else {
+                if (v instanceof JsonElement) {
+                    array.add((JsonElement) v);
+                } else {
+                    JsonObject jo = tryToDealObject(v.toString());
+                    if (jo != null) {
+                        array.add(jo);
+                    } else {
+                        array.add(v.toString());
+                    }
+                }
+            }
+        }
+        return array;
+    }
+
+    private static JsonObject tryToDealObject(String string) {
+        try {
+            return JsonParser.parseString(string).getAsJsonObject();
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
     public String getMethod() {
         return method;
     }
@@ -502,9 +533,9 @@ public class RestRoute {
                     } else {
                         JsonObject jo = tryToDealObject(v.toString());
                         if (jo != null) {
-                            object.add(k,jo);
+                            object.add(k, jo);
                         } else {
-                            object.addProperty(k,v.toString());
+                            object.addProperty(k, v.toString());
                         }
                     }
                 }
@@ -517,37 +548,6 @@ public class RestRoute {
             return getMethod() + " /" + compiledRoute;
         }
 
-    }
-
-    private static JsonArray dealArray(Object object) {
-        JsonArray array = new JsonArray();
-        int length = Array.getLength(object);
-        for (int i = 0; i < length; i++) {
-            Object v = Array.get(object, i);
-            if (v.getClass().isArray()) {
-                array.add(dealArray(v));
-            } else {
-                if (v instanceof JsonElement) {
-                    array.add((JsonElement) v);
-                } else {
-                    JsonObject jo = tryToDealObject(v.toString());
-                    if (jo != null) {
-                        array.add(jo);
-                    } else {
-                        array.add(v.toString());
-                    }
-                }
-            }
-        }
-        return array;
-    }
-
-    private static JsonObject tryToDealObject(String string) {
-        try {
-            return JsonParser.parseString(string).getAsJsonObject();
-        } catch (Exception ignored) {
-            return null;
-        }
     }
 
 }

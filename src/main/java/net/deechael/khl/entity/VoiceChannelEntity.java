@@ -69,7 +69,7 @@ public class VoiceChannelEntity extends ChannelEntity implements VoiceChannel {
 
     @Override
     public void moveTo(User user) {
-        this.moveTo(new User[] {user});
+        this.moveTo(new User[]{user});
     }
 
     @Override

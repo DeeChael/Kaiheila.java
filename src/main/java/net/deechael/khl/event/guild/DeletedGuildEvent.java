@@ -47,16 +47,16 @@ public class DeletedGuildEvent extends AbstractEvent {
     @Override
     public IEvent handleSystemEvent(JsonNode body) {
         CacheManager cacheManager = getKaiheilaBot().getCacheManager();
-        BaseCache<String, GuildEntity> guildCache = (BaseCache<String, GuildEntity>) cacheManager.getGuildCache();
+        BaseCache<String, GuildEntity> guildCache = cacheManager.getGuildCache();
         GuildEntity guildEntity = guildCache.getElementById(guildId);
         for (Integer role : guildEntity.getRoles()) {
-            ((BaseCache<Integer, RoleEntity>) cacheManager.getRoleCache()).unloadElementById(role);
+            cacheManager.getRoleCache().unloadElementById(role);
         }
         for (String channel : guildEntity.getChannelIDs()) {
-            ((BaseCache<String, ChannelEntity>) cacheManager.getChannelCache()).unloadElementById(channel);
+            cacheManager.getChannelCache().unloadElementById(channel);
         }
         for (String emoji : guildEntity.getEmojis()) {
-            ((BaseCache<String, EmojiEntity>) cacheManager.getGuildEmojisCache()).unloadElementById(emoji);
+            cacheManager.getGuildEmojisCache().unloadElementById(emoji);
         }
         guildCache.unloadElementById(guildId);
         return this;

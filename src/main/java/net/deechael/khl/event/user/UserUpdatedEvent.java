@@ -61,7 +61,7 @@ public class UserUpdatedEvent extends AbstractEvent {
 
     @Override
     public IEvent handleSystemEvent(JsonNode body) {
-        BaseCache<String, UserEntity> userCache = (BaseCache<String, UserEntity>) getKaiheilaBot().getCacheManager().getUserCache();
+        BaseCache<String, UserEntity> userCache = getKaiheilaBot().getCacheManager().getUserCache();
         UserEntity userEntity = userCache.getElementById(userId);
         userEntity.setUsername(body.get("username").asText());
         userEntity.setAvatar(body.get("avatar").asText());
