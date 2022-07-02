@@ -1,13 +1,11 @@
 package net.deechael.khl.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import net.deechael.khl.api.Channel;
-import net.deechael.khl.api.Guild;
-import net.deechael.khl.api.Role;
-import net.deechael.khl.api.User;
+import net.deechael.khl.api.*;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.restful.RestRoute;
+import net.deechael.khl.type.ChannelTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -329,6 +327,21 @@ public class GuildEntity extends KaiheilaObject implements Guild {
             channels.add(getGateway().getKaiheilaBot().getCacheManager().getChannelCache().getElementById(channelData.get("id").asText()));
         }
         return channels;
+    }
+
+    @Override
+    public Channel createChannel(Category parent, ChannelTypes type, String name) {
+        return parent.createChannel(type, name);
+    }
+
+    @Override
+    public TextChannel createTextChannel(Category parent, String name) {
+        return parent.createTextChannel(name);
+    }
+
+    @Override
+    public VoiceChannel createVoiceChannel(Category parent, String name, int limit, VoiceChannel.Quality quality) {
+        return parent.createVoiceChannel(name, limit, quality);
     }
 
 }

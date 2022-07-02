@@ -1,6 +1,7 @@
 package net.deechael.khl.api;
 
 import net.deechael.khl.entity.GuildUserEntity;
+import net.deechael.khl.type.ChannelTypes;
 
 import java.util.List;
 
@@ -111,6 +112,8 @@ public interface Guild extends KHLObject {
      */
     int getOfflineCount();
 
+    List<String> getChannelIDs();
+
     List<Channel> getChannels();
 
     List<GuildUserEntity> getMembers();
@@ -118,5 +121,11 @@ public interface Guild extends KHLObject {
     String createServerInvite(Channel.InviteDuration duration, Channel.InviteTimes times);
 
     List<Channel> getJoinedChannel(User user);
+
+    Channel createChannel(Category parent, ChannelTypes type, String name);
+
+    TextChannel createTextChannel(Category parent, String name);
+
+    VoiceChannel createVoiceChannel(Category parent, String name, int limit, VoiceChannel.Quality quality);
 
 }

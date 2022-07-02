@@ -1,8 +1,12 @@
 package net.deechael.khl.restful;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.deechael.khl.client.http.HttpMethod;
 
+import java.lang.reflect.Array;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -139,6 +143,11 @@ public class RestRoute {
          * 获取频道详情
          */
         public static final RestRoute CHANNEL_DETAILS = new RestRoute(HttpMethod.GET, "channel/view", false);
+
+        /**
+         * 更新频道信息
+         */
+        public static final RestRoute UPDATE_CHANNEL = new RestRoute(HttpMethod.POST, "channel/update", false);
 
         /**
          * 创建频道
@@ -485,7 +494,20 @@ public class RestRoute {
         public JsonObject getQueryJson() {
             JsonObject object = new JsonObject();
             queryParams.forEach((k, v) -> {
-                object.addProperty(k, v.toString());
+                if (v.getClass().isArray()) {
+                    object.add(k, dealArray(v));
+                } else {
+                    if (v instanceof JsonElement) {
+                        object.add(k, (JsonElement) v);
+                    } else {
+                        JsonObject jo = tryToDealObject(v.toString());
+                        if (jo != null) {
+                            object.add(k,jo);
+                        } else {
+                            object.addProperty(k,v.toString());
+                        }
+                    }
+                }
             });
             return object;
         }
@@ -496,4 +518,36 @@ public class RestRoute {
         }
 
     }
+
+    private static JsonArray dealArray(Object object) {
+        JsonArray array = new JsonArray();
+        int length = Array.getLength(object);
+        for (int i = 0; i < length; i++) {
+            Object v = Array.get(object, i);
+            if (v.getClass().isArray()) {
+                array.add(dealArray(v));
+            } else {
+                if (v instanceof JsonElement) {
+                    array.add((JsonElement) v);
+                } else {
+                    JsonObject jo = tryToDealObject(v.toString());
+                    if (jo != null) {
+                        array.add(jo);
+                    } else {
+                        array.add(v.toString());
+                    }
+                }
+            }
+        }
+        return array;
+    }
+
+    private static JsonObject tryToDealObject(String string) {
+        try {
+            return JsonParser.parseString(string).getAsJsonObject();
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
 }

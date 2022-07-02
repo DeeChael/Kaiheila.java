@@ -21,8 +21,7 @@ import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.cache.BaseCache;
 import net.deechael.khl.cache.CacheManager;
-import net.deechael.khl.entity.ChannelEntity;
-import net.deechael.khl.entity.GuildEntity;
+import net.deechael.khl.entity.*;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import net.deechael.khl.gate.Gateway;
@@ -52,12 +51,19 @@ public class AddedChannelEvent extends AbstractEvent {
     @Override
     public IEvent handleSystemEvent(JsonNode body) {
         JsonNode node = super.getEventExtraBody(body);
-        ChannelEntity entity = new ChannelEntity(this.getGateway(), node, true);
+        ChannelEntity entity;
+        if (node.get("type").asInt() == 1) {
+            entity = new TextChannelEntity(this.getGateway(), node, true);
+        } else if (node.get("type").asInt() == 2) {
+            entity = new VoiceChannelEntity(this.getGateway(), node, true);
+        } else {
+            entity = new CategoryEntity(this.getGateway(), node, true);
+        }
         // 更新缓存
         CacheManager cacheManager = getKaiheilaBot().getCacheManager();
         GuildEntity guild = cacheManager.getGuildCache().getElementById(guildId);
         guild.getChannelIDs().add(entity.getId());
-        ((BaseCache<String, ChannelEntity>) cacheManager.getChannelCache()).updateElementById(entity.getId(), entity);
+        cacheManager.getChannelCache().updateElementById(entity.getId(), entity);
         return this;
     }
 }

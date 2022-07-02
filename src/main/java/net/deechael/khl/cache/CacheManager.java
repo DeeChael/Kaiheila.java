@@ -82,7 +82,14 @@ public class CacheManager extends KaiheilaObject {
         GuildEntity guild = new GuildEntity(this.getGateway(), node);
         ArrayList<String> channelId = new ArrayList<>();
         for (JsonNode channel : node.get("channels")) {
-            ChannelEntity entity = new ChannelEntity(this.getGateway(), channel);
+            ChannelEntity entity;
+            if (channel.get("type").asInt() == 1) {
+                 entity = new TextChannelEntity(this.getGateway(), channel);
+            } else if (channel.get("type").asInt() == 2) {
+                entity = new VoiceChannelEntity(this.getGateway(), channel);
+            } else {
+                entity = new CategoryEntity(this.getGateway(), channel);
+            }
             entity.setGuild(guild);
             this.channelCache.updateElementById(entity.getId(), entity);
             channelId.add(entity.getId());
@@ -133,19 +140,19 @@ public class CacheManager extends KaiheilaObject {
         return selfCache;
     }
 
-    public ICacheView<String, GuildEntity> getGuildCache() {
+    public BaseCache<String, GuildEntity> getGuildCache() {
         return guildCache;
     }
 
-    public ICacheView<Integer, RoleEntity> getRoleCache() {
+    public BaseCache<Integer, RoleEntity> getRoleCache() {
         return roleCache;
     }
 
-    public ICacheView<String, ChannelEntity> getChannelCache() {
+    public BaseCache<String, ChannelEntity> getChannelCache() {
         return channelCache;
     }
 
-    public ICacheView<String, UserEntity> getUserCache() {
+    public BaseCache<String, UserEntity> getUserCache() {
         return userCache;
     }
 
@@ -153,7 +160,7 @@ public class CacheManager extends KaiheilaObject {
         return guildUsersCache;
     }
 
-    public ICacheView<String, EmojiEntity> getGuildEmojisCache() {
+    public BaseCache<String, EmojiEntity> getGuildEmojisCache() {
         return guildEmojisCache;
     }
 }

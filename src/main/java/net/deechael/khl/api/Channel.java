@@ -2,6 +2,7 @@ package net.deechael.khl.api;
 
 import net.deechael.khl.message.Message;
 import net.deechael.khl.message.ReceivedMessage;
+import net.deechael.khl.type.ChannelTypes;
 
 /**
  * 服务器表情，用户可以创建文本频道或语言频道
@@ -94,6 +95,10 @@ public interface Channel extends KHLObject {
 
     String createChannelInvite(InviteDuration duration, InviteTimes times);
 
+    ChannelTypes getChannelType();
+
+    void updateName(String name);
+
     enum InviteDuration {
         HALF_HOUR(1800),
         ONE_HOUR(3600),
@@ -136,5 +141,31 @@ public interface Channel extends KHLObject {
         }
     }
 
+    enum SlowMode {
+        FIVE_SEC(5000),
+        TEN_SEC(10000),
+        FIFTEEN_SEC(15000),
+        THIRTY_SEC(30000),
+        ONE_MIN(60000),
+        TWO_MIN(120000),
+        FIVE_MIN(300000),
+        TEN_MIN(600000),
+        FIFTEEN_MIN(900000),
+        THIRTY_MIN(1800000),
+        ONE_HOUR(3600000),
+        TWO_HOUR(7200000),
+        SIX_HOUR(21600000);
+
+        private final int time;
+
+        SlowMode(int time) {
+            this.time = time;
+        }
+
+        public int getTime() {
+            return time;
+        }
+
+    }
 
 }

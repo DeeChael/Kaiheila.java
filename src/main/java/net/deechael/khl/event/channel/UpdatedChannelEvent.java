@@ -20,7 +20,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.Guild;
 import net.deechael.khl.cache.BaseCache;
+import net.deechael.khl.entity.CategoryEntity;
 import net.deechael.khl.entity.ChannelEntity;
+import net.deechael.khl.entity.TextChannelEntity;
+import net.deechael.khl.entity.VoiceChannelEntity;
 import net.deechael.khl.event.AbstractEvent;
 import net.deechael.khl.event.IEvent;
 import net.deechael.khl.gate.Gateway;
@@ -50,9 +53,16 @@ public class UpdatedChannelEvent extends AbstractEvent {
     @Override
     public IEvent handleSystemEvent(JsonNode body) {
         JsonNode node = super.getEventExtraBody(body);
-        ChannelEntity entity = new ChannelEntity(this.getGateway(), node, true);
+        ChannelEntity entity;
+        if (node.get("type").asInt() == 1) {
+            entity = new TextChannelEntity(this.getGateway(), node, true);
+        } else if (node.get("type").asInt() == 2) {
+            entity = new VoiceChannelEntity(this.getGateway(), node, true);
+        } else {
+            entity = new CategoryEntity(this.getGateway(), node, true);
+        }
         // 更新缓存
-        BaseCache<String, ChannelEntity> channelCache = (BaseCache<String, ChannelEntity>) getKaiheilaBot().getCacheManager().getChannelCache();
+        BaseCache<String, ChannelEntity> channelCache = getKaiheilaBot().getCacheManager().getChannelCache();
         ChannelEntity oldEntity = channelCache.getElementById(entity.getId());
         entity.setMasterId(oldEntity.getMasterId());
         entity.setPermissionOverwrites(oldEntity.getPermissionOverwrites());
