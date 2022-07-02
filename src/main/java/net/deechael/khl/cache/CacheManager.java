@@ -71,13 +71,13 @@ public class CacheManager extends KaiheilaObject {
         List<JsonNode> data = getGateway().executePaginationRequest(RestRoute.Guild.GET_GUILD_LIST.compile());
         for (JsonNode item : data) {
             String guildId = item.get("id").asText();
-            fetchGuildData(guildId);
-            fetchGuildUserData(guildId);
+            GuildEntity guild = fetchGuildData(guildId);
+            fetchGuildUserData(guild);
             fetchGuildEmojiData(guildId);
         }
     }
 
-    private void fetchGuildData(String guildId) {
+    private GuildEntity fetchGuildData(String guildId) {
         JsonNode node = getGateway().executeRequest(RestRoute.Guild.GET_GUILD_INFO.compile().withQueryParam("guild_id", guildId));
         GuildEntity guild = new GuildEntity(this.getGateway(), node);
         ArrayList<String> channelId = new ArrayList<>();
@@ -108,19 +108,21 @@ public class CacheManager extends KaiheilaObject {
         }
         guild.setRoles(roleId);
         this.guildCache.updateElementById(guild.getId(), guild);
+        return guild;
     }
 
-    private void fetchGuildUserData(String guildId) {
-        List<JsonNode> members = getGateway().executePaginationRequest(RestRoute.Guild.GET_GUILE_MEMBER_LIST.compile().withQueryParam("guild_id", guildId));
+    private void fetchGuildUserData(GuildEntity guild) {
+        List<JsonNode> members = getGateway().executePaginationRequest(RestRoute.Guild.GET_GUILD_USER_LIST.compile().withQueryParam("guild_id", guild.getId()));
         HashMap<String, GuildUserEntity> guildUserEntities = new HashMap<>();
         for (JsonNode items : members) {
             UserEntity userEntity = new UserEntity(this.getGateway(), items);
             this.userCache.updateElementById(userEntity.getId(), userEntity);
             GuildUserEntity guildUserEntity = new GuildUserEntity(this.getGateway(), items);
-            guildUserEntity.setGuild(this.getGuildCache().getElementById(guildId));
+            guildUserEntity.setGuild(this.getGuildCache().getElementById(guild.getId()));
+            guild.addUser(guildUserEntity);
             guildUserEntities.put(guildUserEntity.getId(), guildUserEntity);
         }
-        this.guildUsersCache.put(guildId, guildUserEntities);
+        this.guildUsersCache.put(guild.getId(), guildUserEntities);
     }
 
     private void fetchGuildEmojiData(String guildId) {

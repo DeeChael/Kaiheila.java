@@ -32,6 +32,10 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     private int onlineCount;
     private int offlineCount;
 
+    private GuildStatusEntity status = null;
+
+    private final List<GuildUser> users = new ArrayList<>();
+
     public GuildEntity(Gateway gateway, JsonNode node) {
         super(gateway);
         this.setId(node.get("id").asText());
@@ -329,6 +333,25 @@ public class GuildEntity extends KaiheilaObject implements Guild {
         return channels;
     }
 
+    public void addUser(GuildUser user) {
+        this.users.add(user);
+    }
+
+    @Override
+    public List<GuildUser> getUsers() {
+        return new ArrayList<>(users);
+    }
+
+    @Override
+    public GuildStatus getStatus() {
+        JsonNode node = getGateway().executeRequest(RestRoute.Guild.GET_GUILD_USER_LIST.compile().withQueryParam("guild_id", this.getId()));
+        GuildStatusEntity status = this.status != null ? this.status : new GuildStatusEntity(this.getGateway(), this);
+        status.setUsers(node.get("user_count").asInt());
+        status.setOnlineUsers(node.get("online_count").asInt());
+        status.setOfflineUsers(node.get("offline_count").asInt());
+        return this.status = status;
+    }
+
     @Override
     public Channel createChannel(Category parent, ChannelTypes type, String name) {
         return parent.createChannel(type, name);
@@ -342,6 +365,62 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     @Override
     public VoiceChannel createVoiceChannel(Category parent, String name, int limit, VoiceChannel.Quality quality) {
         return parent.createVoiceChannel(name, limit, quality);
+    }
+
+    private static class GuildStatusEntity implements GuildStatus {
+
+        private final Gateway gateway;
+        private final Guild guild;
+
+        private int users = 0;
+        private int onlineUsers = 0;
+        private int offlineUsers = 0;
+
+        public GuildStatusEntity(Gateway gateway, Guild guild) {
+            this.gateway = gateway;
+            this.guild = guild;
+        }
+
+        @Override
+        public int getUsers() {
+            return this.users;
+        }
+
+        public void setUsers(int users) {
+            this.users = users;
+        }
+
+        @Override
+        public int getOnlineUsers() {
+            return this.onlineUsers;
+        }
+
+        public void setOnlineUsers(int onlineUsers) {
+            this.onlineUsers = onlineUsers;
+        }
+
+        @Override
+        public int getOfflineUsers() {
+            return this.offlineUsers;
+        }
+
+        @Override
+        public void update() {
+            JsonNode node = gateway.executeRequest(RestRoute.Guild.GET_GUILD_USER_LIST.compile().withQueryParam("guild_id", this.getGuild().getId()));
+            this.setUsers(node.get("user_count").asInt());
+            this.setOnlineUsers(node.get("online_count").asInt());
+            this.setOfflineUsers(node.get("offline_count").asInt());
+        }
+
+        @Override
+        public Guild getGuild() {
+            return guild;
+        }
+
+        public void setOfflineUsers(int offlineUsers) {
+            this.offlineUsers = offlineUsers;
+        }
+
     }
 
 }

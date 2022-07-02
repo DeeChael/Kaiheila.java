@@ -154,7 +154,7 @@ public class RestRoute {
                 @Parameter(name = "page_size", location = "query", type = int.class),
                 @Parameter(name = "filter_user_id", location = "query", type = String.class)
         })
-        public static final RestRoute GET_GUILE_MEMBER_LIST = new RestRoute(HttpMethod.GET, "guild/user-list", true);
+        public static final RestRoute GET_GUILD_USER_LIST = new RestRoute(HttpMethod.GET, "guild/user-list", true);
 
         /**
          * 修改服务器中用户的昵称

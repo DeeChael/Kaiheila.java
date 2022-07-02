@@ -128,4 +128,22 @@ public interface Guild extends KHLObject {
 
     VoiceChannel createVoiceChannel(Category parent, String name, int limit, VoiceChannel.Quality quality);
 
+    List<GuildUser> getUsers();
+
+    GuildStatus getStatus();
+
+    interface GuildStatus {
+
+        int getUsers();
+
+        int getOnlineUsers();
+
+        int getOfflineUsers();
+
+        void update();
+
+        Guild getGuild();
+
+    }
+
 }
