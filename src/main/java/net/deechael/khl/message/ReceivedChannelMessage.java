@@ -1,6 +1,7 @@
 package net.deechael.khl.message;
 
 import net.deechael.khl.api.Channel;
+import net.deechael.khl.api.Guild;
 import net.deechael.khl.api.User;
 
 public class ReceivedChannelMessage extends ReceivedMessage {
@@ -16,8 +17,16 @@ public class ReceivedChannelMessage extends ReceivedMessage {
         return channel;
     }
 
+    public Guild getGuild() {
+        return getChannel().getGuild();
+    }
+
     public void reply(Message message) {
         getChannel().reply(message, this.getId());
+    }
+
+    public void replyTemp(Message message) {
+        getChannel().replyTemp(message, this.getAuthor(), this.getId());
     }
 
 }

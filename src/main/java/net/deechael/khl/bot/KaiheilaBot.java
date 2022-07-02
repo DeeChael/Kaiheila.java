@@ -76,12 +76,12 @@ public class KaiheilaBot implements Bot {
         this.defaultMessageHandler = new MessageHandler() {
             @Override
             public void onText(ReceivedChannelMessage message) {
-                KaiheilaBot.this.getCommandManager().execute(message.getChannel(), message.getAuthor(), message.getMessage().getContent());
+                KaiheilaBot.this.getCommandManager().execute(message);
             }
 
             @Override
             public void onKMarkdown(ReceivedChannelMessage message) {
-                KaiheilaBot.this.getCommandManager().execute(message.getChannel(), message.getAuthor(), message.getMessage().getContent());
+                KaiheilaBot.this.getCommandManager().execute(message);
             }
 
             @Override

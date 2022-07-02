@@ -6,6 +6,7 @@ import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.User;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.gate.Gateway;
+import net.deechael.khl.message.ReceivedChannelMessage;
 import net.deechael.khl.message.cardmessage.Card;
 import net.deechael.khl.message.cardmessage.CardMessage;
 import net.deechael.khl.message.cardmessage.Theme;
@@ -63,7 +64,8 @@ public final class CommandManager extends KaiheilaObject {
         }
     }
 
-    public void execute(Channel channel, User user, String message) {
+    public void execute(ReceivedChannelMessage receivedChannelMessage) {
+        String message = receivedChannelMessage.getContent();
         while (message.endsWith(" ")) {
             message = message.substring(0, message.length() - 1);
             if (message.length() == 0)
@@ -78,7 +80,7 @@ public final class CommandManager extends KaiheilaObject {
         for (Entry<Pattern, String> entry : this.patterns.entrySet()) {
             if (entry.getKey().matcher(partToBeChecked).matches()) {
                 try {
-                    this.commandDispatcher.execute(entry.getValue() + message.substring(partToBeChecked.length()), new CommandSender(this.getGateway(), channel, user));
+                    this.commandDispatcher.execute(entry.getValue() + message.substring(partToBeChecked.length()), new CommandSender(this.getGateway(), receivedChannelMessage));
                 } catch (CommandSyntaxException e) {
                     CardMessage msg = new CardMessage();
                     Card card = new Card();
@@ -89,12 +91,12 @@ public final class CommandManager extends KaiheilaObject {
                     header.setText(error);
                     card.append(header);
                     KMarkdownText content = new KMarkdownText();
-                    content.setContent(KMarkdownMessage.mentionUser(user).expendSpace(KMarkdownMessage.create(e.getMessage())));
+                    content.setContent(KMarkdownMessage.mentionUser(receivedChannelMessage.getAuthor()).expendSpace(KMarkdownMessage.create(e.getMessage())));
                     Section section = new Section();
                     section.setText(content);
                     card.append(section);
                     msg.append(card);
-                    channel.sendMessage(msg);
+                    receivedChannelMessage.getChannel().sendMessage(msg);
                 }
             }
         }
