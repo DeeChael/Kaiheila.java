@@ -53,4 +53,12 @@ public enum Permissions {
         return description;
     }
 
+    public static int mix(Permissions... permissions) {
+        int permissionInteger = 0;
+        for (Permissions permission : permissions) {
+            permissionInteger |= permission.getValue();
+        }
+        return permissionInteger;
+    }
+
 }

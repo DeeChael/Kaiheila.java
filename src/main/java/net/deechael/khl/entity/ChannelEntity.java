@@ -1,15 +1,15 @@
 package net.deechael.khl.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import net.deechael.khl.api.Channel;
-import net.deechael.khl.api.Guild;
-import net.deechael.khl.api.User;
+import net.deechael.khl.api.*;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.restful.RestRoute;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class ChannelEntity extends KaiheilaObject implements Channel {
 
@@ -24,8 +24,8 @@ public abstract class ChannelEntity extends KaiheilaObject implements Channel {
     private int slowMode;
     private int type;
     private int limitAmount;
-    private List<PermissionOverwrite> permissionOverwrites;
-    private List<PermissionOverwrite> permissionUsers;
+    private Map<Integer, PermissionOverwriteEntity> permissionOverwrites;
+    private Map<String, PermissionOverwriteEntity> permissionUsers;
     private boolean permissionSync;
     private Guild guild;
 
@@ -47,24 +47,24 @@ public abstract class ChannelEntity extends KaiheilaObject implements Channel {
             this.setLevel(node.get("level").asInt());
             this.setSlowMode(node.get("slow_mode").asInt());
             this.setLimitAmount(node.get("limit_amount").asInt());
-            ArrayList<PermissionOverwrite> overwrites = new ArrayList<>();
+            this.permissionOverwrites = new HashMap<>();
+            this.permissionUsers = new HashMap<>();
             node.get("permission_overwrites").forEach(item -> {
-                PermissionOverwrite overwrite = new PermissionOverwrite();
+                PermissionOverwriteEntity overwrite = new PermissionOverwriteEntity(this);
+                overwrite.setOld();
                 overwrite.setAllow(item.get("allow").asInt());
                 overwrite.setDeny(item.get("deny").asInt());
                 overwrite.setTargetRoleId(item.get("role_id").asInt());
-                overwrites.add(overwrite);
+                ChannelEntity.this.permissionOverwrites.put(item.get("role_id").asInt(), overwrite);
             });
-            this.setPermissionOverwrites(overwrites);
-            ArrayList<PermissionOverwrite> userOverwrites = new ArrayList<>();
             node.get("permission_users").forEach(item -> {
-                PermissionOverwrite overwrite = new PermissionOverwrite();
+                PermissionOverwriteEntity overwrite = new PermissionOverwriteEntity(this);
+                overwrite.setOld();
                 overwrite.setAllow(item.get("allow").asInt());
                 overwrite.setDeny(item.get("deny").asInt());
                 overwrite.setTargetUserId(item.get("user").get("id").asText());
-                userOverwrites.add(overwrite);
+                ChannelEntity.this.permissionUsers.put(item.get("user").get("id").asText(), overwrite);
             });
-            this.setPermissionUsers(userOverwrites);
             this.setPermissionSync(node.get("permission_sync").asInt() == 1);
         } else {
             this.setId(node.get("id").asText());
@@ -76,8 +76,8 @@ public abstract class ChannelEntity extends KaiheilaObject implements Channel {
             this.setParentId(node.get("parent_id").asText());
             this.setLevel(node.get("level").asInt());
             this.setSlowMode(node.get("slow_mode").asInt());
-            this.setPermissionOverwrites(new ArrayList<>());
-            this.setPermissionUsers(new ArrayList<>());
+            this.permissionOverwrites = new HashMap<>();
+            this.permissionUsers = new HashMap<>();
             this.setPermissionSync(true);
         }
     }
@@ -244,28 +244,20 @@ public abstract class ChannelEntity extends KaiheilaObject implements Channel {
         this.limitAmount = limitAmount;
     }
 
-    public List<PermissionOverwrite> getPermissionOverwrites() {
-        return permissionOverwrites;
-    }
-
-    public void setPermissionOverwrites(List<PermissionOverwrite> permissionOverwrites) {
-        this.permissionOverwrites = permissionOverwrites;
-    }
-
-    public List<PermissionOverwrite> getPermissionUsers() {
-        return permissionUsers;
-    }
-
-    public void setPermissionUsers(List<PermissionOverwrite> permissionUsers) {
-        this.permissionUsers = permissionUsers;
-    }
-
     public boolean isPermissionSync() {
         return permissionSync;
     }
 
     public void setPermissionSync(boolean permissionSync) {
         this.permissionSync = permissionSync;
+    }
+
+    public Map<Integer, PermissionOverwriteEntity> getPermissionOverwrites() {
+        return permissionOverwrites;
+    }
+
+    public Map<String, PermissionOverwriteEntity> getPermissionUsers() {
+        return permissionUsers;
     }
 
     public String createChannelInvite(InviteDuration duration, InviteTimes times) {
@@ -283,6 +275,18 @@ public abstract class ChannelEntity extends KaiheilaObject implements Channel {
                 .withQueryParam("channel_id", this.getId())
                 .withQueryParam("name", name)
         );
+    }
+
+    @Override
+    public PermissionOverwrite getPermissionOverwrite(User user) {
+        PermissionOverwriteEntity permissionOverwrite = this.permissionUsers.get(user.getId());
+        return permissionOverwrite != null ? permissionOverwrite : new PermissionOverwriteEntity(this, user);
+    }
+
+    @Override
+    public PermissionOverwrite getPermissionOverwrite(Role role) {
+        PermissionOverwriteEntity permissionOverwrite = this.permissionOverwrites.get(role.getId());
+        return permissionOverwrite != null ? permissionOverwrite : new PermissionOverwriteEntity(this, role);
     }
 
 }

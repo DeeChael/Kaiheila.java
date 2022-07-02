@@ -99,6 +99,10 @@ public interface Channel extends KHLObject {
 
     void updateName(String name);
 
+    PermissionOverwrite getPermissionOverwrite(User user);
+
+    PermissionOverwrite getPermissionOverwrite(Role role);
+
     enum InviteDuration {
         HALF_HOUR(1800),
         ONE_HOUR(3600),
