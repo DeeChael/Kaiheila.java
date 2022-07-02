@@ -7,6 +7,7 @@ import net.deechael.khl.api.User;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.restful.RestRoute;
+import net.deechael.khl.type.Permissions;
 
 public class RoleEntity extends KaiheilaObject implements Role {
 
@@ -193,6 +194,11 @@ public class RoleEntity extends KaiheilaObject implements Role {
                 .withQueryParam("user_id", uid)
                 .withQueryParam("role_id", String.valueOf(this.getId()))
         );
+    }
+
+    @Override
+    public boolean hasPermission(Permissions permission) {
+        return (this.getPermissionsRaw() & permission.getValue()) == permission.getValue();
     }
 
 }

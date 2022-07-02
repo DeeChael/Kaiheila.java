@@ -1,5 +1,7 @@
 package net.deechael.khl.api;
 
+import net.deechael.khl.type.Permissions;
+
 /**
  * 服务器角色，用户自定义创建的角色（用户标签）
  */
@@ -70,5 +72,7 @@ public interface Role extends KHLObject {
     void revokeUser(User user);
 
     void revokeUser(String uid);
+
+    boolean hasPermission(Permissions permission);
 
 }

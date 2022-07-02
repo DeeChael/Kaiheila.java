@@ -353,6 +353,16 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     }
 
     @Override
+    public GuildUser getUser(User user) {
+        for (GuildUser guildUser : this.getUsers()) {
+            if (guildUser.getId() == user.getId()) {
+                return guildUser;
+            }
+        }
+        throw new RuntimeException("该用户不在该服务器中");
+    }
+
+    @Override
     public Channel createChannel(Category parent, ChannelTypes type, String name) {
         return parent.createChannel(type, name);
     }
