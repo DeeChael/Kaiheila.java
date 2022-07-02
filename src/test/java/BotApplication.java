@@ -77,10 +77,11 @@ public class BotApplication {
 
             // 游戏相关API请求过程比较缓慢，请耐心等待
             // 创建游戏
-            //Game kaiheilaJava = bot.createGame("Kaiheila.java");
+            Game kaiheilaJava = bot.createGame("Kaiheila.java");
             // 设置正在游玩的游戏
-            //bot.play(kaiheilaJava);
+            bot.play(kaiheilaJava);
 
+            // 上传文件
             File file = new File("self.jpg");
             System.out.println(bot.uploadAsset(file));
 
