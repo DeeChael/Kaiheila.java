@@ -1,6 +1,7 @@
 package net.deechael.khl.cache;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.Gson;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.entity.*;
 import net.deechael.khl.gate.Gateway;
@@ -8,6 +9,9 @@ import net.deechael.khl.restful.RestRoute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +24,7 @@ public class CacheManager extends KaiheilaObject {
     private final BaseCache<Integer, RoleEntity> roleCache = new BaseCache<>(RoleEntity::getName);
     private final BaseCache<String, ChannelEntity> channelCache = new BaseCache<>(ChannelEntity::getName);
     private final BaseCache<String, UserEntity> userCache = new BaseCache<>(UserEntity::getName);
+    private final BaseCache<Integer, GameEntity> gameCache = new BaseCache<>(GameEntity::getName);
     private final BaseCache<String, EmojiEntity> guildEmojisCache = new BaseCache<>(EmojiEntity::getName);
     private final ConcurrentHashMap<String, Map<String, GuildUserEntity>> guildUsersCache = new ConcurrentHashMap<>();
     private UserEntity selfCache;
@@ -57,6 +62,7 @@ public class CacheManager extends KaiheilaObject {
         try {
             fetchSelf();
             fetchGuildBaseData();
+            fetchGames();
         } catch (InterruptedException e) {
             unloadCache();
         }
@@ -65,6 +71,14 @@ public class CacheManager extends KaiheilaObject {
     private void fetchSelf() throws InterruptedException {
         JsonNode data = getGateway().executeRequest(RestRoute.Misc.SELF_USER.compile());
         this.selfCache = new UserEntity(this.getGateway(), data);
+    }
+
+    private void fetchGames() {
+        List<JsonNode> data = getGateway().executePaginationRequest(RestRoute.Game.GAME_LIST.compile());
+        for (JsonNode item : data) {
+            GameEntity entity = new GameEntity(item);
+            this.gameCache.updateElementById(entity.getId(), entity);
+        }
     }
 
     private void fetchGuildBaseData() throws InterruptedException {
@@ -156,6 +170,10 @@ public class CacheManager extends KaiheilaObject {
 
     public BaseCache<String, UserEntity> getUserCache() {
         return userCache;
+    }
+
+    public BaseCache<Integer, GameEntity> getGameCache() {
+        return gameCache;
     }
 
     public ConcurrentHashMap<String, Map<String, GuildUserEntity>> getGuildUsersCache() {

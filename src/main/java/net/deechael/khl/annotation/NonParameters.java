@@ -6,15 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.CLASS)
-@Target(ElementType.TYPE)
-public @interface Parameter {
-
-    String name();
-
-    String location() default "";
-
-    Class<?> type();
-
-    String mustBe() default "";
-
+@Target(ElementType.FIELD)
+public @interface NonParameters {
 }

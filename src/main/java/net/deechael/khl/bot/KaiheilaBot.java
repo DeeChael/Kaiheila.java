@@ -16,12 +16,10 @@
 
 package net.deechael.khl.bot;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import net.deechael.khl.api.Bot;
-import net.deechael.khl.api.Channel;
-import net.deechael.khl.api.Guild;
-import net.deechael.khl.api.User;
+import net.deechael.khl.api.*;
 import net.deechael.khl.cache.CacheManager;
 import net.deechael.khl.client.http.HttpCall;
 import net.deechael.khl.client.http.HttpHeaders;
@@ -30,6 +28,7 @@ import net.deechael.khl.client.ws.IWebSocketClient;
 import net.deechael.khl.command.CommandManager;
 import net.deechael.khl.command.KaiheilaCommandBuilder;
 import net.deechael.khl.configurer.KaiheilaConfiguration;
+import net.deechael.khl.entity.GameEntity;
 import net.deechael.khl.event.MessageHandler;
 import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.hook.EventListener;
@@ -43,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -239,6 +239,47 @@ public class KaiheilaBot implements Bot {
     @Override
     public User getUser(String id) {
         return getCacheManager().getUserCache().getElementById(id);
+    }
+
+    @Override
+    public List<Game> getGames() {
+        List<Game> games = new ArrayList<>();
+        this.getCacheManager().getGameCache().iterator().forEachRemaining(games::add);
+        return games;
+    }
+
+    @Override
+    public void play(Game game) {
+        this.getGateway().executeRequest(RestRoute.Game.SET_ACTIVITY.compile().withQueryParam("id", game.getId()).withQueryParam("data_type", 1));
+    }
+
+    @Override
+    public void stopPlaying() {
+        this.getGateway().executeRequest(RestRoute.Game.DELETE_ACTIVITY.compile().withQueryParam("data_type", 1));
+    }
+
+    @Override
+    public Game createGame(String name) {
+        JsonNode node = this.getGateway().executeRequest(RestRoute.Game.CREATE_GAME.compile().withQueryParam("name", name));
+        GameEntity game = new GameEntity(node);
+        this.getCacheManager().getGameCache().updateElementById(game.getId(), game);
+        return game;
+    }
+
+    @Override
+    public void updateGameName(Game game, String name) {
+        this.getGateway().executeRequest(RestRoute.Game.UPDATE_GAME.compile().withQueryParam("id", game.getId()).withQueryParam("name", name));
+    }
+
+    @Override
+    public void updateGameIcon(Game game, String icon) {
+        this.getGateway().executeRequest(RestRoute.Game.UPDATE_GAME.compile().withQueryParam("id", game.getId()).withQueryParam("icon", icon));
+    }
+
+    @Override
+    public void deleteGame(Game game) {
+        this.getGateway().executeRequest(RestRoute.Game.DELETE_GAME.compile().withQueryParam("id", game.getId()));
+        this.getCacheManager().getGameCache().unloadElementById(game.getId());
     }
 
     @Override

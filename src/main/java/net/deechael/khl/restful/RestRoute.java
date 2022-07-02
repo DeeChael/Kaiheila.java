@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.deechael.khl.annotation.NonParameters;
 import net.deechael.khl.annotation.OptionalParameters;
 import net.deechael.khl.annotation.Parameter;
 import net.deechael.khl.annotation.RequiredParameters;
@@ -496,6 +497,58 @@ public class RestRoute {
          * 机器人下线
          */
         public static final RestRoute BOT_OFFLINE = new RestRoute(HttpMethod.POST, "user/offline", false);
+
+    }
+
+    /**
+     * 游戏
+     */
+    public static class Game {
+
+        /**
+         * 获取游戏列表
+         */
+        @NonParameters
+        public static final RestRoute GAME_LIST = new RestRoute(HttpMethod.GET, "game", true);
+
+        /**
+         * 添加新游戏
+         * 一天最多添加5个
+         */
+        @RequiredParameters(@Parameter(name = "name", type = String.class))
+        @OptionalParameters(@Parameter(name = "icon", type = String.class))
+        public static final RestRoute CREATE_GAME = new RestRoute(HttpMethod.POST, "game/create", false);
+
+        /**
+         * 更新游戏数据
+         */
+        @RequiredParameters(@Parameter(name = "id", type = int.class))
+        @OptionalParameters({
+                @Parameter(name = "name", type = String.class),
+                @Parameter(name = "icon", type = String.class)
+        })
+        public static final RestRoute UPDATE_GAME = new RestRoute(HttpMethod.POST, "game/update", false);
+
+        /**
+         * 删除游戏
+         */
+        @RequiredParameters(@Parameter(name = "id", type = int.class))
+        public static final RestRoute DELETE_GAME = new RestRoute(HttpMethod.POST, "game/delete", false);
+
+        /**
+         * 开始玩
+         */
+        @RequiredParameters({
+                @Parameter(name = "id", type = int.class),
+                @Parameter(name = "data_type", type = int.class, mustBe = "int:1")
+        })
+        public static final RestRoute SET_ACTIVITY = new RestRoute(HttpMethod.POST, "game/activity", false);
+
+        /**
+         * 停止玩
+         */
+        @RequiredParameters(@Parameter(name = "data_type", type = int.class, mustBe = "int:1"))
+        public static final RestRoute DELETE_ACTIVITY = new RestRoute(HttpMethod.POST, "game/delete-activity", false);
 
     }
 

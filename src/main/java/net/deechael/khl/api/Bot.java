@@ -72,4 +72,18 @@ public interface Bot extends KHLObject {
 
     User getUser(String id);
 
+    List<Game> getGames();
+
+    void play(Game game);
+
+    void stopPlaying();
+
+    Game createGame(String name);
+
+    void updateGameName(Game game, String name);
+
+    void updateGameIcon(Game game, String icon);
+
+    void deleteGame(Game game);
+
 }
