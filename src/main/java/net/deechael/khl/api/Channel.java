@@ -99,6 +99,8 @@ public interface Channel extends KHLObject {
 
     void updateName(String name);
 
+    void delete();
+
     PermissionOverwrite getPermissionOverwrite(User user);
 
     PermissionOverwrite getPermissionOverwrite(Role role);

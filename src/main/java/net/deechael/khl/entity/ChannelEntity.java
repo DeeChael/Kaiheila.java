@@ -276,6 +276,13 @@ public abstract class ChannelEntity extends KaiheilaObject implements Channel {
     }
 
     @Override
+    public void delete() {
+        this.getGateway().executeRequest(RestRoute.Channel.DELETE_CHANNEL.compile()
+                .withQueryParam("channel_id", this.getId())
+        );
+    }
+
+    @Override
     public PermissionOverwrite getPermissionOverwrite(User user) {
         PermissionOverwriteEntity permissionOverwrite = this.permissionUsers.get(user.getId());
         return permissionOverwrite != null ? permissionOverwrite : new PermissionOverwriteEntity(this, user);
