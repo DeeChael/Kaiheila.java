@@ -21,7 +21,7 @@
 <dependency>
     <groupId>net.deechael</groupId>
     <artifactId>khl</artifactId>
-    <version>1.07.0</version>
+    <version>1.08.0</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -29,7 +29,7 @@
 ```kotlin
 dependencies { 
     //...
-    implementation 'net.deechael:khl:1.07.0'
+    implementation 'net.deechael:khl:1.08.0'
 }
 ```
 
