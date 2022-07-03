@@ -1,5 +1,3 @@
-import net.deechael.khl.api.Bot;
-import net.deechael.khl.api.Channel;
 import net.deechael.khl.api.Game;
 import net.deechael.khl.bot.KaiheilaBot;
 import net.deechael.khl.bot.KaiheilaBotBuilder;
@@ -14,7 +12,6 @@ import net.deechael.khl.configuration.file.YamlConfiguration;
 import net.deechael.khl.event.EventHandler;
 import net.deechael.khl.event.Listener;
 import net.deechael.khl.event.channel.UpdateMessageEvent;
-import net.deechael.khl.hook.EventListener;
 import net.deechael.khl.message.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

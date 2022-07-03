@@ -1,7 +1,6 @@
 package net.deechael.khl.message.cardmessage.builder;
 
 import net.deechael.khl.message.cardmessage.element.KMarkdownText;
-import net.deechael.khl.message.cardmessage.element.PlainText;
 import net.deechael.khl.message.cardmessage.element.Text;
 import net.deechael.khl.message.kmarkdown.KMarkdownMessage;
 

@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.List;
 
 public class EventParser extends KaiheilaObject implements Runnable {
     protected static final Logger Log = LoggerFactory.getLogger(EventParser.class);

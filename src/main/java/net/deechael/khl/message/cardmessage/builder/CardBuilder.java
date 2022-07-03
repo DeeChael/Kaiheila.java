@@ -4,9 +4,8 @@ import net.deechael.khl.message.cardmessage.Card;
 
 public class CardBuilder {
 
-    private final CardMessageBuilder parent;
-
     final Card card = new Card();
+    private final CardMessageBuilder parent;
 
     CardBuilder(CardMessageBuilder parent) {
         this.parent = parent;

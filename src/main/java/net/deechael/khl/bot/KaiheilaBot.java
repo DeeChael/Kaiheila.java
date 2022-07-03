@@ -32,7 +32,6 @@ import net.deechael.khl.entity.GameEntity;
 import net.deechael.khl.event.Listener;
 import net.deechael.khl.event.MessageHandler;
 import net.deechael.khl.gate.Gateway;
-import net.deechael.khl.hook.EventListener;
 import net.deechael.khl.hook.EventManager;
 import net.deechael.khl.message.ReceivedChannelMessage;
 import net.deechael.khl.restful.Requester;

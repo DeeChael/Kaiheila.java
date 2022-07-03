@@ -6,7 +6,12 @@ public class CardMessageBuilder {
 
     final CardMessage message = new CardMessage();
 
-    CardMessageBuilder() {}
+    CardMessageBuilder() {
+    }
+
+    public static CardMessageBuilder create() {
+        return new CardMessageBuilder();
+    }
 
     public CardBuilder addCard() {
         return new CardBuilder(this);
@@ -14,10 +19,6 @@ public class CardMessageBuilder {
 
     public CardMessage build() {
         return this.message;
-    }
-
-    public static CardMessageBuilder create() {
-        return new CardMessageBuilder();
     }
 
 }

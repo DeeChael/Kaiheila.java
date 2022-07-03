@@ -1,7 +1,6 @@
 package net.deechael.khl.message.cardmessage.builder;
 
 import net.deechael.khl.message.cardmessage.module.ActionGroup;
-import net.deechael.khl.message.cardmessage.module.Module;
 
 public class ActionGroupBuilder extends ModuleBuilder {
 

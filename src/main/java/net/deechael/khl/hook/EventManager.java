@@ -42,16 +42,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class EventManager extends KaiheilaObject implements EventManagerReceiver {
     protected static final Logger Log = LoggerFactory.getLogger(EventManager.class);
     private final Set<MessageHandler> messageHandlers = new HashSet<>();
+    private final Map<Class<? extends IEvent>, Map<Method, Object>> handlers = new HashMap<>();
     private SequenceMessageQueue<String> messageQueue;
     private EventParser eventParser;
     private EventSource eventSource;
-
-    private final Map<Class<? extends IEvent>, Map<Method, Object>> handlers = new HashMap<>();
 
     public EventManager(Gateway gateway) {
         super(gateway);
@@ -246,7 +244,8 @@ public class EventManager extends KaiheilaObject implements EventManagerReceiver
                 while (superClass != null) {
                     if (Arrays.asList(superClass.getInterfaces()).contains(IEvent.class)) {
                         if (!Modifier.isAbstract(clazz.getModifiers())) {
-                            if (!this.handlers.containsKey(superClass)) this.handlers.put((Class<? extends IEvent>) clazz, new HashMap<>());
+                            if (!this.handlers.containsKey(superClass))
+                                this.handlers.put((Class<? extends IEvent>) clazz, new HashMap<>());
                             this.handlers.get(clazz).put(method, Modifier.isStatic(method.getModifiers()) ? null : listener);
                         }
                         break;

@@ -18,7 +18,6 @@ package net.deechael.khl.api;
 
 import net.deechael.khl.command.KaiheilaCommandBuilder;
 import net.deechael.khl.event.Listener;
-import net.deechael.khl.hook.EventListener;
 
 import java.io.File;
 import java.util.List;
