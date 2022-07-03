@@ -51,7 +51,6 @@ public interface Bot extends KHLObject {
      * 添加事件监听器
      *
      * @param listener 用户事件
-     * @return 开放平台接口实例
      */
     void addEventListener(Listener listener);
 
@@ -60,7 +59,6 @@ public interface Bot extends KHLObject {
      * 移除事件监听器
      *
      * @param listener 用户事件
-     * @return 开放平台接口实例
      */
     void removeEventListener(Listener listener);
 
