@@ -22,6 +22,9 @@ import com.google.gson.JsonParser;
 import net.deechael.khl.configurer.event.EventSourceConfigurer;
 import net.deechael.khl.configurer.event.WebhookEventSourceConfigurer;
 import net.deechael.khl.core.KaiheilaObject;
+import net.deechael.khl.event.EventHandler;
+import net.deechael.khl.event.IEvent;
+import net.deechael.khl.event.Listener;
 import net.deechael.khl.event.MessageHandler;
 import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.hook.queue.SequenceMessageQueue;
@@ -35,19 +38,20 @@ import net.deechael.khl.util.compression.Compression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class EventManager extends KaiheilaObject implements EventManagerReceiver {
     protected static final Logger Log = LoggerFactory.getLogger(EventManager.class);
-
-    private final List<EventListener> listeners = new LinkedList<>();
     private final Set<MessageHandler> messageHandlers = new HashSet<>();
     private SequenceMessageQueue<String> messageQueue;
     private EventParser eventParser;
     private EventSource eventSource;
+
+    private final Map<Class<? extends IEvent>, Map<Method, Object>> handlers = new HashMap<>();
 
     public EventManager(Gateway gateway) {
         super(gateway);
@@ -57,7 +61,7 @@ public class EventManager extends KaiheilaObject implements EventManagerReceiver
     public void initialSn(int sn) {
         messageQueue = new SequenceMessageQueue<>(sn);
         this.shutdownEventParser();
-        this.eventParser = new EventParser(getGateway(), messageQueue, listeners);
+        this.eventParser = new EventParser(getGateway(), messageQueue, this);
     }
 
     @Override
@@ -177,7 +181,7 @@ public class EventManager extends KaiheilaObject implements EventManagerReceiver
         return messageQueue.getLatestSn();
     }
 
-    public void register(MessageHandler handler) {
+    public void registerMessageHandler(MessageHandler handler) {
         this.messageHandlers.add(handler);
     }
 
@@ -232,7 +236,47 @@ public class EventManager extends KaiheilaObject implements EventManagerReceiver
         this.eventSource.start();
     }
 
-    public List<EventListener> getListeners() {
-        return listeners;
+    public void addListener(Listener listener) {
+        for (Method method : listener.getClass().getDeclaredMethods()) {
+            if (method.getAnnotation(EventHandler.class) == null) continue;
+            Class<?>[] parameters = method.getParameterTypes();
+            if (parameters.length == 1) {
+                Class<?> clazz = parameters[0];
+                Class<?> superClass = clazz;
+                while (superClass != null) {
+                    if (Arrays.asList(superClass.getInterfaces()).contains(IEvent.class)) {
+                        if (!Modifier.isAbstract(clazz.getModifiers())) {
+                            if (!this.handlers.containsKey(superClass)) this.handlers.put((Class<? extends IEvent>) clazz, new HashMap<>());
+                            this.handlers.get(clazz).put(method, Modifier.isStatic(method.getModifiers()) ? null : listener);
+                        }
+                        break;
+                    }
+                    superClass = superClass.getSuperclass();
+                }
+            }
+        }
     }
+
+    public void removeListener(Listener listener) {
+        for (Class<?> clazz : this.handlers.keySet()) {
+            Set<Method> methods = this.handlers.get(clazz).keySet();
+            for (Method method : methods) {
+                if (method.getDeclaringClass().equals(listener.getClass())) {
+                    this.handlers.get(clazz).remove(method);
+                }
+            }
+        }
+    }
+
+    public void execute(IEvent event) {
+        if (this.handlers.containsKey(event.getClass())) {
+            for (Map.Entry<Method, Object> entry : this.handlers.get(event.getClass()).entrySet()) {
+                try {
+                    entry.getKey().invoke(entry.getValue(), event);
+                } catch (IllegalAccessException | InvocationTargetException ignored) {
+                }
+            }
+        }
+    }
+
 }

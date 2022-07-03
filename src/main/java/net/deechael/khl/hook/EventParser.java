@@ -112,12 +112,12 @@ public class EventParser extends KaiheilaObject implements Runnable {
 
     private final Thread handleThread;
     private final SequenceMessageQueue<String> messageQueue;
-    private final List<EventListener> listeners;
+    private final EventManager eventManager;
 
-    public EventParser(Gateway gateway, SequenceMessageQueue<String> messageQueue, List<EventListener> listeners) {
+    public EventParser(Gateway gateway, SequenceMessageQueue<String> messageQueue, EventManager eventManager) {
         super(gateway);
         this.messageQueue = messageQueue;
-        this.listeners = listeners;
+        this.eventManager = eventManager;
         this.handleThread = new Thread(this);
         this.handleThread.setName("EventParserThread");
         this.handleThread.setDaemon(true);
@@ -146,7 +146,7 @@ public class EventParser extends KaiheilaObject implements Runnable {
             return;
         }
         IEvent event = createEventObject(dataNode);
-        this.listeners.forEach(eventListener -> eventListener.handle(getGateway().getKaiheilaBot(), event));
+        eventManager.execute(event);
     }
 
     private IEvent createEventObject(JsonNode dataNode) {

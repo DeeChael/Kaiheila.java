@@ -17,6 +17,7 @@
 package net.deechael.khl.api;
 
 import net.deechael.khl.command.KaiheilaCommandBuilder;
+import net.deechael.khl.event.Listener;
 import net.deechael.khl.hook.EventListener;
 
 import java.io.File;
@@ -52,7 +53,7 @@ public interface Bot extends KHLObject {
      * @param listener 用户事件
      * @return 开放平台接口实例
      */
-    Bot addEventListener(EventListener listener);
+    void addEventListener(Listener listener);
 
 
     /**
@@ -61,7 +62,7 @@ public interface Bot extends KHLObject {
      * @param listener 用户事件
      * @return 开放平台接口实例
      */
-    Bot removeEventListener(EventListener listener);
+    void removeEventListener(Listener listener);
 
     Guild getGuild(String id);
 

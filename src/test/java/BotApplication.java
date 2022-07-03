@@ -11,6 +11,8 @@ import net.deechael.khl.command.argument.RoleArgumentType;
 import net.deechael.khl.command.argument.UserArgumentType;
 import net.deechael.khl.configuration.file.FileConfiguration;
 import net.deechael.khl.configuration.file.YamlConfiguration;
+import net.deechael.khl.event.EventHandler;
+import net.deechael.khl.event.Listener;
 import net.deechael.khl.event.channel.UpdateMessageEvent;
 import net.deechael.khl.hook.EventListener;
 import net.deechael.khl.message.TextMessage;
@@ -97,16 +99,11 @@ public class BotApplication {
     /**
      * 创建用户事件处理器
      */
-    public static class UserEventHandler extends EventListener {
+    public static class UserEventHandler implements Listener {
         Logger Log = LoggerFactory.getLogger(UserEventHandler.class);
-        /**
-         * 接收文本消息事件
-         *
-         * @param bot KaiheilaBot 实例
-         * @param event  文本消息事件内容
-         */
-        @Override
-        public void onUpdateMessageEvent(Bot bot, UpdateMessageEvent event) {
+
+        @EventHandler
+        public void youCanRenameTheMethodAsYouWant(UpdateMessageEvent event) {
             Log.info("[{}]{}",event.getEventAuthorId(), event.getEventContent());
             event.getChannel().sendMessage("You sent message", false);
         }

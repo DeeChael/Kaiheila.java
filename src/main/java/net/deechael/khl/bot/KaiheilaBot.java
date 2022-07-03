@@ -29,6 +29,7 @@ import net.deechael.khl.command.CommandManager;
 import net.deechael.khl.command.KaiheilaCommandBuilder;
 import net.deechael.khl.configurer.KaiheilaConfiguration;
 import net.deechael.khl.entity.GameEntity;
+import net.deechael.khl.event.Listener;
 import net.deechael.khl.event.MessageHandler;
 import net.deechael.khl.gate.Gateway;
 import net.deechael.khl.hook.EventListener;
@@ -90,7 +91,7 @@ public class KaiheilaBot implements Bot {
                 message.reply(message.getMessage());
             }
         };
-        this.getEventManager().register(defaultMessageHandler);
+        this.getEventManager().registerMessageHandler(defaultMessageHandler);
         this.scheduler = new KaiheilaScheduler(gateway);
         this.gateway = gateway;
         this.gateway.initialize();
@@ -148,9 +149,8 @@ public class KaiheilaBot implements Bot {
      * @return 开放平台接口实例
      */
     @Override
-    public Bot addEventListener(EventListener listener) {
-        this.eventManager.getListeners().add(listener);
-        return this;
+    public void addEventListener(Listener listener) {
+        this.eventManager.addListener(listener);
     }
 
     /**
@@ -160,9 +160,8 @@ public class KaiheilaBot implements Bot {
      * @return 开放平台接口实例
      */
     @Override
-    public Bot removeEventListener(EventListener listener) {
-        this.eventManager.getListeners().remove(listener);
-        return this;
+    public void removeEventListener(Listener listener) {
+        this.eventManager.removeListener(listener);
     }
 
     private void botOffline() {

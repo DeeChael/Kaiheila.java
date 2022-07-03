@@ -6,9 +6,11 @@
 
 仍在开发中\
 该项目为 https://github.com/FightingGuys/rabbit 及其子分支 https://github.com/Kamikuz/rabbit-enhanced 的新分支\
-但是这个分支会更像 khl.py (python的sdk): https://github.com/TWT233/khl.py
+但是这个分支会更像 khl.py (python的sdk): https://github.com/TWT233/khl.py 以及 BukkitAPI
 
 吐槽一下，rabbit-enhanced新加的东西的结构有点难改。。实在受不了
+
+指令系统使用的是Mojang制作的brigadier，我稍做了修改
 
 
 ### 其实现在SDK已经是可用情况了，不过仍然需要完善
@@ -19,7 +21,7 @@
 <dependency>
     <groupId>net.deechael</groupId>
     <artifactId>khl</artifactId>
-    <version>1.02.0</version>
+    <version>1.07.0</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -27,7 +29,7 @@
 ```kotlin
 dependencies { 
     //...
-    implementation 'net.deechael:khl:1.02.0'
+    implementation 'net.deechael:khl:1.07.0'
 }
 ```
 
@@ -88,6 +90,16 @@ public class Example {
         // 运行机器人
         if (bot.start()) {
 
+            // 游戏相关API请求过程比较缓慢，请耐心等待
+            // 创建游戏
+            Game kaiheilaJava = bot.createGame("Kaiheila.java");
+            // 设置正在游玩的游戏
+            bot.play(kaiheilaJava);
+
+            // 上传文件
+            File file = new File("self.jpg");
+            System.out.println(bot.uploadAsset(file));
+
             // 运行异步任务，但是，现在用不了，不知道为什么，以后修
             bot.getScheduler().runTaskAsynchronously(() -> {
                 // Do sth
@@ -100,16 +112,15 @@ public class Example {
     /**
      * 创建用户事件处理器
      */
-    public static class UserEventHandler extends EventListener {
+    public static class UserEventHandler implements Listener {
         Logger logger = LoggerFactory.getLogger(UserEventHandler.class);
         /**
          * 接收消息更新事件
          *
-         * @param bot KaiheilaBot 实例
          * @param event 更新文本消息事件内容
          */
-        @Override
-        public void onUpdateMessageEvent(Bot bot, UpdateMessageEvent event) {
+        @EventHandler
+        public void justRenameAsYouWant(UpdateMessageEvent event) {
             logger.info("[{}]{}",event.getEventAuthorId(), event.getEventContent());
             event.getChannel().sendMessage("You updated message", false);
         }
