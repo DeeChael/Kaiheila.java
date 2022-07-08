@@ -1,5 +1,6 @@
 package net.deechael.khl.message;
 
+import net.deechael.khl.api.Emoji;
 import net.deechael.khl.api.User;
 import net.deechael.khl.message.cardmessage.CardMessage;
 import net.deechael.khl.message.kmarkdown.KMarkdownMessage;
@@ -61,8 +62,30 @@ public abstract class ReceivedMessage implements Message {
         return this.message;
     }
 
+    public void addReaction(Emoji emoji) {
+        this.getAuthor().getGateway().executeRequest(RestRoute.Message.ADD_REACTION.compile()
+                .withQueryParam("msg_id", this.getId())
+                .withQueryParam("emoji", emoji.getId())
+        );
+    }
+
+    public void deleteReaction(Emoji emoji) {
+        this.getAuthor().getGateway().executeRequest(RestRoute.Message.DELETE_REACTION.compile()
+                .withQueryParam("msg_id", this.getId())
+                .withQueryParam("emoji", emoji.getId())
+        );
+    }
+
+    public void deleteReaction(Emoji emoji, User user) {
+        this.getAuthor().getGateway().executeRequest(RestRoute.Message.DELETE_REACTION.compile()
+                .withQueryParam("msg_id", this.getId())
+                .withQueryParam("emoji", emoji.getId())
+                .withQueryParam("user_id", user.getId())
+        );
+    }
+
     public void delete() {
-        this.getAuthor().getGateway().executeRequest(RestRoute.ChannelMessage.UPDATE_CHANNEL_MESSAGE.compile()
+        this.getAuthor().getGateway().executeRequest(RestRoute.Message.UPDATE_CHANNEL_MESSAGE.compile()
                 .withQueryParam("msg_id", this.getId())
         );
     }

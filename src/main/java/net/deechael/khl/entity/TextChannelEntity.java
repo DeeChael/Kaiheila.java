@@ -27,7 +27,7 @@ public class TextChannelEntity extends ChannelEntity implements TextChannel {
     }
 
     public ReceivedMessage sendMessage(Message message) {
-        JsonNode data = this.getGateway().executeRequest(RestRoute.ChannelMessage.SEND_CHANNEL_MESSAGE.compile()
+        JsonNode data = this.getGateway().executeRequest(RestRoute.Message.SEND_CHANNEL_MESSAGE.compile()
                 .withQueryParam("target_id", this.getId())
                 .withQueryParam("nonce", "bot-message")
                 .withQueryParam("content", message.getContent())
@@ -49,7 +49,7 @@ public class TextChannelEntity extends ChannelEntity implements TextChannel {
     }
 
     public ReceivedMessage sendTempMessage(Message message, String uid) {
-        JsonNode data = this.getGateway().executeRequest(RestRoute.ChannelMessage.SEND_CHANNEL_MESSAGE.compile()
+        JsonNode data = this.getGateway().executeRequest(RestRoute.Message.SEND_CHANNEL_MESSAGE.compile()
                 .withQueryParam("target_id", this.getId())
                 .withQueryParam("nonce", "bot-message")
                 .withQueryParam("content", message.getContent())
@@ -60,7 +60,7 @@ public class TextChannelEntity extends ChannelEntity implements TextChannel {
     }
 
     public ReceivedMessage reply(Message message, String msgId) {
-        JsonNode data = this.getGateway().executeRequest(RestRoute.ChannelMessage.SEND_CHANNEL_MESSAGE.compile()
+        JsonNode data = this.getGateway().executeRequest(RestRoute.Message.SEND_CHANNEL_MESSAGE.compile()
                 .withQueryParam("target_id", this.getId())
                 .withQueryParam("nonce", "bot-message")
                 .withQueryParam("type", message.getType().getType())
@@ -75,7 +75,7 @@ public class TextChannelEntity extends ChannelEntity implements TextChannel {
     }
 
     public ReceivedMessage replyTemp(Message message, String uid, String msgId) {
-        JsonNode data = this.getGateway().executeRequest(RestRoute.ChannelMessage.SEND_CHANNEL_MESSAGE.compile()
+        JsonNode data = this.getGateway().executeRequest(RestRoute.Message.SEND_CHANNEL_MESSAGE.compile()
                 .withQueryParam("target_id", this.getId())
                 .withQueryParam("nonce", "bot-message")
                 .withQueryParam("type", message.getType().getType())

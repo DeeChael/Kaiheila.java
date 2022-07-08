@@ -15,7 +15,7 @@ public class BotChannelMessage extends ReceivedChannelMessage {
     public void update(Message content) {
         if (Arrays.asList(9, 10).contains(this.getType().getType())) {
             if (content.getType() == this.getType()) {
-                this.getChannel().getGateway().executeRequest(RestRoute.ChannelMessage.UPDATE_CHANNEL_MESSAGE.compile()
+                this.getChannel().getGateway().executeRequest(RestRoute.Message.UPDATE_CHANNEL_MESSAGE.compile()
                         .withQueryParam("msg_id", this.getId())
                         .withQueryParam("content", content.getContent())
                 );
@@ -30,7 +30,7 @@ public class BotChannelMessage extends ReceivedChannelMessage {
     public void updateTemp(Message content, User user) {
         if (Arrays.asList(9, 10).contains(this.getType().getType())) {
             if (content.getType() == this.getType()) {
-                this.getChannel().getGateway().executeRequest(RestRoute.ChannelMessage.UPDATE_CHANNEL_MESSAGE.compile()
+                this.getChannel().getGateway().executeRequest(RestRoute.Message.UPDATE_CHANNEL_MESSAGE.compile()
                         .withQueryParam("msg_id", this.getId())
                         .withQueryParam("content", content.getContent())
                         .withQueryParam("temp_target_id", user.getId())

@@ -260,7 +260,7 @@ public class RestRoute {
     /**
      * 频道消息
      */
-    public static class ChannelMessage {
+    public static class Message {
 
         /**
          * 获取频道聊天消息列表
@@ -290,12 +290,12 @@ public class RestRoute {
         /**
          * 给某个消息添加回应
          */
-        public static final RestRoute ADD_CHANNEL_MESSAGE_REACTION = new RestRoute(HttpMethod.POST, "message/add-reaction", false);
+        public static final RestRoute ADD_REACTION = new RestRoute(HttpMethod.POST, "message/add-reaction", false);
 
         /**
          * 删除消息的某个回应
          */
-        public static final RestRoute DELETE_CHANNEL_MESSAGE_REACTION = new RestRoute(HttpMethod.POST, "message/delete-reaction", false);
+        public static final RestRoute DELETE_REACTION = new RestRoute(HttpMethod.POST, "message/delete-reaction", false);
 
     }
 
