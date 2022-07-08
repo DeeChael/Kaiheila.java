@@ -134,6 +134,8 @@ public interface Guild extends KHLObject {
 
     GuildUser getUser(User user);
 
+    Category createCategory(String name);
+
     interface GuildStatus {
 
         int getUsers();

@@ -71,7 +71,7 @@ public class CategoryEntity extends ChannelEntity implements Category {
     @Override
     public Channel createChannel(ChannelTypes type, String name) {
         if (type == ChannelTypes.CATEGORY) {
-            throw new RuntimeException("目前KOOK API还不支持创建频道分组");
+            throw new RuntimeException("你不能将分组放在分组内");
         }
         JsonNode data = this.getGateway().executeRequest(RestRoute.Channel.CREATE_CHANNEL.compile()
                 .withQueryParam("guild_id", this.getGuildId())

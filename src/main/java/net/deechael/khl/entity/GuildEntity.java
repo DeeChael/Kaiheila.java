@@ -361,6 +361,20 @@ public class GuildEntity extends KaiheilaObject implements Guild {
     }
 
     @Override
+    public Category createCategory(String name) {
+        JsonNode data = this.getGateway().executeRequest(RestRoute.Channel.CREATE_CHANNEL.compile()
+                .withQueryParam("guild_id", this.getId())
+                .withQueryParam("name", name)
+                .withQueryParam("is_category", 1)
+        );
+        CategoryEntity category = new CategoryEntity(this.getGateway(), data);
+        category.setGuild(this);
+        this.getGateway().getKaiheilaBot().getCacheManager().getChannelCache().updateElementById(category.getId(), category);
+        this.getChannelIDs().add(category.getId());
+        return category;
+    }
+
+    @Override
     public Channel createChannel(Category parent, ChannelTypes type, String name) {
         return parent.createChannel(type, name);
     }
