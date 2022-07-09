@@ -75,6 +75,8 @@ public interface Channel extends KHLObject {
      */
     Guild getGuild();
 
+    Category getParent();
+
     ReceivedMessage sendMessage(String message, boolean isKMarkdown);
 
     ReceivedMessage sendMessage(Message message);

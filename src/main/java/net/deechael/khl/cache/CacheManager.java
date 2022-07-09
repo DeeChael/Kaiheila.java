@@ -1,6 +1,7 @@
 package net.deechael.khl.cache;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import net.deechael.khl.api.Category;
 import net.deechael.khl.core.KaiheilaObject;
 import net.deechael.khl.entity.*;
 import net.deechael.khl.gate.Gateway;
@@ -59,9 +60,18 @@ public class CacheManager extends KaiheilaObject {
             fetchSelf();
             fetchGuildBaseData();
             fetchGames();
+            resolveChannels();
         } catch (InterruptedException e) {
             unloadCache();
         }
+    }
+
+    private void resolveChannels() {
+        this.getChannelCache().iterator().forEachRemaining(channel -> {
+            if (!channel.isCategory()) {
+                channel.setParent((Category) this.getChannelCache().getElementById(channel.getParentId()));
+            }
+        });
     }
 
     private void fetchSelf() throws InterruptedException {

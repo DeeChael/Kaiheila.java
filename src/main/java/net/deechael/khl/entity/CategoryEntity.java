@@ -113,4 +113,9 @@ public class CategoryEntity extends ChannelEntity implements Category {
         return channel;
     }
 
+    @Override
+    public Category getParent() {
+        throw new RuntimeException("频道分组在最顶层，无法被容纳");
+    }
+
 }

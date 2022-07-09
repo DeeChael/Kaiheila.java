@@ -26,6 +26,7 @@ public abstract class ChannelEntity extends KaiheilaObject implements Channel {
     private Map<String, PermissionOverwriteEntity> permissionUsers;
     private boolean permissionSync;
     private Guild guild;
+    private Category parent;
 
     public ChannelEntity(Gateway gateway, JsonNode node) {
         this(gateway, node, false);
@@ -302,8 +303,13 @@ public abstract class ChannelEntity extends KaiheilaObject implements Channel {
         this.permissionOverwrites = permissionOverwrites;
     }
 
-    public Map<String, PermissionOverwriteEntity> GETPermissionUsers() {
-        return this.permissionUsers;
+    @Override
+    public Category getParent() {
+        return parent;
+    }
+
+    public void setParent(Category parent) {
+        this.parent = parent;
     }
 
 }
