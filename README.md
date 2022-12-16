@@ -1,4 +1,9 @@
-# Kaiheila.java (WIP)
+# Kaiheila.java (Outdated)
+
+## 怎么都弃坑快5个月了还有人用这个SDK啊！建议使用JKook：https://github.com/SNWCreations/JKook，这个项目出任何问题我不会解决的，原计划是重新做一个KOOK的sdk的，但现在没时间也不想再做了，就用JKook或者KtKook吧
+
+---
+
 ## 一个为开黑啦开发制作的Java SDK
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.deechael/khl/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.deechael/khl)
 
